@@ -4,7 +4,7 @@ export const Route = createFileRoute('/')({
   // Temporarily redirect directly to dashboard until auth is built
   beforeLoad: () => {
     throw redirect({
-      to: '/dashboard',
+      to: '/login',
     })
   },
   component: () => <div>Redirecting...</div>,

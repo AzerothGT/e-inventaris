@@ -11,7 +11,7 @@ import {
 // Placeholder role for now until Auth is implemented
 const CURRENT_ROLE = 'tu'
 
-export function Sidebar() {
+export function NavbarBottom() {
   const menuItems = [
     {
       title: 'Dashboard',
@@ -54,31 +54,20 @@ export function Sidebar() {
   const filteredMenu = menuItems.filter(item => item.roles.includes(CURRENT_ROLE))
 
   return (
-    <aside className="w-64 border-r border-surface-200 bg-white flex flex-col h-full flex-shrink-0">
-      <div className="h-16 flex items-center px-6 border-b border-surface-200">
-        <div className="flex items-center gap-2 text-primary-600 font-bold text-xl tracking-tight">
-          <div className="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center">
-            <Package size={20} />
-          </div>
-          E-Inventaris
-        </div>
-      </div>
-
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-        {filteredMenu.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className="sidebar-link"
-            activeProps={{
-              className: 'sidebar-link-active',
-            }}
-          >
-            {item.icon}
-            {item.title}
-          </Link>
-        ))}
-      </nav>
-    </aside>
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-surface-200 lg:hidden flex justify-around items-center h-16 pb-0">
+      {filteredMenu.map((item) => (
+        <Link
+          key={item.to}
+          to={item.to}
+          className="navbar-link"
+          activeProps={{
+            className: 'navbar-link-active',
+          }}
+        >
+          {item.icon}
+          <span className="text-[10px] mt-1 font-medium">{item.title}</span>
+        </Link>
+      ))}
+    </nav>
   )
 }
