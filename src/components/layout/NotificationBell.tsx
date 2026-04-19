@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Bell } from 'lucide-react'
 
 export function NotificationBell() {

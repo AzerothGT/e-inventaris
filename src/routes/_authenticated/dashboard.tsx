@@ -7,11 +7,20 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 })
 
 function Dashboard() {
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 11) return 'Selamat Pagi'
+    if (hour < 15) return 'Selamat Siang'
+    if (hour < 18) return 'Selamat Sore'
+    return 'Selamat Malam'
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-surface-500">Selamat datang kembali. Berikut ringkasan aktivitas.</p>
+      <div className="flex flex-col gap-1">
+        <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
+          {getGreeting()}, Tata Usaha! 👋
+        </h2>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
