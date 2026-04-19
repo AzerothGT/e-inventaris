@@ -17,54 +17,63 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 stagger-1">
         <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
-          {getGreeting()}, Tata Usaha! 👋
+          {getGreeting()}, <span className="text-gradient">Tata Usaha!</span> 👋
         </h2>
+        <p className="text-surface-500">Berikut adalah ringkasan inventaris sekolah hari ini.</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="glass-card glass-card-hover lift-card stagger-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-surface-500">Total Barang</CardTitle>
-            <Package className="h-4 w-4 text-primary-500" />
+            <CardTitle className="text-sm font-medium text-surface-500 uppercase tracking-wider">Total Barang</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center">
+              <Package className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-surface-900">1,248</div>
-            <p className="text-xs text-surface-500">+12 barang bulan ini</p>
+            <div className="text-3xl font-bold text-surface-900">1,248</div>
+            <p className="text-xs text-surface-500 mt-1">+12 barang bulan ini</p>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="glass-card glass-card-hover lift-card stagger-3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-surface-500">Pengadaan Aktif</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-warning-500" />
+            <CardTitle className="text-sm font-medium text-surface-500 uppercase tracking-wider">Pengadaan Aktif</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-warning-100 text-warning-600 flex items-center justify-center">
+              <ShoppingCart className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-surface-900">5</div>
-            <p className="text-xs text-warning-600">Menunggu persetujuan</p>
+            <div className="text-3xl font-bold text-surface-900">5</div>
+            <p className="text-xs text-warning-600 mt-1 font-medium">Menunggu persetujuan</p>
           </CardContent>
         </Card>
-
-        <Card>
+ 
+        <Card className="glass-card glass-card-hover lift-card stagger-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-surface-500">Persetujuan Saya</CardTitle>
-            <Clock className="h-4 w-4 text-danger-500" />
+            <CardTitle className="text-sm font-medium text-surface-500 uppercase tracking-wider">Persetujuan Saya</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-danger-100 text-danger-600 flex items-center justify-center">
+              <Clock className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-danger-600">2</div>
-            <p className="text-xs text-surface-500">Perlu tindakan</p>
+            <div className="text-3xl font-bold text-danger-600">2</div>
+            <p className="text-xs text-surface-500 mt-1">Perlu tindakan segera</p>
           </CardContent>
         </Card>
-
-        <Card>
+ 
+        <Card className="glass-card glass-card-hover lift-card stagger-5">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-surface-500">Selesai (Bulan ini)</CardTitle>
-            <CheckCircle className="h-4 w-4 text-success-500" />
+            <CardTitle className="text-sm font-medium text-surface-500 uppercase tracking-wider">Selesai (Bulan ini)</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-success-100 text-success-600 flex items-center justify-center">
+              <CheckCircle className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-surface-900">8</div>
-            <p className="text-xs text-success-600">Pengadaan selesai</p>
+            <div className="text-3xl font-bold text-surface-900">8</div>
+            <p className="text-xs text-success-600 mt-1 font-medium">Pengadaan berhasil</p>
           </CardContent>
         </Card>
       </div>

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Sidebar } from './Sidebar'
 import { NavbarBottom } from './NavbarBottom'
 import { NotificationBell } from './NotificationBell'
-import { LogOut, ChevronDown, Package } from 'lucide-react'
+import { LogOut, ChevronDown, Package, Search } from 'lucide-react'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [profileOpen, setProfileOpen] = React.useState(false)
@@ -17,7 +17,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Navbar */}
-        <header className="h-16 bg-white border-b border-surface-200 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10 w-full relative">
+        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-white/40 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10 w-full relative shadow-sm">
           <div className="flex items-center">
              {/* Mobile Navbar Branding */}
              <div className="flex items-center gap-2 text-primary-600 font-bold text-lg tracking-tight lg:hidden">
@@ -29,6 +29,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <h1 className="text-xl font-semibold text-surface-900 hidden lg:block">
               {/* Dynamic title could go here based on route */}
             </h1>
+          </div>
+
+          {/* Central Search Bar - Desktop Only */}
+          <div className="hidden md:flex flex-1 justify-center px-4 max-w-2xl">
+            <div className="search-container">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400">
+                <Search size={18} />
+              </div>
+              <input 
+                type="text" 
+                placeholder="Cari barang atau aksi... (⌘K)" 
+                className="search-input"
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded border border-surface-200 bg-white text-[10px] font-medium text-surface-400">
+                <span className="text-xs">⌘</span>K
+              </div>
+            </div>
           </div>
           
           <div className="flex items-center gap-4">

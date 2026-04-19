@@ -104,7 +104,17 @@ body {
 
 /* ── Utility: Glass card ─────────────────────────────────── */
 .glass-card {
-  @apply bg-white/80 backdrop-blur-sm border border-surface-200 rounded-2xl;
+  @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-sm transition-all duration-300;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.glass-card-hover {
+  @apply hover:bg-white/80 hover:border-white/60 hover:shadow-md transition-all duration-300;
+}
+
+/* ── Utility: Lift card ──────────────────────────────────── */
+.lift-card {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
 }
 
 /* ── Utility: Gradient text ──────────────────────────────── */
@@ -144,3 +154,21 @@ body {
   66% { transform: translate(-20px, 20px) scale(0.9); }
   100% { transform: translate(0px, 0px) scale(1); }
 }
+
+/* ── Search Container ────────────────────────────────────── */
+.search-container {
+  @apply relative max-w-md w-full;
+}
+
+.search-input {
+  @apply w-full bg-surface-100 border-none rounded-2xl py-2 pl-10 pr-4 
+         text-sm focus:ring-2 focus:ring-primary-500/20 focus:bg-white 
+         transition-all duration-300 outline-none placeholder:text-surface-400;
+}
+
+/* ── Staggered Animations ────────────────────────────────── */
+.stagger-1 { animation: slide-up 0.4s ease-out 0.05s both; }
+.stagger-2 { animation: slide-up 0.4s ease-out 0.10s both; }
+.stagger-3 { animation: slide-up 0.4s ease-out 0.15s both; }
+.stagger-4 { animation: slide-up 0.4s ease-out 0.20s both; }
+.stagger-5 { animation: slide-up 0.4s ease-out 0.25s both; }

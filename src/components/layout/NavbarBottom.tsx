@@ -20,7 +20,7 @@ export function NavbarBottom() {
       roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {
-      title: 'Inventaris',
+      title: 'Barang',
       icon: <Package size={20} />,
       to: '/inventaris',
       roles: ['tu', 'penjaga_lab', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
