@@ -43,13 +43,13 @@ export function Sidebar() {
     {
       title: 'Barang',
       icon: Package,
-      to: '/inventaris',
+      to: '/barang',
       roles: ['tu', 'penjaga_lab', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {
-      title: 'Pengadaan',
+      title: 'Pengajuan',
       icon: FilePen,
-      to: '/pengadaan',
+      to: '/pengajuan',
       roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {

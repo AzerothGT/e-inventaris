@@ -22,13 +22,13 @@ export function NavbarBottom() {
     {
       title: 'Barang',
       icon: <Package size={20} />,
-      to: '/inventaris',
+      to: '/barang',
       roles: ['tu', 'penjaga_lab', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {
-      title: 'Pengadaan',
+      title: 'Pengajuan',
       icon: <FilePen size={20} />,
-      to: '/pengadaan',
+      to: '/pengajuan',
       roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {
