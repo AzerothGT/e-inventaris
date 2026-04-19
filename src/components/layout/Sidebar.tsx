@@ -2,8 +2,8 @@ import { Link } from '@tanstack/react-router'
 import {
   LayoutDashboard,
   Package,
-  ShoppingCart,
-  MapPin,
+  FilePen,
+  House,
   Bell,
   Users,
   LogOut,
@@ -28,13 +28,13 @@ export function Sidebar() {
     },
     {
       title: 'Pengadaan',
-      icon: <ShoppingCart size={20} />,
+      icon: <FilePen size={20} />,
       to: '/pengadaan',
       roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {
       title: 'Ruangan',
-      icon: <MapPin size={20} />,
+      icon: <House size={20} />,
       to: '/ruangan',
       roles: ['tu', 'penjaga_lab'],
     },
