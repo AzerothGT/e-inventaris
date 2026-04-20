@@ -1,0 +1,340 @@
+
+<style>
+  .section { margin: 0 0 2rem; }
+  .section-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 .75rem; padding-bottom: .5rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .phase { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); margin-bottom: 1rem; overflow: hidden; }
+  .phase-header { display: flex; align-items: center; gap: 12px; padding: .875rem 1.25rem; cursor: pointer; user-select: none; }
+  .phase-header:hover { background: var(--color-background-secondary); }
+  .phase-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+  .phase-meta { flex: 1; }
+  .phase-name { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 2px; }
+  .phase-sub { font-size: 12px; color: var(--color-text-secondary); margin: 0; }
+  .phase-dur { font-size: 12px; color: var(--color-text-tertiary); flex-shrink: 0; }
+  .phase-arrow { font-size: 12px; color: var(--color-text-tertiary); transition: transform .2s; }
+  .phase-body { display: none; padding: 0 1.25rem 1.25rem; border-top: 0.5px solid var(--color-border-tertiary); }
+  .phase-body.open { display: block; }
+  .task-list { list-style: none; margin: .75rem 0 0; padding: 0; }
+  .task-list li { font-size: 14px; color: var(--color-text-secondary); padding: 5px 0 5px 20px; position: relative; line-height: 1.5; }
+  .task-list li::before { content: ""; position: absolute; left: 4px; top: 13px; width: 6px; height: 6px; border-radius: 50%; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: .75rem; }
+  .mini-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: .75rem 1rem; }
+  .mini-card-title { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px; }
+  .mini-card-body { font-size: 13px; color: var(--color-text-primary); margin: 0; line-height: 1.5; }
+  .role-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .role-row:last-child { border-bottom: none; }
+  .role-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); min-width: 160px; }
+  .role-desc { font-size: 12px; color: var(--color-text-secondary); }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; margin-right: 4px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 1rem; }
+  .tab { font-size: 13px; padding: 5px 14px; border-radius: var(--border-radius-md); cursor: pointer; border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .tab.active { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  @media (max-width: 500px) { .grid2 { grid-template-columns: 1fr; } .role-name { min-width: 120px; } }
+</style>
+
+<h2 class="sr-only">Implementation plan for Inventaris & Pengadaan Barang — SMK Al Basyariah</h2>
+
+<div style="padding: 1rem 0">
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('overview')">Overview</button>
+  <button class="tab" onclick="showTab('phases')">Phases</button>
+  <button class="tab" onclick="showTab('roles')">Roles</button>
+  <button class="tab" onclick="showTab('stack')">Tech stack</button>
+</div>
+
+<!-- OVERVIEW -->
+<div id="tab-overview" class="tab-content active">
+  <div class="grid2">
+    <div class="mini-card">
+      <p class="mini-card-title">Project</p>
+      <p class="mini-card-body">Inventaris & Pengadaan Barang<br><span style="font-size:12px;color:var(--color-text-tertiary)">SMK Al Basyariah</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Estimated timeline</p>
+      <p class="mini-card-body">10–12 weeks</p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Core modules</p>
+      <p class="mini-card-body">Inventory · Pengadaan · Approval chain · Notifications</p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Deployment</p>
+      <p class="mini-card-body">Vercel (frontend + API routes)<br>SQLite via Turso/LibSQL</p>
+    </div>
+  </div>
+
+  <div style="margin-top:1.25rem">
+    <p style="font-size:14px;color:var(--color-text-secondary);margin:0 0 .75rem">Approval chain</p>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12px">
+      <span style="padding:4px 10px;border-radius:4px;background:var(--color-background-info);color:var(--color-text-info)">Penjaga Lab / TU</span>
+      <span style="color:var(--color-text-tertiary)">→ Buat Permintaan</span>
+      <span style="padding:4px 10px;border-radius:4px;background:var(--color-background-secondary);color:var(--color-text-secondary)">Kaprog</span>
+      <span style="color:var(--color-text-tertiary)">→</span>
+      <span style="padding:4px 10px;border-radius:4px;background:var(--color-background-secondary);color:var(--color-text-secondary)">Wakasek Kurikulum</span>
+      <span style="color:var(--color-text-tertiary)">→</span>
+      <span style="padding:4px 10px;border-radius:4px;background:var(--color-background-secondary);color:var(--color-text-secondary)">Wakasek Kesiswaan</span>
+      <span style="color:var(--color-text-tertiary)">→</span>
+      <span style="padding:4px 10px;border-radius:4px;background:var(--color-background-warning);color:var(--color-text-warning)">Kepala Sekolah</span>
+      <span style="color:var(--color-text-tertiary)">→</span>
+      <span style="padding:4px 10px;border-radius:4px;background:var(--color-background-success);color:var(--color-text-success)">TU Beli → Inventory</span>
+    </div>
+  </div>
+</div>
+
+<!-- PHASES -->
+<div id="tab-phases" class="tab-content">
+
+  <!-- Phase 1 -->
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--color-background-info);color:var(--color-text-info)">1</div>
+      <div class="phase-meta">
+        <p class="phase-name">Project setup & design</p>
+        <p class="phase-sub">Foundation, ERD, UI wireframes</p>
+      </div>
+      <span class="phase-dur">Wk 1–2</span>
+      <span class="phase-arrow">▼</span>
+    </div>
+    <div class="phase-body">
+      <ul class="task-list">
+        <li style="--dot:var(--color-text-info)">Init repo: Next.js 14 (App Router) + TanStack Query + TanStack Table</li>
+        <li>Set up SQLite via Turso (libsql) — free tier sufficient for school scale</li>
+        <li>Design ERD: <code>barang</code>, <code>lokasi</code>, <code>lemari</code>, <code>permintaan</code>, <code>approval_log</code>, <code>users</code></li>
+        <li>Define role enum: <code>penjaga_lab | orang_tu | kaprog | wakasek_kurikulum | wakasek_kesiswaan | kepala_sekolah | tu_admin</code></li>
+        <li>Wireframe 5 key screens: Dashboard, Form Permintaan, Approval Queue, Inventaris, Terima Barang</li>
+        <li>Set up auth: NextAuth.js with credential provider + role-based middleware</li>
+      </ul>
+      <div class="grid2" style="margin-top:.75rem">
+        <div class="mini-card">
+          <p class="mini-card-title">Key output</p>
+          <p class="mini-card-body">Running skeleton app + DB schema migration files</p>
+        </div>
+        <div class="mini-card">
+          <p class="mini-card-title">Risk</p>
+          <p class="mini-card-body">SQLite concurrency on Vercel — use Turso to avoid serverless limits</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--color-background-info);color:var(--color-text-info)">2</div>
+      <div class="phase-meta">
+        <p class="phase-name">Inventory module</p>
+        <p class="phase-sub">CRUD barang, lokasi, kondisi</p>
+      </div>
+      <span class="phase-dur">Wk 3–4</span>
+      <span class="phase-arrow">▼</span>
+    </div>
+    <div class="phase-body">
+      <ul class="task-list">
+        <li>API routes: <code>GET/POST/PATCH /api/barang</code>, <code>/api/lokasi</code>, <code>/api/lemari</code></li>
+        <li>TanStack Query hooks for all data fetching + optimistic updates</li>
+        <li>TanStack Table for inventory list — sortable, filterable by lokasi/kondisi/merk</li>
+        <li>Form input barang: Nama, Merk, Kuantitas, Lokasi Ruangan, Lemari, Kondisi (Baik | Rusak)</li>
+        <li>Status badge logic: <span style="background:var(--color-background-success);color:var(--color-text-success);font-size:11px;padding:1px 6px;border-radius:3px">Baik/Hidup</span> <span style="background:var(--color-background-danger);color:var(--color-text-danger);font-size:11px;padding:1px 6px;border-radius:3px">Rusak</span></li>
+        <li>Export view (CSV) for inventory report</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--color-background-warning);color:var(--color-text-warning)">3</div>
+      <div class="phase-meta">
+        <p class="phase-name">Pengadaan & approval flow</p>
+        <p class="phase-sub">Permintaan → approval chain → notif</p>
+      </div>
+      <span class="phase-dur">Wk 5–7</span>
+      <span class="phase-arrow">▼</span>
+    </div>
+    <div class="phase-body">
+      <ul class="task-list">
+        <li>Form Permintaan Barang (Penjaga Lab / Orang TU): nama barang, jumlah, alasan, prioritas</li>
+        <li>Approval state machine: <code>draft → pending_kaprog → pending_wakasek_kur → pending_wakasek_kes → pending_kepsek → approved | rejected</code></li>
+        <li>Each approver sees their own queue with Acc / Tolak + catatan</li>
+        <li>Approval log table: siapa, kapan, status, catatan — full audit trail</li>
+        <li>Notification system: in-app badge + optional email (Resend.com free tier) when status changes</li>
+        <li>TU Admin receives notif on final approval → trigger "proses pembelian"</li>
+      </ul>
+      <div class="mini-card" style="margin-top:.75rem">
+        <p class="mini-card-title">State machine tip</p>
+        <p class="mini-card-body">Store <code>current_step</code> as enum in <code>permintaan</code> table. Each role only sees requests where <code>current_step = their_step</code>. Simpler than a separate workflow engine.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--color-background-warning);color:var(--color-text-warning)">4</div>
+      <div class="phase-meta">
+        <p class="phase-name">Terima barang & masuk inventory</p>
+        <p class="phase-sub">TU menerima → otomatis update DB</p>
+      </div>
+      <span class="phase-dur">Wk 8</span>
+      <span class="phase-arrow">▼</span>
+    </div>
+    <div class="phase-body">
+      <ul class="task-list">
+        <li>TU konfirmasi barang diterima: input kuantitas aktual, kondisi, lokasi, lemari</li>
+        <li>On confirm → <code>permintaan.status = received</code> + insert baris baru di tabel <code>barang</code> (atau increment qty jika barang sudah ada)</li>
+        <li>Auto-set kondisi default Baik; TU bisa override ke Rusak</li>
+        <li>Generate nomor inventaris otomatis (prefix + year + sequence)</li>
+        <li>Notif ke pemohon: "Barang [X] sudah diterima dan masuk inventaris"</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 5 -->
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--color-background-success);color:var(--color-text-success)">5</div>
+      <div class="phase-meta">
+        <p class="phase-name">Dashboard & laporan</p>
+        <p class="phase-sub">Ringkasan per role, statistik</p>
+      </div>
+      <span class="phase-dur">Wk 9</span>
+      <span class="phase-arrow">▼</span>
+    </div>
+    <div class="phase-body">
+      <ul class="task-list">
+        <li>Dashboard per-role: Penjaga Lab lihat status permintaannya; Kepala Sekolah lihat semua pending</li>
+        <li>Metric cards: total barang, barang rusak, permintaan pending, permintaan bulan ini</li>
+        <li>TanStack Table dengan filter kondisi + lokasi + tanggal</li>
+        <li>Laporan PDF/CSV: daftar inventaris per ruangan, riwayat pengadaan</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phase 6 -->
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num" style="background:var(--color-background-success);color:var(--color-text-success)">6</div>
+      <div class="phase-meta">
+        <p class="phase-name">Testing & deployment</p>
+        <p class="phase-sub">QA, staging, go-live</p>
+      </div>
+      <span class="phase-dur">Wk 10–12</span>
+      <span class="phase-arrow">▼</span>
+    </div>
+    <div class="phase-body">
+      <ul class="task-list">
+        <li>UAT dengan 1 user per role — jalankan skenario end-to-end</li>
+        <li>Vercel preview deployment untuk review sebelum production</li>
+        <li>Set up Vercel environment vars: <code>DATABASE_URL</code> (Turso), <code>NEXTAUTH_SECRET</code>, <code>RESEND_API_KEY</code></li>
+        <li>Seed database: lokasi ruangan, lemari, akun awal tiap role</li>
+        <li>Training singkat 30 menit per kelompok pengguna</li>
+        <li>Soft launch + monitor error via Vercel logs</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROLES -->
+<div id="tab-roles" class="tab-content">
+  <div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem">
+    <div class="role-row">
+      <span class="role-name">Penjaga Lab</span>
+      <span class="role-desc">Buat permintaan barang, lihat status permintaan sendiri, lihat inventaris lab</span>
+    </div>
+    <div class="role-row">
+      <span class="role-name">Orang TU</span>
+      <span class="role-desc">Buat permintaan barang, lihat status permintaan sendiri</span>
+    </div>
+    <div class="role-row">
+      <span class="role-name">Kaprog</span>
+      <span class="role-desc">Approve / tolak permintaan di step 1, tambah catatan</span>
+    </div>
+    <div class="role-row">
+      <span class="role-name">Wakasek Kurikulum</span>
+      <span class="role-desc">Approve / tolak di step 2 (setelah Kaprog acc)</span>
+    </div>
+    <div class="role-row">
+      <span class="role-name">Wakasek Kesiswaan</span>
+      <span class="role-desc">Approve / tolak di step 3</span>
+    </div>
+    <div class="role-row">
+      <span class="role-name">Kepala Sekolah</span>
+      <span class="role-desc">Final approval step 4 — keputusan akhir, bisa lihat semua riwayat</span>
+    </div>
+    <div class="role-row">
+      <span class="role-name">TU Admin</span>
+      <span class="role-desc">Terima notif setelah Kepsek acc, proses pembelian, konfirmasi barang diterima, kelola inventaris penuh</span>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<div id="tab-stack" class="tab-content">
+  <div class="grid2">
+    <div class="mini-card">
+      <p class="mini-card-title">Framework</p>
+      <p class="mini-card-body">Next.js 14 (App Router)<br><span style="font-size:12px;color:var(--color-text-tertiary)">Server actions + API routes</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Data fetching</p>
+      <p class="mini-card-body">TanStack Query v5<br><span style="font-size:12px;color:var(--color-text-tertiary)">Caching, optimistic updates, invalidation</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Tables</p>
+      <p class="mini-card-body">TanStack Table v8<br><span style="font-size:12px;color:var(--color-text-tertiary)">Sort, filter, pagination</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Database</p>
+      <p class="mini-card-body">SQLite via Turso<br><span style="font-size:12px;color:var(--color-text-tertiary)">libsql driver, free tier ~500 DBs</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">ORM</p>
+      <p class="mini-card-body">Drizzle ORM<br><span style="font-size:12px;color:var(--color-text-tertiary)">Type-safe, works great with libsql</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Auth</p>
+      <p class="mini-card-body">NextAuth.js v5<br><span style="font-size:12px;color:var(--color-text-tertiary)">Credentials + role middleware</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">UI components</p>
+      <p class="mini-card-body">shadcn/ui + Tailwind CSS<br><span style="font-size:12px;color:var(--color-text-tertiary)">Accessible, customizable</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Deployment</p>
+      <p class="mini-card-body">Vercel<br><span style="font-size:12px;color:var(--color-text-tertiary)">Preview + production, free for hobby scale</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Email notif (opsional)</p>
+      <p class="mini-card-body">Resend.com<br><span style="font-size:12px;color:var(--color-text-tertiary)">3,000 email/bulan free</span></p>
+    </div>
+    <div class="mini-card">
+      <p class="mini-card-title">Forms</p>
+      <p class="mini-card-body">React Hook Form + Zod<br><span style="font-size:12px;color:var(--color-text-tertiary)">Validation, error messages</span></p>
+    </div>
+  </div>
+  <div style="margin-top:1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.875rem 1rem">
+    <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 4px;font-weight:500">Catatan SQLite + Vercel</p>
+    <p style="font-size:13px;color:var(--color-text-secondary);margin:0">Vercel serverless functions tidak bisa menulis ke SQLite file lokal karena filesystem-nya read-only. Gunakan <strong>Turso</strong> (remote SQLite via libsql) — gratis, latency rendah, dan Drizzle sudah punya adapter resmi.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+function togglePhase(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.phase-arrow');
+  const open = body.classList.toggle('open');
+  arrow.style.transform = open ? 'rotate(180deg)' : '';
+}
+</script>
