@@ -119,7 +119,7 @@ export const STATUS_METADATA: Record<PermintaanStatus, { label: string; color: s
   menunggu_kaprog: { label: 'Menunggu Kaprog', color: 'bg-warning-50 text-warning-600 border-warning-200' },
   menunggu_wakasek: { label: 'Menunggu Wakasek', color: 'bg-warning-50 text-warning-600 border-warning-200' },
   menunggu_kepsek: { label: 'Menunggu Kepsek', color: 'bg-warning-50 text-warning-600 border-warning-200' },
-  disetujui: { label: 'Disetujui', color: 'bg-success-50 text-success-600 border-success-200' },
+  disetujui: { label: 'Siap Dibeli', color: 'bg-success-50 text-success-600 border-success-200' },
   proses_pembelian: { label: 'Proses Pembelian', color: 'bg-primary-50 text-primary-600 border-primary-200' },
   selesai: { label: 'Selesai', color: 'bg-success-500 text-white border-success-600' },
   ditolak: { label: 'Ditolak', color: 'bg-danger-50 text-danger-600 border-danger-200' },

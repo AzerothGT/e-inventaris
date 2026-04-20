@@ -186,6 +186,15 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
       .set(updateData)
       .where(eq(permintaanPengadaan.id, data.id));
 
+    // Verify the update
+    const [updatedPermintaan] = await db
+      .select()
+      .from(permintaanPengadaan)
+      .where(eq(permintaanPengadaan.id, data.id))
+      .limit(1);
+    
+    console.log('[updatePermintaanStatus] Verified Status:', updatedPermintaan?.status);
+
     // Log the transition
     await db.insert(approvalLogs).values({
       id: crypto.randomUUID(),
