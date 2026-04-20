@@ -189,3 +189,9 @@ body {
 .stagger-3 { animation: slide-up 0.4s ease-out 0.15s both; }
 .stagger-4 { animation: slide-up 0.4s ease-out 0.20s both; }
 .stagger-5 { animation: slide-up 0.4s ease-out 0.25s both; }
+.stagger-6 { animation: slide-up 0.4s ease-out 0.30s both; }
+.stagger-7 { animation: slide-up 0.4s ease-out 0.35s both; }
+.stagger-8 { animation: slide-up 0.4s ease-out 0.40s both; }
+.stagger-9 { animation: slide-up 0.4s ease-out 0.45s both; }
+.stagger-10 { animation: slide-up 0.4s ease-out 0.50s both; }
+

@@ -3,6 +3,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Toaster } from 'sonner'
 
 import appCss from '../styles.css?url'
 import { NotFound } from '../components/ui/NotFound'
@@ -37,6 +38,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           {children}
+          <Toaster richColors position="top-right" />
           <ReactQueryDevtools buttonPosition="bottom-left" />
         </QueryClientProvider>
         <TanStackDevtools

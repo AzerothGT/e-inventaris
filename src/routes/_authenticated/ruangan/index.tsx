@@ -10,7 +10,9 @@ import { DataTableRowActions } from '../../../components/ui/DataTableRowActions'
 import { Dialog } from '../../../components/ui/Dialog'
 import { RuanganForm } from '../../../components/inventory/RuanganForm'
 import { createRuangan, updateRuangan, deleteRuangan } from '../../../server/functions/ruangan'
+import { PageHeader } from '../../../components/ui/PageHeader'
 import * as React from 'react'
+
 
 export const Route = createFileRoute('/_authenticated/ruangan/')({
   loader: ({ context }) => context.queryClient.ensureQueryData(ruanganQueries.list()),
@@ -93,19 +95,21 @@ function RuanganListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
-            Daftar <span className="text-gradient">Ruangan</span> 🏫
-          </h2>
-        </div>
-        <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Tambah Ruangan
-        </Button>
-      </div>
+      <PageHeader 
+        title="Daftar"
+        gradientTitle="Ruangan"
+        actions={
 
-      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm">
+          <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Tambah Ruangan
+          </Button>
+        }
+      />
+
+
+      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
+
         <div className="flex items-center gap-2 mb-4">
           <Warehouse className="h-5 w-5 text-primary-500" />
           <h3 className="text-lg font-semibold text-surface-900">Semua Ruangan</h3>

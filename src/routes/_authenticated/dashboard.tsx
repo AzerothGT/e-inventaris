@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card'
 import { Package, ShoppingCart, CheckCircle, Clock } from 'lucide-react'
+import { PageHeader } from '../../components/ui/PageHeader'
+
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
   component: Dashboard,
@@ -17,12 +19,12 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-1 stagger-1">
-        <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
-          {getGreeting()}, <span className="text-gradient">Tata Usaha!</span> 👋
-        </h2>
+      <PageHeader 
+        title={`${getGreeting()},`}
+        gradientTitle="Tata Usaha!"
+        suffix=" 👋"
+      />
 
-      </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="glass-card glass-card-hover lift-card stagger-2">
@@ -79,7 +81,7 @@ function Dashboard() {
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+        <Card className="col-span-4 stagger-6">
           <CardHeader>
             <CardTitle>Aktivitas Pengajuan</CardTitle>
           </CardHeader>
@@ -88,7 +90,8 @@ function Dashboard() {
           </CardContent>
         </Card>
         
-        <Card className="col-span-3">
+        <Card className="col-span-3 stagger-7">
+
           <CardHeader>
             <CardTitle>Permintaan Terbaru</CardTitle>
           </CardHeader>

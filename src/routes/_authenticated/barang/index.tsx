@@ -12,6 +12,8 @@ import { DataTableRowActions } from '../../../components/ui/DataTableRowActions'
 import { Dialog } from '../../../components/ui/Dialog'
 import { BarangForm } from '../../../components/inventory/BarangForm'
 import { createBarang, updateBarang, deleteBarang } from '../../../server/functions/barang'
+import { PageHeader } from '../../../components/ui/PageHeader'
+
 import * as React from 'react'
 
 export const Route = createFileRoute('/_authenticated/barang/')({
@@ -155,19 +157,21 @@ function BarangListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
-            Daftar <span className="text-gradient">Inventaris</span> 📦
-          </h2>
-        </div>
-        <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Tambah Barang
-        </Button>
-      </div>
+      <PageHeader 
+        title="Daftar"
+        gradientTitle="Inventaris"
+        actions={
 
-      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm">
+          <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Tambah Barang
+          </Button>
+        }
+      />
+
+
+      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
+
         <div className="flex items-center gap-2 mb-4">
           <Package className="h-5 w-5 text-primary-500" />
           <h3 className="text-lg font-semibold text-surface-900">Semua Barang</h3>

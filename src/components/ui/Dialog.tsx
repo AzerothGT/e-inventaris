@@ -8,10 +8,19 @@ interface DialogProps {
   title?: string
   children: React.ReactNode
   className?: string
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
 }
 
-export function Dialog({ isOpen, onClose, title, children, className }: DialogProps) {
+export function Dialog({ isOpen, onClose, title, children, className, size = 'md' }: DialogProps) {
   const dialogRef = React.useRef<HTMLDialogElement>(null)
+
+  const sizeClasses = {
+    sm: 'max-w-md',
+    md: 'max-w-lg',
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl',
+    full: 'max-w-[95vw]',
+  }
 
   React.useEffect(() => {
     const dialog = dialogRef.current
@@ -49,7 +58,10 @@ export function Dialog({ isOpen, onClose, title, children, className }: DialogPr
         className
       )}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className={cn(
+        "bg-white rounded-2xl shadow-2xl w-full mx-auto overflow-hidden animate-in fade-in zoom-in duration-300",
+        sizeClasses[size]
+      )}>
         <div className="flex items-center justify-between p-6 border-b border-surface-100">
           {title && <h3 className="text-xl font-bold text-surface-900">{title}</h3>}
           <button

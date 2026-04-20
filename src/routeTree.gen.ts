@@ -14,7 +14,9 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedRuanganIndexRouteImport } from './routes/_authenticated/ruangan/index'
+import { Route as AuthenticatedPermintaanIndexRouteImport } from './routes/_authenticated/permintaan/index'
 import { Route as AuthenticatedBarangIndexRouteImport } from './routes/_authenticated/barang/index'
+import { Route as AuthenticatedPermintaanTambahRouteImport } from './routes/_authenticated/permintaan/tambah'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -41,10 +43,22 @@ const AuthenticatedRuanganIndexRoute =
     path: '/ruangan/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedPermintaanIndexRoute =
+  AuthenticatedPermintaanIndexRouteImport.update({
+    id: '/permintaan/',
+    path: '/permintaan/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedBarangIndexRoute =
   AuthenticatedBarangIndexRouteImport.update({
     id: '/barang/',
     path: '/barang/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPermintaanTambahRoute =
+  AuthenticatedPermintaanTambahRouteImport.update({
+    id: '/permintaan/tambah',
+    path: '/permintaan/tambah',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -52,14 +66,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/barang/': typeof AuthenticatedBarangIndexRoute
+  '/permintaan/': typeof AuthenticatedPermintaanIndexRoute
   '/ruangan/': typeof AuthenticatedRuanganIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/barang': typeof AuthenticatedBarangIndexRoute
+  '/permintaan': typeof AuthenticatedPermintaanIndexRoute
   '/ruangan': typeof AuthenticatedRuanganIndexRoute
 }
 export interface FileRoutesById {
@@ -68,21 +86,39 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/_authenticated/barang/': typeof AuthenticatedBarangIndexRoute
+  '/_authenticated/permintaan/': typeof AuthenticatedPermintaanIndexRoute
   '/_authenticated/ruangan/': typeof AuthenticatedRuanganIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard' | '/barang/' | '/ruangan/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/permintaan/tambah'
+    | '/barang/'
+    | '/permintaan/'
+    | '/ruangan/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/barang' | '/ruangan'
+  to:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/permintaan/tambah'
+    | '/barang'
+    | '/permintaan'
+    | '/ruangan'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/dashboard'
+    | '/_authenticated/permintaan/tambah'
     | '/_authenticated/barang/'
+    | '/_authenticated/permintaan/'
     | '/_authenticated/ruangan/'
   fileRoutesById: FileRoutesById
 }
@@ -129,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRuanganIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/permintaan/': {
+      id: '/_authenticated/permintaan/'
+      path: '/permintaan'
+      fullPath: '/permintaan/'
+      preLoaderRoute: typeof AuthenticatedPermintaanIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/barang/': {
       id: '/_authenticated/barang/'
       path: '/barang'
@@ -136,18 +179,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBarangIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/permintaan/tambah': {
+      id: '/_authenticated/permintaan/tambah'
+      path: '/permintaan/tambah'
+      fullPath: '/permintaan/tambah'
+      preLoaderRoute: typeof AuthenticatedPermintaanTambahRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedPermintaanTambahRoute: typeof AuthenticatedPermintaanTambahRoute
   AuthenticatedBarangIndexRoute: typeof AuthenticatedBarangIndexRoute
+  AuthenticatedPermintaanIndexRoute: typeof AuthenticatedPermintaanIndexRoute
   AuthenticatedRuanganIndexRoute: typeof AuthenticatedRuanganIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedPermintaanTambahRoute: AuthenticatedPermintaanTambahRoute,
   AuthenticatedBarangIndexRoute: AuthenticatedBarangIndexRoute,
+  AuthenticatedPermintaanIndexRoute: AuthenticatedPermintaanIndexRoute,
   AuthenticatedRuanganIndexRoute: AuthenticatedRuanganIndexRoute,
 }
 
