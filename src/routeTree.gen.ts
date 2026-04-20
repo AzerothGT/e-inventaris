@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedRuanganIndexRouteImport } from './routes/_authenticated/ruangan/index'
 import { Route as AuthenticatedBarangIndexRouteImport } from './routes/_authenticated/barang/index'
 
 const LoginRoute = LoginRouteImport.update({
@@ -34,6 +35,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedRuanganIndexRoute =
+  AuthenticatedRuanganIndexRouteImport.update({
+    id: '/ruangan/',
+    path: '/ruangan/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedBarangIndexRoute =
   AuthenticatedBarangIndexRouteImport.update({
     id: '/barang/',
@@ -46,12 +53,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/barang/': typeof AuthenticatedBarangIndexRoute
+  '/ruangan/': typeof AuthenticatedRuanganIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/barang': typeof AuthenticatedBarangIndexRoute
+  '/ruangan': typeof AuthenticatedRuanganIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -60,12 +69,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/barang/': typeof AuthenticatedBarangIndexRoute
+  '/_authenticated/ruangan/': typeof AuthenticatedRuanganIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard' | '/barang/'
+  fullPaths: '/' | '/login' | '/dashboard' | '/barang/' | '/ruangan/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/barang'
+  to: '/' | '/login' | '/dashboard' | '/barang' | '/ruangan'
   id:
     | '__root__'
     | '/'
@@ -73,6 +83,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/dashboard'
     | '/_authenticated/barang/'
+    | '/_authenticated/ruangan/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -111,6 +122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/ruangan/': {
+      id: '/_authenticated/ruangan/'
+      path: '/ruangan'
+      fullPath: '/ruangan/'
+      preLoaderRoute: typeof AuthenticatedRuanganIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/barang/': {
       id: '/_authenticated/barang/'
       path: '/barang'
@@ -124,11 +142,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedBarangIndexRoute: typeof AuthenticatedBarangIndexRoute
+  AuthenticatedRuanganIndexRoute: typeof AuthenticatedRuanganIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedBarangIndexRoute: AuthenticatedBarangIndexRoute,
+  AuthenticatedRuanganIndexRoute: AuthenticatedRuanganIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

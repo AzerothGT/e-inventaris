@@ -1,14 +1,30 @@
 import { createServerFn } from '@tanstack/react-start';
 import { db } from '../../db';
-import { barang } from '../../db/schema';
+import { barang, ruangan } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
-export const getBarangList = createServerFn({ method: 'GET' })
-  .handler(async () => {
-    const list = await db.select().from(barang).orderBy(barang.createdAt);
-    return list;
-  });
+export const getBarangList = createServerFn({ method: "GET" }).handler(async () => {
+  const list = await db
+    .select({
+      id: barang.id,
+      kodeBarang: barang.kodeBarang,
+      nama: barang.nama,
+      kategori: barang.kategori,
+      merek: barang.merek,
+      noSeri: barang.noSeri,
+      tahunPengadaan: barang.tahunPengadaan,
+      jumlah: barang.jumlah,
+      status: barang.status,
+      createdAt: barang.createdAt,
+      ruanganId: barang.ruanganId,
+      namaRuangan: ruangan.nama,
+    })
+    .from(barang)
+    .leftJoin(ruangan, eq(barang.ruanganId, ruangan.id))
+    .orderBy(barang.createdAt);
+  return list;
+});
 
 export const getBarangById = createServerFn({ method: 'GET' })
   .inputValidator(z.object({ id: z.string() }))

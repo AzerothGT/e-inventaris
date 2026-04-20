@@ -1,32 +1,117 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { barangQueries } from '../../../data/barangQueries'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/Table'
+import { DataTable } from '../../../components/ui/DataTable'
+import { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '../../../components/ui/Badge'
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card'
 import { Package, Plus } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
+import { DataTableColumnHeader } from '../../../components/ui/DataTableColumnHeader'
 
 export const Route = createFileRoute('/_authenticated/barang/')({
   loader: ({ context }) => context.queryClient.ensureQueryData(barangQueries.list()),
   component: BarangListPage,
 })
 
+
 function BarangListPage() {
   const { data: items } = useSuspenseQuery(barangQueries.list())
 
-  const getStatusColor = (status: string): "success" | "warning" | "destructive" | "secondary" => {
-    switch (status) {
-      case 'baik': return 'success'
-      case 'rusak_ringan': return 'warning'
-      case 'rusak_berat': return 'destructive'
-      default: return 'secondary'
-    }
-  }
+  const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "kodeBarang",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Kode" />
+      ),
+      cell: ({ row }) => (
+        <div className="w-[80px] font-mono text-xs font-semibold text-primary-600">
+          {row.getValue("kodeBarang")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "nama",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Nama Barang" />
+      ),
+      cell: ({ row }) => (
+        <div className="font-medium text-surface-900">{row.getValue("nama")}</div>
+      ),
+    },
+    {
+      accessorKey: "kategori",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Kategori" />
+      ),
+      cell: ({ row }) => (
+        <div className="text-surface-600">{row.getValue("kategori")}</div>
+      ),
+    },
+    {
+      accessorKey: "merek",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Merek" />
+      ),
+      cell: ({ row }) => (
+        <div className="text-surface-600">{row.getValue("merek")}</div>
+      ),
+    },
+    {
+      accessorKey: "namaRuangan",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Ruangan" />
+      ),
+      cell: ({ row }) => (
+        <div className="text-surface-600">{row.getValue("namaRuangan") || "-"}</div>
+      ),
+    },
+    {
+      accessorKey: "jumlah",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Jumlah" className="justify-center" />
+      ),
+      cell: ({ row }) => (
+        <div className="text-center font-bold text-surface-900">{row.getValue("jumlah")}</div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string
+        const getStatusColor = (s: string): "success" | "warning" | "destructive" | "secondary" => {
+          switch (s) {
+            case 'baik': return 'success'
+            case 'rusak_ringan': return 'warning'
+            case 'rusak_berat': return 'destructive'
+            default: return 'secondary'
+          }
+        }
+        const formatStatus = (s: string) => s.replace('_', ' ').toUpperCase()
 
-  const formatStatus = (status: string) => {
-    return status.replace('_', ' ').toUpperCase()
-  }
+        return (
+          <Badge variant={getStatusColor(status)}>
+            {formatStatus(status)}
+          </Badge>
+        )
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id))
+      },
+    },
+    {
+      id: "actions",
+      cell: ({ }) => (
+        <div className="text-right">
+          <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-700">
+            Edit
+          </Button>
+        </div>
+      ),
+    },
+  ]
 
   return (
     <div className="space-y-6">
@@ -43,62 +128,18 @@ function BarangListPage() {
         </Button>
       </div>
 
-      <Card className="glass-card shadow-xl border-none overflow-hidden">
-        <CardHeader className="bg-surface-50/50 border-b border-surface-100">
-          <div className="flex items-center gap-2">
-            <Package className="h-5 w-5 text-primary-500" />
-            <CardTitle>Semua Barang</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[120px]">Kode</TableHead>
-                  <TableHead>Nama Barang</TableHead>
-                  <TableHead>Kategori</TableHead>
-                  <TableHead>Merek</TableHead>
-                  <TableHead className="text-center">Jumlah</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center text-surface-500">
-                      Belum ada data barang.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  items.map((item) => (
-                    <TableRow key={item.id} className="hover:bg-surface-50/50 transition-colors">
-                      <TableCell className="font-mono text-xs font-semibold text-primary-600">
-                        {item.kodeBarang}
-                      </TableCell>
-                      <TableCell className="font-medium text-surface-900">{item.nama}</TableCell>
-                      <TableCell className="text-surface-600">{item.kategori}</TableCell>
-                      <TableCell className="text-surface-600">{item.merek}</TableCell>
-                      <TableCell className="text-center font-bold text-surface-900">{item.jumlah}</TableCell>
-                      <TableCell>
-                        <Badge variant={getStatusColor(item.status)}>
-                          {formatStatus(item.status)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-700">
-                          Edit
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <Package className="h-5 w-5 text-primary-500" />
+          <h3 className="text-lg font-semibold text-surface-900">Semua Barang</h3>
+        </div>
+
+        <DataTable
+          columns={columns}
+          data={items}
+          searchPlaceholder="Cari berdasarkan nama, kode, atau kategori..."
+        />
+      </div>
     </div>
   )
 }

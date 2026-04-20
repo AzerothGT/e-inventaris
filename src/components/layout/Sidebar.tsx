@@ -55,7 +55,7 @@ export function Sidebar() {
     {
       title: 'Gudang',
       icon: Warehouse,
-      to: '/gudang',
+      to: '/ruangan',
       roles: ['tu', 'penjaga_lab'],
     },
     {
