@@ -6,7 +6,7 @@ import { setAuthSession, clearAuthSession, getAuthSession } from '../../lib/auth
 import { z } from 'zod';
 
 export const loginUser = createServerFn({ method: 'POST' })
-  .validator(z.object({
+  .inputValidator(z.object({
     username: z.string(),
     password: z.string(),
   }))
