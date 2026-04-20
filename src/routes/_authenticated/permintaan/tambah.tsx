@@ -29,20 +29,16 @@ function TambahPermintaanPage() {
 
   return (
     <div className="space-y-6">
-
       <PageHeader 
-        title="Form"
-        gradientTitle="Pengadaan Barang"
+        title="Buat"
+        gradientTitle="Permintaan Barang"
       />
 
-
-      
-      <div className="flex justify-center stagger-2">
-
+      <div className="stagger-2">
         <PermintaanForm 
           onSubmit={handleSubmit} 
           isLoading={mutation.isPending}
-          onCancel={() => navigate({ to: '/dashboard' })}
+          onCancel={() => navigate({ to: '/permintaan' })}
         />
       </div>
     </div>

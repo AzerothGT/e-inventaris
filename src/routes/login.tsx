@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { LockKeyhole, User, ArrowRight, Package, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
+import { loginUser } from '../server/functions/auth'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -13,14 +15,21 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate auth
-    setTimeout(() => {
+    
+    try {
+      const result = await loginUser({ data: { username, password } })
+      if (result.success) {
+        toast.success(`Selamat datang kembali, ${result.user.name}!`)
+        navigate({ to: '/dashboard' })
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal masuk. Silakan periksa kembali username dan password Anda.')
+    } finally {
       setIsLoading(false)
-      navigate({ to: '/dashboard' })
-    }, 1200)
+    }
   }
 
   return (

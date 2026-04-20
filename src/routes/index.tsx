@@ -1,11 +1,19 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { getCurrentUser } from '../server/functions/auth'
 
 export const Route = createFileRoute('/')({
-  // Temporarily redirect directly to dashboard until auth is built
-  beforeLoad: () => {
-    throw redirect({
-      to: '/login',
-    })
+  beforeLoad: async () => {
+    const user = await getCurrentUser()
+    
+    if (user) {
+      throw redirect({
+        to: '/dashboard',
+      })
+    } else {
+      throw redirect({
+        to: '/login',
+      })
+    }
   },
   component: () => <div>Redirecting...</div>,
 })

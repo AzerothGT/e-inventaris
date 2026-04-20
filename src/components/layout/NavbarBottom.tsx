@@ -28,7 +28,7 @@ export function NavbarBottom() {
     {
       title: 'Pengajuan',
       icon: <FilePen size={20} />,
-      to: '/permintaan/tambah',
+      to: '/permintaan',
       roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {

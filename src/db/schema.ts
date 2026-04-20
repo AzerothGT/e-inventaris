@@ -27,6 +27,7 @@ export const barang = sqliteTable('barang', {
   noSeri: text('no_seri'),
   tahunPengadaan: integer('tahun_pengadaan').notNull(),
   ruanganId: text('ruangan_id').references(() => ruangan.id).notNull(),
+  lemari: text('lemari'),
   status: text('status', { enum: ['baik', 'rusak_ringan', 'rusak_berat'] }).notNull(),
   jumlah: integer('jumlah').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),

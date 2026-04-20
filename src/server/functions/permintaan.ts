@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "../../db";
-import { permintaanPengadaan, barang, approvalLogs, users, notifikasi } from "../../db/schema";
+import { permintaanPengadaan, barang, approvalLogs, users, notifikasi, ruangan } from "../../db/schema";
 import { getAuthSession } from "../../lib/auth";
 import { z } from "zod";
 import { isValidTransition, PermintaanStatus, UserRole, STATUS_METADATA } from "../../lib/approvals";
-import { eq, desc, inArray } from "drizzle-orm";
+import { eq, desc, inArray, and } from "drizzle-orm";
 
 async function sendNotification(userId: string, tipe: string, pesan: string) {
   await db.insert(notifikasi).values({
@@ -128,29 +128,55 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
     if (data.targetLemari) updateData.targetLemari = data.targetLemari;
     if (data.kondisiDiterima) updateData.kondisiDiterima = data.kondisiDiterima;
 
-    // Handle "selesai" - Create Inventory Item
+    // Handle "selesai" - Create Inventory Item or Update Existing
     if (data.status === 'selesai') {
       if (!data.targetRuanganId || !data.kondisiDiterima) {
         throw new Error("Data inventory (ruangan & kondisi) harus diisi untuk menyelesaikan permintaan");
       }
 
-      // 1. Create a unique code for the new item
-      const shortId = data.id.slice(0, 4).toUpperCase();
-      const kodeBarang = `BRG-${new Date().getFullYear()}-${shortId}`;
+      // Check if item already exists with the same metadata (Nama, Merek, Ruangan, Status, Lemari)
+      const [existingItem] = await db
+        .select()
+        .from(barang)
+        .where(
+          and(
+            eq(barang.nama, permintaan.namaBarang),
+            eq(barang.merek, permintaan.merek || "Tidak Spesifik"),
+            eq(barang.ruanganId, data.targetRuanganId),
+            eq(barang.status, data.kondisiDiterima),
+            eq(barang.lemari, data.targetLemari || "")
+          )
+        )
+        .limit(1);
 
-      // 2. Insert into barang table
-      await db.insert(barang).values({
-        id: crypto.randomUUID(),
-        kodeBarang,
-        nama: permintaan.namaBarang,
-        merek: permintaan.merek || "Tidak Spesifik",
-        kategori: permintaan.kategori || "Umum",
-        jumlah: permintaan.jumlah,
-        ruanganId: data.targetRuanganId,
-        status: data.kondisiDiterima,
-        tahunPengadaan: new Date().getFullYear(),
-        createdAt: new Date(),
-      });
+      if (existingItem) {
+        // Increment quantity
+        await db
+          .update(barang)
+          .set({
+            jumlah: existingItem.jumlah + permintaan.jumlah,
+          })
+          .where(eq(barang.id, existingItem.id));
+      } else {
+        // Create a unique code for the new item
+        const shortId = data.id.slice(0, 4).toUpperCase();
+        const kodeBarang = `BRG-${new Date().getFullYear()}-${shortId}`;
+
+        // Insert into barang table
+        await db.insert(barang).values({
+          id: crypto.randomUUID(),
+          kodeBarang,
+          nama: permintaan.namaBarang,
+          merek: permintaan.merek || "Tidak Spesifik",
+          kategori: permintaan.kategori || "Umum",
+          jumlah: permintaan.jumlah,
+          ruanganId: data.targetRuanganId,
+          lemari: data.targetLemari || "",
+          status: data.kondisiDiterima,
+          tahunPengadaan: new Date().getFullYear(),
+          createdAt: new Date(),
+        });
+      }
     }
 
     await db
@@ -171,8 +197,20 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
     });
 
     // Notify original requester
+    let locationPesan = "";
+    if (data.status === 'selesai' && data.targetRuanganId) {
+      const [targetRoom] = await db.select().from(ruangan).where(eq(ruangan.id, data.targetRuanganId)).limit(1);
+      if (targetRoom) {
+        locationPesan = ` di ${targetRoom.nama}`;
+      }
+    }
+
     const newStatusLabel = STATUS_METADATA[data.status as PermintaanStatus].label;
-    await sendNotification(permintaan.diajukanOleh, 'Update Status', `Permintaan "${permintaan.namaBarang}" sekarang: ${newStatusLabel}`);
+    await sendNotification(
+      permintaan.diajukanOleh, 
+      'Update Status', 
+      `Permintaan "${permintaan.namaBarang}" sekarang: ${newStatusLabel}${locationPesan}`
+    );
 
     // Notify next approvers if applicable
     if (data.status === 'menunggu_wakasek') {
