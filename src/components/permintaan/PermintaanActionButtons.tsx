@@ -24,6 +24,10 @@ export function PermintaanActionButtons({
   const queryClient = useQueryClient();
   const router = useRouter();
   const [isReceiveDialogOpen, setIsReceiveDialogOpen] = useState(false);
+  const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+  const [comment, setComment] = useState("");
+  const [pendingAction, setPendingAction] = useState<any>(null);
+  
   const [receiveData, setReceiveData] = useState({
     targetRuanganId: "",
     targetLemari: "",
@@ -51,6 +55,9 @@ export function PermintaanActionButtons({
       router.invalidate();
       
       setIsReceiveDialogOpen(false);
+      setIsRejectDialogOpen(false);
+      setComment("");
+      setPendingAction(null);
       onSuccess?.();
     },
     onError: (error: any) => {
@@ -59,11 +66,28 @@ export function PermintaanActionButtons({
   });
 
   const handleActionClick = (action: any) => {
+    setPendingAction(action);
     if (action.requiresData) {
       setIsReceiveDialogOpen(true);
+    } else if (action.requiresReason) {
+      setIsRejectDialogOpen(true);
     } else {
       mutation.mutate({ data: { id: permintaanId, status: action.to } });
     }
+  };
+
+  const handleConfirmReject = () => {
+    if (!comment.trim()) {
+      toast.error("Silakan berikan alasan");
+      return;
+    }
+    mutation.mutate({ 
+      data: { 
+        id: permintaanId, 
+        status: pendingAction.to,
+        catatan: comment
+      } 
+    });
   };
 
   const handleConfirmReceive = () => {
@@ -156,6 +180,37 @@ export function PermintaanActionButtons({
               disabled={mutation.isPending}
             >
               {mutation.isPending ? "Memproses..." : "Konfirmasi & Selesai"}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog 
+        isOpen={isRejectDialogOpen} 
+        onClose={() => setIsRejectDialogOpen(false)}
+        title={pendingAction?.label || "Konfirmasi"}
+      >
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold">
+              Alasan {pendingAction?.label?.toLowerCase() === 'batalkan' ? 'Pembatalan' : 'Penolakan'}
+            </label>
+            <textarea
+              className="w-full min-h-[100px] p-3 rounded-xl border border-surface-200 bg-white text-sm focus:ring-2 focus:ring-primary-600 focus:outline-none resize-none transition-all"
+              placeholder="Berikan alasan yang jelas agar pemohon memahami keputusannya..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Button variant="ghost" onClick={() => setIsRejectDialogOpen(false)}>Kembali</Button>
+            <Button 
+              variant={pendingAction?.variant || "destructive"}
+              onClick={handleConfirmReject}
+              disabled={mutation.isPending || !comment.trim()}
+            >
+              {mutation.isPending ? "Memproses..." : "Konfirmasi"}
             </Button>
           </div>
         </div>

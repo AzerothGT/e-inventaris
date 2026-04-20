@@ -94,6 +94,7 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
       targetRuanganId: z.string().optional(),
       targetLemari: z.string().optional(),
       kondisiDiterima: z.enum(['baik', 'rusak_ringan', 'rusak_berat']).optional(),
+      catatan: z.string().optional(),
     })
   )
   .handler(async ({ data }) => {
@@ -192,7 +193,7 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
       action: `Update Status ke ${data.status.replace('_', ' ')}`,
       previousStatus: permintaan.status,
       newStatus: data.status,
-      catatan: data.status === 'selesai' ? `Barang diterima di ${data.targetRuanganId}` : undefined,
+      catatan: data.catatan || (data.status === 'selesai' ? `Barang diterima di ${data.targetRuanganId}` : undefined),
       createdAt: new Date(),
     });
 
