@@ -16,6 +16,11 @@ const config = defineConfig({
     nitro(),
     viteReact(),
   ],
+  build: {
+    commonjsOptions: {
+      ignoreDynamicRequires: true,
+    },
+  },
 });
 
 export default config;
