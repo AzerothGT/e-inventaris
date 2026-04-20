@@ -7,6 +7,7 @@ export const users = sqliteTable('users', {
   name: text('name').notNull(),
   role: text('role', { enum: ['admin', 'kepala_program', 'teknisi'] }).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }),
 });
 
 export const ruangan = sqliteTable('ruangan', {

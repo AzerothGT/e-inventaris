@@ -1,11 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ruanganQueries } from '../../../data/ruanganQueries'
 import { DataTable } from '../../../components/ui/DataTable'
 import { ColumnDef } from '@tanstack/react-table'
 import { Warehouse, Plus } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
 import { DataTableColumnHeader } from '../../../components/ui/DataTableColumnHeader'
+import { DataTableRowActions } from '../../../components/ui/DataTableRowActions'
+import { Dialog } from '../../../components/ui/Dialog'
+import { RuanganForm } from '../../../components/inventory/RuanganForm'
+import { createRuangan, updateRuangan, deleteRuangan } from '../../../server/functions/ruangan'
+import * as React from 'react'
 
 export const Route = createFileRoute('/_authenticated/ruangan/')({
   loader: ({ context }) => context.queryClient.ensureQueryData(ruanganQueries.list()),
@@ -13,7 +18,36 @@ export const Route = createFileRoute('/_authenticated/ruangan/')({
 })
 
 function RuanganListPage() {
+  const queryClient = useQueryClient()
   const { data: items } = useSuspenseQuery(ruanganQueries.list())
+
+  const [isAddOpen, setIsAddOpen] = React.useState(false)
+  const [editingItem, setEditingItem] = React.useState<any>(null)
+  const [deletingItem, setDeletingItem] = React.useState<any>(null)
+
+  const createMutation = useMutation({
+    mutationFn: createRuangan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+      setIsAddOpen(false)
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: updateRuangan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+      setEditingItem(null)
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteRuangan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+      setDeletingItem(null)
+    },
+  })
 
   const columns: ColumnDef<any>[] = [
     {
@@ -47,12 +81,12 @@ function RuanganListPage() {
     },
     {
       id: "actions",
-      cell: ({ }) => (
-        <div className="text-right">
-          <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-700">
-            Edit
-          </Button>
-        </div>
+      cell: ({ row }) => (
+        <DataTableRowActions
+          row={row}
+          onEdit={(item) => setEditingItem(item)}
+          onDelete={(item) => setDeletingItem(item)}
+        />
       ),
     },
   ]
@@ -66,7 +100,7 @@ function RuanganListPage() {
           </h2>
           <p className="text-surface-500 mt-1">Kelola data ruangan dan lokasi inventaris.</p>
         </div>
-        <Button className="glass-button flex items-center gap-2">
+        <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Tambah Ruangan
         </Button>
@@ -81,9 +115,55 @@ function RuanganListPage() {
         <DataTable
           columns={columns}
           data={items}
-          searchPlaceholder="Cari berdasarkan nama atau kode ruangan..."
+          searchPlaceholder="Cari ruangan..."
+          searchColumn="nama"
         />
       </div>
+
+      {/* Add Modal */}
+      <Dialog isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Tambah Ruangan Baru">
+        <RuanganForm
+          onSubmit={(data) => createMutation.mutate({ data })}
+          onCancel={() => setIsAddOpen(false)}
+          isLoading={createMutation.isPending}
+        />
+      </Dialog>
+
+      {/* Edit Modal */}
+      <Dialog isOpen={!!editingItem} onClose={() => setEditingItem(null)} title="Edit Ruangan">
+        {editingItem && (
+          <RuanganForm
+            initialData={editingItem}
+            onSubmit={(data) => updateMutation.mutate({ data: { ...data, id: editingItem.id } })}
+            onCancel={() => setEditingItem(null)}
+            isLoading={updateMutation.isPending}
+          />
+        )}
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <Dialog isOpen={!!deletingItem} onClose={() => setDeletingItem(null)} title="Hapus Ruangan">
+        {deletingItem && (
+          <div className="space-y-4">
+            <p className="text-surface-600">
+              Apakah Anda yakin ingin menghapus ruangan <span className="font-bold text-surface-900">{deletingItem.nama}</span>?
+              Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="ghost" onClick={() => setDeletingItem(null)}>
+                Batal
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => deleteMutation.mutate({ data: { id: deletingItem.id } })}
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? "Menghapus..." : "Hapus Ruangan"}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Dialog>
     </div>
   )
 }

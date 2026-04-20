@@ -166,6 +166,23 @@ body {
          transition-all duration-300 outline-none placeholder:text-surface-400;
 }
 
+.glass-input {
+  @apply bg-white/50 backdrop-blur-sm border-surface-200/50 
+         focus:bg-white focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5
+         transition-all duration-300;
+}
+
+.glass-button {
+  @apply relative overflow-hidden bg-primary-600 text-white shadow-lg
+         hover:bg-primary-700 hover:shadow-primary-500/20 active:scale-95
+         transition-all duration-200;
+}
+
+.glass-button::after {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-none;
+}
+
 /* ── Staggered Animations ────────────────────────────────── */
 .stagger-1 { animation: slide-up 0.4s ease-out 0.05s both; }
 .stagger-2 { animation: slide-up 0.4s ease-out 0.10s both; }

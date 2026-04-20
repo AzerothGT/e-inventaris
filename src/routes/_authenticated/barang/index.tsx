@@ -1,21 +1,61 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { barangQueries } from '../../../data/barangQueries'
+import { ruanganQueries } from '../../../data/ruanganQueries'
 import { DataTable } from '../../../components/ui/DataTable'
 import { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '../../../components/ui/Badge'
-import { Package, Plus } from 'lucide-react'
+import { Package, Plus, ShieldCheck, ShieldAlert, Shield } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
 import { DataTableColumnHeader } from '../../../components/ui/DataTableColumnHeader'
+import { DataTableRowActions } from '../../../components/ui/DataTableRowActions'
+import { Dialog } from '../../../components/ui/Dialog'
+import { BarangForm } from '../../../components/inventory/BarangForm'
+import { createBarang, updateBarang, deleteBarang } from '../../../server/functions/barang'
+import * as React from 'react'
 
 export const Route = createFileRoute('/_authenticated/barang/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(barangQueries.list()),
+  loader: ({ context }) => {
+    return Promise.all([
+      context.queryClient.ensureQueryData(barangQueries.list()),
+      context.queryClient.ensureQueryData(ruanganQueries.list()),
+    ])
+  },
   component: BarangListPage,
 })
 
-
 function BarangListPage() {
+  const queryClient = useQueryClient()
   const { data: items } = useSuspenseQuery(barangQueries.list())
+  const { data: rooms } = useSuspenseQuery(ruanganQueries.list())
+
+  const [isAddOpen, setIsAddOpen] = React.useState(false)
+  const [editingItem, setEditingItem] = React.useState<any>(null)
+  const [deletingItem, setDeletingItem] = React.useState<any>(null)
+
+  const createMutation = useMutation({
+    mutationFn: createBarang,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+      setIsAddOpen(false)
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: updateBarang,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+      setEditingItem(null)
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteBarang,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+      setDeletingItem(null)
+    },
+  })
 
   const columns: ColumnDef<any>[] = [
     {
@@ -103,12 +143,12 @@ function BarangListPage() {
     },
     {
       id: "actions",
-      cell: ({ }) => (
-        <div className="text-right">
-          <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-700">
-            Edit
-          </Button>
-        </div>
+      cell: ({ row }) => (
+        <DataTableRowActions
+          row={row}
+          onEdit={(item) => setEditingItem(item)}
+          onDelete={(item) => setDeletingItem(item)}
+        />
       ),
     },
   ]
@@ -120,9 +160,8 @@ function BarangListPage() {
           <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
             Daftar <span className="text-gradient">Inventaris</span> 📦
           </h2>
-          <p className="text-surface-500 mt-1">Kelola dan pantau status barang inventaris sekolah.</p>
         </div>
-        <Button className="glass-button flex items-center gap-2">
+        <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Tambah Barang
         </Button>
@@ -137,9 +176,68 @@ function BarangListPage() {
         <DataTable
           columns={columns}
           data={items}
-          searchPlaceholder="Cari berdasarkan nama, kode, atau kategori..."
+          searchPlaceholder="Cari barang..."
+          searchColumn="nama"
+          facetedFilters={[
+            {
+              columnId: "status",
+              title: "Status",
+              options: [
+                { label: "Baik", value: "baik", icon: ShieldCheck },
+                { label: "Rusak Ringan", value: "rusak_ringan", icon: Shield },
+                { label: "Rusak Berat", value: "rusak_berat", icon: ShieldAlert },
+              ],
+            },
+          ]}
         />
       </div>
+
+      {/* Add Modal */}
+      <Dialog isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Tambah Barang Baru">
+        <BarangForm
+          ruanganOptions={rooms}
+          onSubmit={(data) => createMutation.mutate({ data })}
+          onCancel={() => setIsAddOpen(false)}
+          isLoading={createMutation.isPending}
+        />
+      </Dialog>
+
+      {/* Edit Modal */}
+      <Dialog isOpen={!!editingItem} onClose={() => setEditingItem(null)} title="Edit Barang">
+        {editingItem && (
+          <BarangForm
+            initialData={editingItem}
+            ruanganOptions={rooms}
+            onSubmit={(data) => updateMutation.mutate({ data: { ...data, id: editingItem.id } })}
+            onCancel={() => setEditingItem(null)}
+            isLoading={updateMutation.isPending}
+          />
+        )}
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <Dialog isOpen={!!deletingItem} onClose={() => setDeletingItem(null)} title="Hapus Barang">
+        {deletingItem && (
+          <div className="space-y-4">
+            <p className="text-surface-600">
+              Apakah Anda yakin ingin menghapus barang <span className="font-bold text-surface-900">{deletingItem.nama}</span>?
+              Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="ghost" onClick={() => setDeletingItem(null)}>
+                Batal
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => deleteMutation.mutate({ data: { id: deletingItem.id } })}
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? "Menghapus..." : "Hapus Barang"}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Dialog>
     </div>
   )
 }

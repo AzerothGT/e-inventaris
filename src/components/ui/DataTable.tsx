@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { Search } from "lucide-react"
+import { Search, X } from "lucide-react"
 
 import {
   Table,
@@ -23,23 +23,36 @@ import {
 } from "./Table"
 import { Input } from "./Input"
 import { DataTablePagination } from "./DataTablePagination"
+import { DataTableFacetedFilter } from "./DataTableFacetedFilter"
+import { Button } from "./Button"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   searchPlaceholder?: string
+  searchColumn?: string
+  facetedFilters?: {
+    columnId: string
+    title: string
+    options: {
+      label: string
+      value: string
+      icon?: React.ComponentType<{ className?: string }>
+    }[]
+  }[]
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchPlaceholder = "Cari data...",
+  searchColumn = "nama",
+  facetedFilters = [],
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [globalFilter, setGlobalFilter] = React.useState("")
 
   const table = useReactTable({
     data,
@@ -52,27 +65,47 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      globalFilter,
     },
   })
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
-          <Input
-            placeholder={searchPlaceholder}
-            value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(event.target.value)}
-            className="pl-10 glass-input"
-          />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-1 items-center space-x-2">
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
+            <Input
+              placeholder={searchPlaceholder}
+              value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn(searchColumn)?.setFilterValue(event.target.value)
+              }
+              className="pl-10 glass-input h-9"
+            />
+          </div>
+          {facetedFilters.map((filter) => (
+            <DataTableFacetedFilter
+              key={filter.columnId}
+              column={table.getColumn(filter.columnId)}
+              title={filter.title}
+              options={filter.options}
+            />
+          ))}
+          {columnFilters.length > 0 && (
+            <Button
+              variant="ghost"
+              onClick={() => table.resetColumnFilters()}
+              className="h-8 px-2 lg:px-3 text-xs"
+            >
+              Reset
+              <X className="ml-2 h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
       <div className="rounded-xl border border-surface-200 bg-white/50 backdrop-blur-sm shadow-sm overflow-hidden">
@@ -86,9 +119,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
