@@ -98,6 +98,8 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const session = await getAuthSession();
+    console.log('[updatePermintaanStatus] Incoming:', { data, userId: session?.id, role: session?.role });
+    
     if (!session) {
       throw new Error("Unauthorized");
     }

@@ -62,7 +62,8 @@ export function PermintaanActionButtons({
     if (action.requiresData) {
       setIsReceiveDialogOpen(true);
     } else {
-      mutation.mutate({ data: { id: permintaanId, status: action.to } });
+      console.log('[PermintaanActionButtons] Mutating:', { id: permintaanId, status: action.to });
+      mutation.mutate({ id: permintaanId, status: action.to });
     }
   };
 
@@ -71,14 +72,13 @@ export function PermintaanActionButtons({
       toast.error("Pilih ruangan terlebih dahulu");
       return;
     }
+    console.log('[PermintaanActionButtons] Confirming Receive:', { id: permintaanId, ...receiveData });
     mutation.mutate({ 
-      data: { 
-        id: permintaanId, 
-        status: 'selesai',
-        targetRuanganId: receiveData.targetRuanganId,
-        targetLemari: receiveData.targetLemari,
-        kondisiDiterima: receiveData.kondisiDiterima
-      } 
+      id: permintaanId, 
+      status: 'selesai',
+      targetRuanganId: receiveData.targetRuanganId,
+      targetLemari: receiveData.targetLemari,
+      kondisiDiterima: receiveData.kondisiDiterima
     });
   };
 
