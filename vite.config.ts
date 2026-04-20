@@ -16,9 +16,9 @@ const config = defineConfig({
     nitro(),
     viteReact(),
   ],
-  build: {
-    commonjsOptions: {
-      ignoreDynamicRequires: true,
+  resolve: {
+    alias: {
+      "@libsql/client": "@libsql/client/web",
     },
   },
 });
