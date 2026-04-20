@@ -1,10 +1,28 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "../../db";
-import { permintaanPengadaan, barang, approvalLogs, users } from "../../db/schema";
+import { permintaanPengadaan, barang, approvalLogs, users, notifikasi } from "../../db/schema";
 import { getAuthSession } from "../../lib/auth";
 import { z } from "zod";
-import { isValidTransition, PermintaanStatus, UserRole } from "../../lib/approvals";
-import { eq, desc } from "drizzle-orm";
+import { isValidTransition, PermintaanStatus, UserRole, STATUS_METADATA } from "../../lib/approvals";
+import { eq, desc, inArray } from "drizzle-orm";
+
+async function sendNotification(userId: string, tipe: string, pesan: string) {
+  await db.insert(notifikasi).values({
+    id: crypto.randomUUID(),
+    userId,
+    tipe,
+    pesan,
+    dibaca: false,
+    createdAt: new Date(),
+  });
+}
+
+async function notifyRoles(roles: string[], tipe: string, pesan: string) {
+  const targetUsers = await db.select().from(users).where(inArray(users.role, roles as any));
+  for (const user of targetUsers) {
+    await sendNotification(user.id, tipe, pesan);
+  }
+}
 
 export const createPermintaan = createServerFn({ method: "POST" })
   .inputValidator(
@@ -42,6 +60,9 @@ export const createPermintaan = createServerFn({ method: "POST" })
       newStatus: "menunggu_kaprog",
       createdAt: new Date(),
     });
+
+    // Notify Kaprog & Admin
+    await notifyRoles(['kepala_program', 'admin'], 'Permintaan Baru', `Ada permintaan baru: ${newPermintaan.namaBarang} dari ${session.name}`);
 
     return { success: true, data: newPermintaan };
   });
@@ -148,6 +169,19 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
       catatan: data.status === 'selesai' ? `Barang diterima di ${data.targetRuanganId}` : undefined,
       createdAt: new Date(),
     });
+
+    // Notify original requester
+    const newStatusLabel = STATUS_METADATA[data.status as PermintaanStatus].label;
+    await sendNotification(permintaan.diajukanOleh, 'Update Status', `Permintaan "${permintaan.namaBarang}" sekarang: ${newStatusLabel}`);
+
+    // Notify next approvers if applicable
+    if (data.status === 'menunggu_wakasek') {
+      await notifyRoles(['wakasek_kurikulum', 'wakasek_kesiswaan', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Wakasek`);
+    } else if (data.status === 'menunggu_kepsek') {
+      await notifyRoles(['kepala_sekolah', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Kepsek`);
+    } else if (data.status === 'disetujui') {
+      await notifyRoles(['tata_usaha', 'admin'], 'Proses Pembelian', `Permintaan "${permintaan.namaBarang}" telah disetujui, siap dibeli`);
+    }
 
     return { success: true };
   });
