@@ -6,6 +6,7 @@ import { getRuanganList } from "../../server/functions/ruangan"; // To list room
 import { Button } from "../ui/Button";
 import { Dialog } from "../ui/Dialog";
 import { useState } from "react";
+import { useRouter } from "@tanstack/react-router";
 
 interface PermintaanActionButtonsProps {
   permintaanId: string;
@@ -21,6 +22,7 @@ export function PermintaanActionButtons({
   onSuccess,
 }: PermintaanActionButtonsProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [isReceiveDialogOpen, setIsReceiveDialogOpen] = useState(false);
   const [receiveData, setReceiveData] = useState({
     targetRuanganId: "",
@@ -40,7 +42,14 @@ export function PermintaanActionButtons({
     mutationFn: updatePermintaanStatus,
     onSuccess: () => {
       toast.success("Status permintaan berhasil diperbarui");
-      queryClient.invalidateQueries(); 
+      // Explicitly invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ['permintaan'] });
+      queryClient.invalidateQueries({ queryKey: ['approvalLogs', permintaanId] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      
+      // Forces TanStack Start to refresh the current route's data
+      router.invalidate();
+      
       setIsReceiveDialogOpen(false);
       onSuccess?.();
     },
