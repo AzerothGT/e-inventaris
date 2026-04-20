@@ -13,6 +13,9 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
   component: Dashboard,
 })
 
+import { QuickActions } from '../../components/dashboard/QuickActions'
+import { OverviewChart } from '../../components/dashboard/OverviewChart'
+
 function Dashboard() {
   const { data: user } = useSuspenseQuery({
     queryKey: ['currentUser'],
@@ -42,6 +45,8 @@ function Dashboard() {
     return 'Selamat Malam'
   }
 
+  const role = user?.role as any
+
   return (
     <div className="space-y-8 pb-12">
       <PageHeader
@@ -61,26 +66,26 @@ function Dashboard() {
           stagger="stagger-1"
         />
         <StatCard
-          title="Permintaan Aktif"
-          value={stats.activeRequests}
-          subtitle="Sedang diproses"
+          title={role === 'penjaga_lab' ? "Permintaan Saya" : "Total Permintaan"}
+          value={role === 'penjaga_lab' ? stats.pendingAction : stats.activeRequests}
+          subtitle={role === 'penjaga_lab' ? "Sedang diproses" : "Menunggu tindakan"}
           icon={<ShoppingCart className="h-5 w-5" />}
           color="warning"
           stagger="stagger-2"
         />
         <StatCard
-          title={user?.role === 'penjaga_lab' ? "Permintaan Saya" : "Persetujuan Saya"}
-          value={stats.pendingAction}
-          subtitle="Perlu tindakan segera"
+          title={role === 'penjaga_lab' ? "Selesai" : "Persetujuan Saya"}
+          value={role === 'penjaga_lab' ? stats.completedMonth : stats.pendingAction}
+          subtitle="Perlu perhatian"
           icon={<Clock className="h-5 w-5" />}
           color="danger"
-          highlight={stats.pendingAction > 0}
+          highlight={!['penjaga_lab', 'admin'].includes(role) && stats.pendingAction > 0}
           stagger="stagger-3"
         />
         <StatCard
-          title="Selesai"
-          value={stats.completedMonth}
-          subtitle="Bulan ini"
+          title="Update Sistem"
+          value={recentActivity.length}
+          subtitle="Aktivitas hari ini"
           icon={<CheckCircle className="h-5 w-5" />}
           color="success"
           stagger="stagger-4"
@@ -88,9 +93,9 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-7">
-        {/* Main Section: Approval Queue or Activity Chart */}
         <div className="lg:col-span-4 space-y-6">
-          {user?.role !== 'penjaga_lab' && approvalQueue.length > 0 ? (
+          {/* Main Content Area */}
+          {role !== 'penjaga_lab' && approvalQueue.length > 0 ? (
             <Card className="glass-card shadow-sm border-surface-200 stagger-5 overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between border-b border-surface-100 bg-surface-50/30">
                 <div>
@@ -140,24 +145,16 @@ function Dashboard() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="glass-card shadow-sm border-surface-200 stagger-5">
-              <CardHeader>
-                <CardTitle className="text-lg">Ringkasan Aktivitas</CardTitle>
-              </CardHeader>
-              <CardContent className="h-[350px] flex flex-col items-center justify-center text-surface-400 bg-surface-50/30 rounded-xl border border-dashed border-surface-200 m-2">
-                <div className="w-16 h-16 bg-surface-100 rounded-full flex items-center justify-center mb-4 text-surface-300">
-                  <Package size={32} />
-                </div>
-                <p className="text-sm font-medium">Visualisasi data akan muncul di sini</p>
-                <p className="text-xs mt-1">Menunggu lebih banyak data sistem...</p>
-              </CardContent>
-            </Card>
+            <OverviewChart />
           )}
+
+          {/* Quick Actions (only for desktop layout, can be moved) */}
+          <QuickActions role={role} />
         </div>
 
-        {/* Sidebar Section: Recent Activity / History */}
-        <div className="lg:col-span-3">
-          <Card className="glass-card shadow-sm border-surface-200 stagger-6 h-full">
+        <div className="lg:col-span-3 space-y-6">
+          {/* Sidebar Section */}
+          <Card className="glass-card shadow-sm border-surface-200 stagger-6 h-full min-h-[400px]">
             <CardHeader className="border-b border-surface-100">
               <CardTitle className="text-lg">Aktivitas Terbaru</CardTitle>
             </CardHeader>
@@ -180,7 +177,7 @@ function Dashboard() {
                           {format(new Date(activity.createdAt), 'HH:mm', { locale: id })}
                         </span>
                         <span className="w-1 h-1 rounded-full bg-surface-300" />
-                        <span className="text-[10px] font-medium text-surface-500">
+                        <span className="text-[10px] font-medium text-surface-500 capitalize">
                           {activity.newStatus.replace('_', ' ')}
                         </span>
                       </div>

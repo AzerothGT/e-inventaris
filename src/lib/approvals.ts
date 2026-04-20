@@ -9,12 +9,13 @@ export type PermintaanStatus =
 
 export type UserRole =
   | 'admin'
-  | 'kepala_program'
+  | 'kaprog'
   | 'penjaga_lab'
-  | 'tata_usaha'
+  | 'orang_tu'
   | 'wakasek_kurikulum'
   | 'wakasek_kesiswaan'
-  | 'kepala_sekolah';
+  | 'kepala_sekolah'
+  | 'tu_admin';
 
 export interface ApprovalAction {
   id: string;
@@ -34,7 +35,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Setujui (Kaprog)',
     from: 'menunggu_kaprog',
     to: 'menunggu_wakasek',
-    roles: ['kepala_program', 'admin'],
+    roles: ['kaprog', 'admin'],
     variant: 'success',
   },
   {
@@ -42,7 +43,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Tolak',
     from: 'menunggu_kaprog',
     to: 'ditolak',
-    roles: ['kepala_program', 'admin'],
+    roles: ['kaprog', 'admin'],
     variant: 'destructive',
   },
 
@@ -88,7 +89,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Proses Pembelian',
     from: 'disetujui',
     to: 'proses_pembelian',
-    roles: ['tata_usaha', 'admin'],
+    roles: ['tu_admin', 'admin'],
     variant: 'default',
   },
 
@@ -98,7 +99,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Barang Diterima',
     from: 'proses_pembelian',
     to: 'selesai',
-    roles: ['tata_usaha', 'admin'],
+    roles: ['tu_admin', 'admin'],
     variant: 'success',
     requiresData: true,
   },
@@ -109,7 +110,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Batalkan',
     from: 'menunggu_kaprog',
     to: 'ditolak',
-    roles: ['penjaga_lab', 'tata_usaha', 'admin'],
+    roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'admin'],
     variant: 'outline',
   },
 ];

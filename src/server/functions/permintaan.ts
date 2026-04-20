@@ -62,7 +62,7 @@ export const createPermintaan = createServerFn({ method: "POST" })
     });
 
     // Notify Kaprog & Admin
-    await notifyRoles(['kepala_program', 'admin'], 'Permintaan Baru', `Ada permintaan baru: ${newPermintaan.namaBarang} dari ${session.name}`);
+    await notifyRoles(['kaprog', 'admin'], 'Permintaan Baru', `Ada permintaan baru: ${newPermintaan.namaBarang} dari ${session.name}`);
 
     return { success: true, data: newPermintaan };
   });
@@ -218,7 +218,7 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
     } else if (data.status === 'menunggu_kepsek') {
       await notifyRoles(['kepala_sekolah', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Kepsek`);
     } else if (data.status === 'disetujui') {
-      await notifyRoles(['tata_usaha', 'admin'], 'Proses Pembelian', `Permintaan "${permintaan.namaBarang}" telah disetujui, siap dibeli`);
+      await notifyRoles(['tu_admin', 'admin'], 'Proses Pembelian', `Permintaan "${permintaan.namaBarang}" telah disetujui, siap dibeli`);
     }
 
     return { success: true };

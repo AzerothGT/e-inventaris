@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 
 // Placeholder role for now until Auth is implemented
-const CURRENT_ROLE = 'tu'
+const CURRENT_ROLE = 'tu_admin'
 
 export function Sidebar() {
   const [isMinimized, setIsMinimized] = React.useState<boolean>(() => {
@@ -38,37 +38,37 @@ export function Sidebar() {
       title: 'Dashboard',
       icon: LayoutDashboard,
       to: '/dashboard',
-      roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Barang',
       icon: Package,
       to: '/barang',
-      roles: ['tu', 'penjaga_lab', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['tu_admin', 'penjaga_lab', 'orang_tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengajuan',
       icon: FilePen,
       to: '/permintaan',
-      roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Gudang',
       icon: Warehouse,
       to: '/ruangan',
-      roles: ['tu', 'penjaga_lab'],
+      roles: ['tu_admin', 'penjaga_lab', 'admin'],
     },
     {
       title: 'Laporan',
       icon: FileText,
       to: '/laporan',
-      roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengguna',
       icon: Users,
       to: '/pengaturan/users',
-      roles: ['kepala_sekolah'],
+      roles: ['kepala_sekolah', 'admin'],
     },
   ]
 

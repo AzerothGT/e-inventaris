@@ -33,13 +33,13 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       let statusToWatch: PermintaanStatus[] = [];
       if (role === 'admin') {
         statusToWatch = ['menunggu_kaprog', 'menunggu_wakasek', 'menunggu_kepsek', 'disetujui', 'proses_pembelian'];
-      } else if (role === 'kepala_program') {
+      } else if (role === 'kaprog') {
         statusToWatch = ['menunggu_kaprog'];
       } else if (role === 'wakasek_kurikulum' || role === 'wakasek_kesiswaan') {
         statusToWatch = ['menunggu_wakasek'];
       } else if (role === 'kepala_sekolah') {
         statusToWatch = ['menunggu_kepsek'];
-      } else if (role === 'tata_usaha') {
+      } else if (role === 'tu_admin') {
         statusToWatch = ['disetujui', 'proses_pembelian'];
       }
 
@@ -50,8 +50,8 @@ export const getDashboardStats = createServerFn({ method: "GET" })
           .where(sql`${permintaanPengadaan.status} IN ${statusToWatch}`);
         approvalNeededCount = result.value;
       }
-    } else {
-      // For Penjaga Lab, "Persetujuan Saya" might mean "My Pending Requests"
+    } else if (role === 'penjaga_lab' || role === 'orang_tu') {
+      // For Requesters, "Persetujuan Saya" might mean "My Pending Requests"
       const [result] = await db
         .select({ value: count() })
         .from(permintaanPengadaan)
@@ -125,18 +125,18 @@ export const getApprovalQueue = createServerFn({ method: "GET" })
     if (!session) throw new Error("Unauthorized");
 
     const role = session.role as UserRole;
-    if (role === 'penjaga_lab') return [];
+    if (role === 'penjaga_lab' || role === 'orang_tu') return [];
 
     let statusToWatch: PermintaanStatus[] = [];
     if (role === 'admin') {
       statusToWatch = ['menunggu_kaprog', 'menunggu_wakasek', 'menunggu_kepsek', 'disetujui', 'proses_pembelian'];
-    } else if (role === 'kepala_program') {
+    } else if (role === 'kaprog') {
       statusToWatch = ['menunggu_kaprog'];
     } else if (role === 'wakasek_kurikulum' || role === 'wakasek_kesiswaan') {
       statusToWatch = ['menunggu_wakasek'];
     } else if (role === 'kepala_sekolah') {
       statusToWatch = ['menunggu_kepsek'];
-    } else if (role === 'tata_usaha') {
+    } else if (role === 'tu_admin') {
       statusToWatch = ['disetujui', 'proses_pembelian'];
     }
 

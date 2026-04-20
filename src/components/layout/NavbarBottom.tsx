@@ -8,8 +8,7 @@ import {
   Users,
 } from 'lucide-react'
 
-// Placeholder role for now until Auth is implemented
-const CURRENT_ROLE = 'tu'
+const CURRENT_ROLE = 'tu_admin'
 
 export function NavbarBottom() {
   const menuItems = [
@@ -17,37 +16,37 @@ export function NavbarBottom() {
       title: 'Dashboard',
       icon: <LayoutDashboard size={20} />,
       to: '/dashboard',
-      roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Barang',
       icon: <Package size={20} />,
       to: '/barang',
-      roles: ['tu', 'penjaga_lab', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['tu_admin', 'penjaga_lab', 'orang_tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengajuan',
       icon: <FilePen size={20} />,
       to: '/permintaan',
-      roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Gudang',
       icon: <Warehouse size={20} />,
       to: '/gudang',
-      roles: ['tu', 'penjaga_lab'],
+      roles: ['tu_admin', 'penjaga_lab', 'admin'],
     },
     {
       title: 'Notifikasi',
       icon: <Bell size={20} />,
       to: '/notifikasi',
-      roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengguna',
       icon: <Users size={20} />,
       to: '/pengaturan/users',
-      roles: ['kepala_sekolah'],
+      roles: ['kepala_sekolah', 'admin'],
     },
   ]
 

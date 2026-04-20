@@ -5,7 +5,7 @@ export const users = sqliteTable('users', {
   username: text('username').notNull().unique(),
   password: text('password').notNull(),
   name: text('name').notNull(),
-  role: text('role', { enum: ['admin', 'kepala_program', 'penjaga_lab', 'tata_usaha', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'] }).notNull(),
+  role: text('role', { enum: ['admin', 'kaprog', 'penjaga_lab', 'orang_tu', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'tu_admin'] }).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
 });
