@@ -3,9 +3,43 @@ import { Sidebar } from './Sidebar'
 import { NavbarBottom } from './NavbarBottom'
 import { NotificationBell } from './NotificationBell'
 import { LogOut, ChevronDown, Package, Search } from 'lucide-react'
+import { CommandMenu } from './CommandMenu'
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { getCurrentUser, logoutUser } from '../../server/functions/auth'
+import { useRouter } from '@tanstack/react-router'
+import { ROLE_DEPARTMENTS, UserRole } from '../../lib/approvals'
+import { toast } from 'sonner'
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [profileOpen, setProfileOpen] = React.useState(false)
+  const [commandOpen, setCommandOpen] = React.useState(false)
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
+  const { data: user } = useSuspenseQuery({
+    queryKey: ['session'],
+    queryFn: () => getCurrentUser(),
+  })
+
+  const logoutMutation = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      queryClient.setQueryData(['session'], null)
+      router.invalidate()
+      toast.success('Berhasil keluar')
+    }
+  })
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2)
+  }
+
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-50 font-sans text-surface-950">
@@ -33,20 +67,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* Central Search Bar - Desktop Only */}
           <div className="hidden md:flex flex-1 justify-center px-4 max-w-2xl">
-            <div className="search-container">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400">
+            <button 
+              onClick={() => setCommandOpen(true)}
+              className="search-container text-left group"
+            >
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 group-hover:text-primary-500 transition-colors">
                 <Search size={18} />
               </div>
-              <input 
-                type="text" 
-                placeholder="Cari barang atau aksi... (⌘K)" 
-                className="search-input"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded border border-surface-200 bg-white text-[10px] font-medium text-surface-400">
+              <div className="search-input cursor-pointer flex items-center text-surface-400">
+                Cari barang atau aksi... (⌘K)
+              </div>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded border border-surface-200 bg-white text-[10px] font-medium text-surface-400 group-hover:border-primary-200 transition-colors">
                 <span className="text-xs">⌘</span>K
               </div>
-            </div>
+            </button>
           </div>
+          
+          <CommandMenu open={commandOpen} setOpen={setCommandOpen} />
           
           <div className="flex items-center gap-4">
             <NotificationBell />
@@ -59,11 +96,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 aria-haspopup="true"
               >
                 <div className="w-9 h-9 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm uppercase">
-                  TU
+                  {getInitials(user?.name || '??')}
                 </div>
                 <div className="hidden md:block text-sm text-left">
-                  <p className="font-medium text-surface-900">Staf TU</p>
-                  <p className="text-surface-500 text-xs">Tata Usaha</p>
+                  <p className="font-medium text-surface-900">{user?.name}</p>
+                  <p className="text-surface-500 text-xs">{ROLE_DEPARTMENTS[user?.role as UserRole] || user?.role}</p>
                 </div>
                 <ChevronDown size={16} className={`text-surface-500 transition-transform hidden sm:block ${profileOpen ? 'rotate-180' : ''}`} />
               </button>
@@ -76,9 +113,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     onClick={() => setProfileOpen(false)}
                   />
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-surface-200 py-1 z-50 transform origin-top-right transition-all">
-                    <button className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-danger-600 hover:bg-danger-50 transition-colors text-left">
+                    <button 
+                      onClick={() => logoutMutation.mutate({})}
+                      disabled={logoutMutation.isPending}
+                      className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-danger-600 hover:bg-danger-50 transition-colors text-left disabled:opacity-50"
+                    >
                       <LogOut size={16} />
-                      Keluar
+                      {logoutMutation.isPending ? 'Keluar...' : 'Keluar'}
                     </button>
                   </div>
                 </>

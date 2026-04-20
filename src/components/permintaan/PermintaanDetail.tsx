@@ -8,10 +8,22 @@ interface PermintaanDetailProps {
   data: any
 }
 
+interface DetailItem {
+  label: string;
+  value: React.ReactNode;
+  isCustom?: boolean;
+}
+
+interface DetailSection {
+  label: string;
+  icon: React.ReactNode;
+  items: DetailItem[];
+}
+
 export function PermintaanDetail({ data }: PermintaanDetailProps) {
   if (!data) return null;
 
-  const sections = [
+  const sections: DetailSection[] = [
     {
       label: "Informasi Barang",
       icon: <Package className="h-4 w-4" />,

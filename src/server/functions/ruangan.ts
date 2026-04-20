@@ -3,6 +3,7 @@ import { db } from '../../db';
 import { ruangan } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { indexRuangan, deleteFromIndex } from './indexing';
 
 export const getRuanganList = createServerFn({ method: 'GET' })
   .handler(async () => {
@@ -34,6 +35,10 @@ export const createRuangan = createServerFn({ method: 'POST' })
     };
     
     await db.insert(ruangan).values(newRuangan);
+    
+    // Index to Elasticsearch
+    await indexRuangan(newRuangan);
+
     return { success: true, data: newRuangan };
   });
 
@@ -48,6 +53,10 @@ export const updateRuangan = createServerFn({ method: 'POST' })
     const { id, ...updateData } = data;
     
     await db.update(ruangan).set(updateData).where(eq(ruangan.id, id));
+    
+    // Update Elasticsearch index
+    await indexRuangan({ id, ...updateData });
+
     return { success: true };
   });
 
@@ -57,5 +66,9 @@ export const deleteRuangan = createServerFn({ method: 'POST' })
   }))
   .handler(async ({ data }) => {
     await db.delete(ruangan).where(eq(ruangan.id, data.id));
+    
+    // Remove from Elasticsearch index
+    await deleteFromIndex('ruangan', data.id);
+
     return { success: true };
   });
