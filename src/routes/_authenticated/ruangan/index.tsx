@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ruanganQueries } from '../../../data/ruanganQueries'
 import { DataTable } from '../../../components/ui/DataTable'
@@ -12,14 +12,16 @@ import { RuanganForm } from '../../../components/inventory/RuanganForm'
 import { createRuangan, updateRuangan, deleteRuangan } from '../../../server/functions/ruangan'
 import { PageHeader } from '../../../components/ui/PageHeader'
 import * as React from 'react'
-
+import { TablePageSkeleton } from '../../../components/ui/TablePageSkeleton'
 
 export const Route = createFileRoute('/_authenticated/ruangan/')({
   loader: ({ context }) => context.queryClient.ensureQueryData(ruanganQueries.list()),
   component: RuanganListPage,
+  pendingComponent: () => <TablePageSkeleton title="Daftar" gradientTitle="Ruangan" />,
 })
 
 function RuanganListPage() {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const { data: items } = useSuspenseQuery(ruanganQueries.list())
 
@@ -29,24 +31,27 @@ function RuanganListPage() {
 
   const createMutation = useMutation({
     mutationFn: createRuangan,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+      await router.invalidate()
       setIsAddOpen(false)
     },
   })
 
   const updateMutation = useMutation({
     mutationFn: updateRuangan,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+      await router.invalidate()
       setEditingItem(null)
     },
   })
 
   const deleteMutation = useMutation({
     mutationFn: deleteRuangan,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ruanganQueries.all() })
+      await router.invalidate()
       setDeletingItem(null)
     },
   })
@@ -99,7 +104,6 @@ function RuanganListPage() {
         title="Daftar"
         gradientTitle="Ruangan"
         actions={
-
           <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Tambah Ruangan
@@ -107,9 +111,7 @@ function RuanganListPage() {
         }
       />
 
-
       <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
-
         <div className="flex items-center gap-2 mb-4">
           <Warehouse className="h-5 w-5 text-primary-500" />
           <h3 className="text-lg font-semibold text-surface-900">Semua Ruangan</h3>

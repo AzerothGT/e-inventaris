@@ -16,6 +16,8 @@ import { PageHeader } from '../../../components/ui/PageHeader'
 
 import * as React from 'react'
 
+import { TablePageSkeleton } from '../../../components/ui/TablePageSkeleton'
+
 export const Route = createFileRoute('/_authenticated/barang/')({
   loader: ({ context }) => {
     return Promise.all([
@@ -24,9 +26,13 @@ export const Route = createFileRoute('/_authenticated/barang/')({
     ])
   },
   component: BarangListPage,
+  pendingComponent: () => <TablePageSkeleton title="Daftar" gradientTitle="Inventaris" />,
 })
 
+import { useRouter } from '@tanstack/react-router'
+
 function BarangListPage() {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const { data: items } = useSuspenseQuery(barangQueries.list())
   const { data: rooms } = useSuspenseQuery(ruanganQueries.list())
@@ -37,24 +43,27 @@ function BarangListPage() {
 
   const createMutation = useMutation({
     mutationFn: createBarang,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+      await router.invalidate()
       setIsAddOpen(false)
     },
   })
 
   const updateMutation = useMutation({
     mutationFn: updateBarang,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+      await router.invalidate()
       setEditingItem(null)
     },
   })
 
   const deleteMutation = useMutation({
     mutationFn: deleteBarang,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: barangQueries.all() })
+      await router.invalidate()
       setDeletingItem(null)
     },
   })

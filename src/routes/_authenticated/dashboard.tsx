@@ -9,8 +9,11 @@ import { STATUS_METADATA, PermintaanStatus } from '../../lib/approvals'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
 
+import { DashboardSkeleton } from '../../components/dashboard/DashboardSkeleton'
+
 export const Route = createFileRoute('/_authenticated/dashboard')({
   component: Dashboard,
+  pendingComponent: DashboardSkeleton,
 })
 
 import { QuickActions } from '../../components/dashboard/QuickActions'

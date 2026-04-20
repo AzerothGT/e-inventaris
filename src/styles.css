@@ -195,3 +195,22 @@ body {
 .stagger-9 { animation: slide-up 0.4s ease-out 0.45s both; }
 .stagger-10 { animation: slide-up 0.4s ease-out 0.50s both; }
 
+/* ── Skeleton ────────────────────────────────────────────── */
+.skeleton {
+  @apply bg-surface-200 animate-pulse rounded-full;
+}
+
+.skeleton-rounded {
+  @apply rounded-full;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+

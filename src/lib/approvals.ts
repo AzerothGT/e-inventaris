@@ -115,7 +115,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     from: 'menunggu_kaprog',
     to: 'ditolak',
     roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'admin'],
-    variant: 'outline',
+    variant: 'secondary',
     requiresReason: true,
   },
 ];

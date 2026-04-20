@@ -2,11 +2,19 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getAvailableActions, PermintaanStatus, UserRole } from "../../lib/approvals";
 import { updatePermintaanStatus } from "../../server/functions/permintaan";
-import { getRuanganList } from "../../server/functions/ruangan"; // To list rooms
+import { getRuanganList } from "../../server/functions/ruangan";
 import { Button } from "../ui/Button";
 import { Dialog } from "../ui/Dialog";
 import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
+import { 
+  Check, 
+  X, 
+  ShoppingCart, 
+  PackageCheck, 
+  Ban,
+  Loader2
+} from "lucide-react";
 
 interface PermintaanActionButtonsProps {
   permintaanId: string;
@@ -35,6 +43,15 @@ export function PermintaanActionButtons({
   });
 
   const availableActions = getAvailableActions(currentStatus, userRole);
+
+  const getActionIcon = (id: string) => {
+    if (id.startsWith('approve_')) return <Check className="h-4 w-4" />;
+    if (id.startsWith('reject_')) return <X className="h-4 w-4" />;
+    if (id === 'start_purchase') return <ShoppingCart className="h-4 w-4" />;
+    if (id === 'complete_purchase') return <PackageCheck className="h-4 w-4" />;
+    if (id === 'cancel_request') return <Ban className="h-4 w-4" />;
+    return null;
+  };
 
   const { data: ruanganList } = useQuery({
     queryKey: ['ruangan'],
@@ -115,11 +132,17 @@ export function PermintaanActionButtons({
           <Button
             key={action.id}
             variant={action.variant as any}
-            size="sm"
+            size="icon"
+            title={action.label}
             disabled={mutation.isPending}
             onClick={() => handleActionClick(action)}
+            className="h-9 w-9"
           >
-            {mutation.isPending ? "Loading..." : action.label}
+            {mutation.isPending && pendingAction?.id === action.id ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              getActionIcon(action.id)
+            )}
           </Button>
         ))}
       </div>
@@ -142,7 +165,7 @@ export function PermintaanActionButtons({
               onChange={(e) => setReceiveData({ ...receiveData, targetRuanganId: e.target.value })}
             >
               <option value="">-- Pilih Ruangan --</option>
-              {ruanganList?.map((r) => (
+              {ruanganList?.map((r: any) => (
                 <option key={r.id} value={r.id}>{r.nama} ({r.kodeRuangan})</option>
               ))}
             </select>

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPermintaanList, createPermintaan } from '../../../server/functions/permintaan';
 import { PermintaanStatusBadge } from '../../../components/permintaan/PermintaanStatusBadge';
 import { PermintaanActionButtons } from '../../../components/permintaan/PermintaanActionButtons';
@@ -13,33 +13,53 @@ import { Dialog } from '../../../components/ui/Dialog';
 import { ApprovalLogTable } from '../../../components/permintaan/ApprovalLogTable';
 import { PermintaanForm } from '../../../components/permintaan/PermintaanForm';
 import { useState } from 'react';
-import { History, ClipboardList, Plus } from 'lucide-react';
+import { History, ClipboardList, Plus, Eye } from 'lucide-react';
+import { PermintaanDetail } from '../../../components/permintaan/PermintaanDetail';
 import { Button } from '../../../components/ui/Button';
 import { toast } from 'sonner';
+import { TablePageSkeleton } from '../../../components/ui/TablePageSkeleton';
 
 export const Route = createFileRoute('/_authenticated/permintaan/')({
+  loader: async ({ context }) => {
+    return Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: ['session'],
+        queryFn: () => getCurrentUser(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: ['permintaan'],
+        queryFn: () => getPermintaanList(),
+      }),
+    ]);
+  },
   component: PermintaanListPage,
+  pendingComponent: () => <TablePageSkeleton title="Daftar" gradientTitle="Permintaan Barang" />,
 });
 
+import { useRouter } from '@tanstack/react-router';
+
 function PermintaanListPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: user } = useQuery({
+  const { data: user } = useSuspenseQuery({
     queryKey: ['session'],
     queryFn: () => getCurrentUser(),
   });
 
-  const { data: permintaanList, isLoading } = useQuery({
+  const { data: permintaanList } = useSuspenseQuery({
     queryKey: ['permintaan'],
     queryFn: () => getPermintaanList(),
   });
 
   const [selectedPermintaanId, setSelectedPermintaanId] = useState<string | null>(null);
+  const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
 
   const createMutation = useMutation({
     mutationFn: createPermintaan,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['permintaan'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['permintaan'] });
+      await router.invalidate();
       toast.success('Permintaan barang berhasil dikirim!');
       setIsAddOpen(false);
     },
@@ -102,13 +122,23 @@ function PermintaanListPage() {
         return (
           <div className="flex justify-end items-center gap-2">
              <Button 
-              variant="ghost" 
-              size="sm" 
+              variant="secondary" 
+              size="icon" 
+              title="Detail"
+              onClick={() => setSelectedDetailId(item.id)}
+              className="h-9 w-9"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+
+             <Button 
+              variant="secondary" 
+              size="icon" 
               title="Riwayat"
               onClick={() => setSelectedPermintaanId(item.id)}
-              className="h-8 w-8 p-0"
+              className="h-9 w-9"
             >
-              <History className="h-4 w-4 text-surface-500 hover:text-primary-600 transition-colors" />
+              <History className="h-4 w-4" />
             </Button>
             
             <PermintaanActionButtons 
@@ -121,10 +151,6 @@ function PermintaanListPage() {
       },
     },
   ];
-
-  if (isLoading) {
-    return <div className="p-8">Loading...</div>;
-  }
 
   return (
     <div className="space-y-6">
@@ -162,6 +188,21 @@ function PermintaanListPage() {
       </Dialog>
 
       <Dialog
+        isOpen={selectedDetailId !== null}
+        onClose={() => setSelectedDetailId(null)}
+        title="Detail Permintaan"
+        size="lg"
+      >
+        <div className="py-2">
+          {selectedDetailId && (
+            <PermintaanDetail 
+              data={permintaanList?.find(p => p.id === selectedDetailId)} 
+            />
+          )}
+        </div>
+      </Dialog>
+
+      <Dialog
         isOpen={selectedPermintaanId !== null}
         onClose={() => setSelectedPermintaanId(null)}
         title="Riwayat Persetujuan"
@@ -174,4 +215,3 @@ function PermintaanListPage() {
     </div>
   );
 }
-
