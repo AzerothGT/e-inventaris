@@ -180,7 +180,7 @@ body {
 
 .glass-button::after {
   content: '';
-  @apply absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-none;
+  @apply absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none;
 }
 
 /* ── Staggered Animations ────────────────────────────────── */
