@@ -9,14 +9,14 @@ export function PermintaanStatusBadge({ status }: PermintaanStatusBadgeProps) {
   
   if (!metadata) {
     return (
-      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-gray-500/10 text-gray-500 border border-gray-500/20">
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-500/10 text-gray-500 border border-gray-500/20 whitespace-nowrap">
         Unknown
       </span>
     );
   }
 
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${metadata.color}`}>
+    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border whitespace-nowrap ${metadata.color}`}>
       {metadata.label}
     </span>
   );
