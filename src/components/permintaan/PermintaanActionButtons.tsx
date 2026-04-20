@@ -196,7 +196,7 @@ export function PermintaanActionButtons({
               Alasan {pendingAction?.label?.toLowerCase() === 'batalkan' ? 'Pembatalan' : 'Penolakan'}
             </label>
             <textarea
-              className="w-full min-h-[100px] p-3 rounded-xl border border-surface-200 bg-white text-sm focus:ring-2 focus:ring-primary-600 focus:outline-none resize-none transition-all"
+              className="w-full mt-5 min-h-[100px] p-3 rounded-xl border border-surface-200 bg-white text-sm focus:ring-2 focus:ring-primary-600 focus:outline-none resize-none transition-all"
               placeholder="Berikan alasan yang jelas agar pemohon memahami keputusannya..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
