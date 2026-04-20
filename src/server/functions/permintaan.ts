@@ -98,8 +98,6 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const session = await getAuthSession();
-    console.log('[updatePermintaanStatus] Incoming:', { data, userId: session?.id, role: session?.role });
-    
     if (!session) {
       throw new Error("Unauthorized");
     }
@@ -185,15 +183,6 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
       .update(permintaanPengadaan)
       .set(updateData)
       .where(eq(permintaanPengadaan.id, data.id));
-
-    // Verify the update
-    const [updatedPermintaan] = await db
-      .select()
-      .from(permintaanPengadaan)
-      .where(eq(permintaanPengadaan.id, data.id))
-      .limit(1);
-    
-    console.log('[updatePermintaanStatus] Verified Status:', updatedPermintaan?.status);
 
     // Log the transition
     await db.insert(approvalLogs).values({
