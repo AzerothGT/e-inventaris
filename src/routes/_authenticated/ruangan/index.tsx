@@ -98,7 +98,6 @@ function RuanganListPage() {
           <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
             Daftar <span className="text-gradient">Ruangan</span> 🏫
           </h2>
-          <p className="text-surface-500 mt-1">Kelola data ruangan dan lokasi inventaris.</p>
         </div>
         <Button onClick={() => setIsAddOpen(true)} className="glass-button flex items-center gap-2">
           <Plus className="h-4 w-4" />
