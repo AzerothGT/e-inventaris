@@ -21,7 +21,7 @@ function Dashboard() {
         <h2 className="text-3xl font-extrabold tracking-tight text-surface-900">
           {getGreeting()}, <span className="text-gradient">Tata Usaha!</span> 👋
         </h2>
-        <p className="text-surface-500">Berikut adalah ringkasan inventaris sekolah hari ini.</p>
+
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

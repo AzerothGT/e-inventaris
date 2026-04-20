@@ -3,7 +3,7 @@ import {
   LayoutDashboard,
   Package,
   FilePen,
-  House,
+  Warehouse,
   Bell,
   Users,
 } from 'lucide-react'
@@ -32,9 +32,9 @@ export function NavbarBottom() {
       roles: ['penjaga_lab', 'tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah'],
     },
     {
-      title: 'Ruangan',
-      icon: <House size={20} />,
-      to: '/ruangan',
+      title: 'Gudang',
+      icon: <Warehouse size={20} />,
+      to: '/gudang',
       roles: ['tu', 'penjaga_lab'],
     },
     {

@@ -4,7 +4,7 @@ import {
   LayoutDashboard,
   Package,
   FilePen,
-  House,
+  Warehouse,
   FileText,
   Users,
   ChevronLeft,
@@ -54,7 +54,7 @@ export function Sidebar() {
     },
     {
       title: 'Gudang',
-      icon: House,
+      icon: Warehouse,
       to: '/gudang',
       roles: ['tu', 'penjaga_lab'],
     },
