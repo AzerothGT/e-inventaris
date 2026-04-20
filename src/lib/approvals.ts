@@ -29,14 +29,14 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 export const ROLE_DEPARTMENTS: Record<UserRole, string> = {
-  admin: 'System',
-  kaprog: 'Ketua Program',
-  penjaga_lab: 'Laboratorium',
-  orang_tu: 'Tata Usaha',
-  wakasek_kurikulum: 'Kurikulum',
-  wakasek_kesiswaan: 'Kesiswaan',
-  kepala_sekolah: 'Manajemen',
-  tu_admin: 'Tata Usaha',
+  admin: 'Administrator',
+  kaprog: 'Kepala Program',
+  penjaga_lab: 'Penjaga Lab',
+  orang_tu: 'Staf Tata Usaha',
+  wakasek_kurikulum: 'Wakasek Kurikulum',
+  wakasek_kesiswaan: 'Wakasek Kesiswaan',
+  kepala_sekolah: 'Kepala Sekolah',
+  tu_admin: 'Admin Tata Usaha',
 };
 
 

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedRuanganIndexRouteImport } from './routes/_authenticated/ruangan/index'
 import { Route as AuthenticatedPermintaanIndexRouteImport } from './routes/_authenticated/permintaan/index'
@@ -31,6 +32,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/barang/': typeof AuthenticatedBarangIndexRoute
   '/permintaan/': typeof AuthenticatedPermintaanIndexRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/barang': typeof AuthenticatedBarangIndexRoute
   '/permintaan': typeof AuthenticatedPermintaanIndexRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/_authenticated/barang/': typeof AuthenticatedBarangIndexRoute
   '/_authenticated/permintaan/': typeof AuthenticatedPermintaanIndexRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
+    | '/users'
     | '/permintaan/tambah'
     | '/barang/'
     | '/permintaan/'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
+    | '/users'
     | '/permintaan/tambah'
     | '/barang'
     | '/permintaan'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/dashboard'
+    | '/_authenticated/users'
     | '/_authenticated/permintaan/tambah'
     | '/_authenticated/barang/'
     | '/_authenticated/permintaan/'
@@ -150,6 +162,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -191,6 +210,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedPermintaanTambahRoute: typeof AuthenticatedPermintaanTambahRoute
   AuthenticatedBarangIndexRoute: typeof AuthenticatedBarangIndexRoute
   AuthenticatedPermintaanIndexRoute: typeof AuthenticatedPermintaanIndexRoute
@@ -199,6 +219,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedPermintaanTambahRoute: AuthenticatedPermintaanTambahRoute,
   AuthenticatedBarangIndexRoute: AuthenticatedBarangIndexRoute,
   AuthenticatedPermintaanIndexRoute: AuthenticatedPermintaanIndexRoute,

@@ -3,7 +3,6 @@ import { db } from "../../db";
 import { barang, ruangan } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { indexBarang, deleteFromIndex } from "./indexing";
 
 export const getBarangList = createServerFn({ method: "GET" }).handler(
 	async () => {
@@ -65,9 +64,6 @@ export const createBarang = createServerFn({ method: "POST" })
 		};
 
 		await db.insert(barang).values(newBarang);
-		
-		// Index to Elasticsearch
-		await indexBarang(newBarang);
 
 		return { success: true, data: newBarang };
 	});
@@ -98,9 +94,6 @@ export const updateBarang = createServerFn({ method: "POST" })
 			})
 			.where(eq(barang.id, id));
 
-		// Update Elasticsearch index
-		await indexBarang({ id, ...updateData });
-
 		return { success: true };
 	});
 
@@ -112,9 +105,6 @@ export const deleteBarang = createServerFn({ method: "POST" })
 	)
 	.handler(async ({ data }) => {
 		await db.delete(barang).where(eq(barang.id, data.id));
-		
-		// Remove from Elasticsearch index
-		await deleteFromIndex('barang', data.id);
 
 		return { success: true };
 	});

@@ -10,9 +10,8 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
-
-// Placeholder role for now until Auth is implemented
-const CURRENT_ROLE = 'tu_admin'
+import { useQuery } from '@tanstack/react-query'
+import { getCurrentUser } from '../../server/functions/auth'
 
 export function Sidebar() {
   const [isMinimized, setIsMinimized] = React.useState<boolean>(() => {
@@ -32,6 +31,13 @@ export function Sidebar() {
       document.cookie = `sidebar_minimized=${newVal}; path=/; max-age=31536000`
     }
   }
+
+  const { data: user } = useQuery({
+    queryKey: ['session'],
+    queryFn: () => getCurrentUser(),
+  })
+
+  const currentRole = user?.role || 'guest'
 
   const menuItems = [
     {
@@ -67,12 +73,12 @@ export function Sidebar() {
     {
       title: 'Pengguna',
       icon: Users,
-      to: '/pengaturan/users',
-      roles: ['kepala_sekolah', 'admin'],
+      to: '/users',
+      roles: ['tu_admin', 'admin'],
     },
   ]
 
-  const filteredMenu = menuItems.filter(item => item.roles.includes(CURRENT_ROLE))
+  const filteredMenu = menuItems.filter(item => item.roles.includes(currentRole as any))
 
   return (
     <aside className={`border-r border-white/40 bg-white/70 backdrop-blur-xl flex flex-col h-full flex-shrink-0 transition-all duration-300 relative z-20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] ${isMinimized ? 'w-20' : 'w-64'}`}>

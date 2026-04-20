@@ -9,7 +9,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^9.3.4",
     "@hookform/resolvers": "^3.9.1",
     "@libsql/client": "^0.17.2",
     "@tailwindcss/vite": "^4.0.6",
@@ -23,7 +22,6 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/router-plugin": "^1.132.0",
     "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.45.2",
     "lucide-react": "^0.544.0",

@@ -2,8 +2,7 @@ import * as React from 'react'
 import { Sidebar } from './Sidebar'
 import { NavbarBottom } from './NavbarBottom'
 import { NotificationBell } from './NotificationBell'
-import { LogOut, ChevronDown, Package, Search } from 'lucide-react'
-import { CommandMenu } from './CommandMenu'
+import { LogOut, ChevronDown, Package } from 'lucide-react'
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getCurrentUser, logoutUser } from '../../server/functions/auth'
 import { useRouter } from '@tanstack/react-router'
@@ -13,7 +12,6 @@ import { toast } from 'sonner'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [profileOpen, setProfileOpen] = React.useState(false)
-  const [commandOpen, setCommandOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const router = useRouter()
 
@@ -53,8 +51,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* Top Navbar */}
         <header className="h-16 bg-white/70 backdrop-blur-md border-b border-white/40 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10 w-full relative shadow-sm">
           <div className="flex items-center">
-             {/* Mobile Navbar Branding */}
-             <div className="flex items-center gap-2 text-primary-600 font-bold text-lg tracking-tight lg:hidden">
+            {/* Mobile Navbar Branding */}
+            <div className="flex items-center gap-2 text-primary-600 font-bold text-lg tracking-tight lg:hidden">
               <div className="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center">
                 <Package size={18} />
               </div>
@@ -65,31 +63,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </h1>
           </div>
 
-          {/* Central Search Bar - Desktop Only */}
           <div className="hidden md:flex flex-1 justify-center px-4 max-w-2xl">
-            <button 
-              onClick={() => setCommandOpen(true)}
-              className="search-container text-left group"
-            >
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 group-hover:text-primary-500 transition-colors">
-                <Search size={18} />
-              </div>
-              <div className="search-input cursor-pointer flex items-center text-surface-400">
-                Cari barang atau aksi... (⌘K)
-              </div>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded border border-surface-200 bg-white text-[10px] font-medium text-surface-400 group-hover:border-primary-200 transition-colors">
-                <span className="text-xs">⌘</span>K
-              </div>
-            </button>
+            {/* Search bar removed */}
           </div>
-          
-          <CommandMenu open={commandOpen} setOpen={setCommandOpen} />
-          
+
+
           <div className="flex items-center gap-4">
             <NotificationBell />
-            
+
             <div className="relative ml-2 pl-4 border-l border-surface-200">
-              <button 
+              <button
                 onClick={() => setProfileOpen(!profileOpen)}
                 className="flex items-center gap-3 focus:outline-none hover:bg-surface-50 rounded-lg p-1 transition-colors"
                 aria-expanded={profileOpen}
@@ -108,12 +91,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {/* Dropdown Menu */}
               {profileOpen && (
                 <>
-                  <div 
+                  <div
                     className="fixed inset-0 z-40"
                     onClick={() => setProfileOpen(false)}
                   />
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-surface-200 py-1 z-50 transform origin-top-right transition-all">
-                    <button 
+                    <button
                       onClick={() => logoutMutation.mutate({})}
                       disabled={logoutMutation.isPending}
                       className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-danger-600 hover:bg-danger-50 transition-colors text-left disabled:opacity-50"
