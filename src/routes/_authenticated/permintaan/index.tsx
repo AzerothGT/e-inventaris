@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPermintaanList, createPermintaan } from '../../../server/functions/permintaan';
+import { getKategoriList } from '../../../server/functions/kategori';
 import { PermintaanStatusBadge } from '../../../components/permintaan/PermintaanStatusBadge';
 import { PermintaanActionButtons } from '../../../components/permintaan/PermintaanActionButtons';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -30,6 +31,10 @@ export const Route = createFileRoute('/_authenticated/permintaan/')({
         queryKey: ['permintaan'],
         queryFn: () => getPermintaanList(),
       }),
+      context.queryClient.ensureQueryData({
+        queryKey: ['kategori'],
+        queryFn: () => getKategoriList(),
+      }),
     ]);
   },
   component: PermintaanListPage,
@@ -49,6 +54,11 @@ function PermintaanListPage() {
   const { data: permintaanList } = useSuspenseQuery({
     queryKey: ['permintaan'],
     queryFn: () => getPermintaanList(),
+  });
+
+  const { data: kategoriList } = useSuspenseQuery({
+    queryKey: ['kategori'],
+    queryFn: () => getKategoriList(),
   });
 
   const [selectedPermintaanId, setSelectedPermintaanId] = useState<string | null>(null);
@@ -184,6 +194,7 @@ function PermintaanListPage() {
           onSubmit={(data) => createMutation.mutate({ data })} 
           isLoading={createMutation.isPending}
           onCancel={() => setIsAddOpen(false)}
+          kategoriOptions={kategoriList}
         />
       </Dialog>
 

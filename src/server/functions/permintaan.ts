@@ -70,8 +70,25 @@ export const createPermintaan = createServerFn({ method: "POST" })
 export const getPermintaanList = createServerFn({ method: "GET" })
   .handler(async () => {
     const list = await db
-      .select()
+      .select({
+        id: permintaanPengadaan.id,
+        namaBarang: permintaanPengadaan.namaBarang,
+        merek: permintaanPengadaan.merek,
+        kategori: permintaanPengadaan.kategori,
+        jumlah: permintaanPengadaan.jumlah,
+        deskripsi: permintaanPengadaan.deskripsi,
+        prioritas: permintaanPengadaan.prioritas,
+        status: permintaanPengadaan.status,
+        diajukanOleh: permintaanPengadaan.diajukanOleh,
+        targetRuanganId: permintaanPengadaan.targetRuanganId,
+        targetLemari: permintaanPengadaan.targetLemari,
+        kondisiDiterima: permintaanPengadaan.kondisiDiterima,
+        createdAt: permintaanPengadaan.createdAt,
+        requesterName: users.name,
+        requesterRole: users.role,
+      })
       .from(permintaanPengadaan)
+      .leftJoin(users, eq(permintaanPengadaan.diajukanOleh, users.id))
       .orderBy(permintaanPengadaan.createdAt);
 
     return list;

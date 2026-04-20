@@ -20,8 +20,15 @@ interface DetailSection {
   items: DetailItem[];
 }
 
+import { ROLE_DEPARTMENTS, UserRole } from "../../lib/approvals"
+
 export function PermintaanDetail({ data }: PermintaanDetailProps) {
   if (!data) return null;
+
+  const requesterDept = data.requesterRole ? ROLE_DEPARTMENTS[data.requesterRole as UserRole] : null;
+  const olehValue = data.requesterName 
+    ? `${data.requesterName}${requesterDept ? ` (${requesterDept})` : ""}`
+    : "-";
 
   const sections: DetailSection[] = [
     {
@@ -47,7 +54,7 @@ export function PermintaanDetail({ data }: PermintaanDetailProps) {
       icon: <Calendar className="h-4 w-4" />,
       items: [
         { label: "Tanggal Pengajuan", value: data.createdAt ? format(new Date(data.createdAt), "dd MMMM yyyy HH:mm", { locale: id }) : "-" },
-        { label: "Oleh", value: data.requesterName || "-" },
+        { label: "Oleh", value: olehValue },
       ]
     }
   ];

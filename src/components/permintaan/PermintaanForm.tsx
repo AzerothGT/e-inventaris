@@ -7,6 +7,8 @@ import { ClipboardList } from "lucide-react"
 
 const permintaanSchema = z.object({
   namaBarang: z.string().min(1, "Nama barang harus diisi"),
+  merek: z.string().optional(),
+  kategori: z.string().optional(),
   jumlah: z.number().int().min(1, "Jumlah minimal 1"),
   deskripsi: z.string().min(1, "Alasan pengadaan harus diisi"),
   prioritas: z.enum(["rendah", "sedang", "tinggi"]),
@@ -18,12 +20,14 @@ interface PermintaanFormProps {
   onSubmit: SubmitHandler<PermintaanFormData>
   isLoading?: boolean
   onCancel?: () => void
+  kategoriOptions: { id: string; nama: string }[]
 }
 
 export function PermintaanForm({
   onSubmit,
   isLoading,
   onCancel,
+  kategoriOptions,
 }: PermintaanFormProps) {
   const {
     register,
@@ -60,6 +64,32 @@ export function PermintaanForm({
           {errors.namaBarang && (
             <p className="text-xs font-medium text-danger-600">{errors.namaBarang.message}</p>
           )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-surface-700">Merek / Tipe</label>
+            <Input 
+              {...register("merek")} 
+              placeholder="Contoh: Epson / EB-X06"
+              className="hover:border-primary-300 focus:border-primary-500 transition-colors"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-surface-700">Kategori</label>
+            <select
+              {...register("kategori")}
+              className="w-full h-10 px-3 rounded-lg border border-surface-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm transition-all hover:border-primary-300"
+            >
+              <option value="">Pilih Kategori</option>
+              {kategoriOptions.map((k) => (
+                <option key={k.id} value={k.nama}>
+                  {k.nama}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -8,7 +8,8 @@ import {
   FileText,
   Users,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Tag
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getCurrentUser } from '../../server/functions/auth'
@@ -74,6 +75,12 @@ export function Sidebar() {
       title: 'Pengguna',
       icon: Users,
       to: '/users',
+      roles: ['tu_admin', 'admin'],
+    },
+    {
+      title: 'Kategori',
+      icon: Tag,
+      to: '/pengaturan/kategori',
       roles: ['tu_admin', 'admin'],
     },
   ]

@@ -10,6 +10,13 @@ export const users = sqliteTable('users', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
 });
 
+export const kategori = sqliteTable('kategori', {
+  id: text('id').primaryKey(),
+  nama: text('nama').notNull().unique(),
+  deskripsi: text('deskripsi'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
 export const ruangan = sqliteTable('ruangan', {
   id: text('id').primaryKey(),
   kodeRuangan: text('kode_ruangan').notNull().unique(),

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { barangQueries } from '../../../data/barangQueries'
 import { ruanganQueries } from '../../../data/ruanganQueries'
+import { kategoriQueries } from '../../../data/kategoriQueries'
 import { DataTable } from '../../../components/ui/DataTable'
 import { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '../../../components/ui/Badge'
@@ -23,6 +24,7 @@ export const Route = createFileRoute('/_authenticated/barang/')({
     return Promise.all([
       context.queryClient.ensureQueryData(barangQueries.list()),
       context.queryClient.ensureQueryData(ruanganQueries.list()),
+      context.queryClient.ensureQueryData(kategoriQueries.list()),
     ])
   },
   component: BarangListPage,
@@ -36,6 +38,7 @@ function BarangListPage() {
   const queryClient = useQueryClient()
   const { data: items } = useSuspenseQuery(barangQueries.list())
   const { data: rooms } = useSuspenseQuery(ruanganQueries.list())
+  const { data: categories } = useSuspenseQuery(kategoriQueries.list())
 
   const [isAddOpen, setIsAddOpen] = React.useState(false)
   const [editingItem, setEditingItem] = React.useState<any>(null)
@@ -209,6 +212,7 @@ function BarangListPage() {
       <Dialog isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Tambah Barang Baru">
         <BarangForm
           ruanganOptions={rooms}
+          kategoriOptions={categories}
           onSubmit={(data) => createMutation.mutate({ data })}
           onCancel={() => setIsAddOpen(false)}
           isLoading={createMutation.isPending}
@@ -221,6 +225,7 @@ function BarangListPage() {
           <BarangForm
             initialData={editingItem}
             ruanganOptions={rooms}
+            kategoriOptions={categories}
             onSubmit={(data) => updateMutation.mutate({ data: { ...data, id: editingItem.id } })}
             onCancel={() => setEditingItem(null)}
             isLoading={updateMutation.isPending}

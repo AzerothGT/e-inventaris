@@ -18,6 +18,7 @@ import { Route as AuthenticatedRuanganIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedPermintaanIndexRouteImport } from './routes/_authenticated/permintaan/index'
 import { Route as AuthenticatedBarangIndexRouteImport } from './routes/_authenticated/barang/index'
 import { Route as AuthenticatedPermintaanTambahRouteImport } from './routes/_authenticated/permintaan/tambah'
+import { Route as AuthenticatedPengaturanKategoriRouteImport } from './routes/_authenticated/pengaturan/kategori'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -67,12 +68,19 @@ const AuthenticatedPermintaanTambahRoute =
     path: '/permintaan/tambah',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedPengaturanKategoriRoute =
+  AuthenticatedPengaturanKategoriRouteImport.update({
+    id: '/pengaturan/kategori',
+    path: '/pengaturan/kategori',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
   '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/barang/': typeof AuthenticatedBarangIndexRoute
   '/permintaan/': typeof AuthenticatedPermintaanIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
   '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/barang': typeof AuthenticatedBarangIndexRoute
   '/permintaan': typeof AuthenticatedPermintaanIndexRoute
@@ -95,6 +104,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
+  '/_authenticated/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
   '/_authenticated/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
   '/_authenticated/barang/': typeof AuthenticatedBarangIndexRoute
   '/_authenticated/permintaan/': typeof AuthenticatedPermintaanIndexRoute
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/users'
+    | '/pengaturan/kategori'
     | '/permintaan/tambah'
     | '/barang/'
     | '/permintaan/'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/users'
+    | '/pengaturan/kategori'
     | '/permintaan/tambah'
     | '/barang'
     | '/permintaan'
@@ -128,6 +140,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/dashboard'
     | '/_authenticated/users'
+    | '/_authenticated/pengaturan/kategori'
     | '/_authenticated/permintaan/tambah'
     | '/_authenticated/barang/'
     | '/_authenticated/permintaan/'
@@ -205,12 +218,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPermintaanTambahRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/pengaturan/kategori': {
+      id: '/_authenticated/pengaturan/kategori'
+      path: '/pengaturan/kategori'
+      fullPath: '/pengaturan/kategori'
+      preLoaderRoute: typeof AuthenticatedPengaturanKategoriRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
+  AuthenticatedPengaturanKategoriRoute: typeof AuthenticatedPengaturanKategoriRoute
   AuthenticatedPermintaanTambahRoute: typeof AuthenticatedPermintaanTambahRoute
   AuthenticatedBarangIndexRoute: typeof AuthenticatedBarangIndexRoute
   AuthenticatedPermintaanIndexRoute: typeof AuthenticatedPermintaanIndexRoute
@@ -220,6 +241,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
+  AuthenticatedPengaturanKategoriRoute: AuthenticatedPengaturanKategoriRoute,
   AuthenticatedPermintaanTambahRoute: AuthenticatedPermintaanTambahRoute,
   AuthenticatedBarangIndexRoute: AuthenticatedBarangIndexRoute,
   AuthenticatedPermintaanIndexRoute: AuthenticatedPermintaanIndexRoute,

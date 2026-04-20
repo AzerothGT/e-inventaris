@@ -23,6 +23,7 @@ interface BarangFormProps {
   onSubmit: SubmitHandler<BarangFormData>
   onCancel: () => void
   ruanganOptions: { id: string; nama: string }[]
+  kategoriOptions: { id: string; nama: string }[]
   isLoading?: boolean
 }
 
@@ -31,6 +32,7 @@ export function BarangForm({
   onSubmit,
   onCancel,
   ruanganOptions,
+  kategoriOptions,
   isLoading,
 }: BarangFormProps) {
   const {
@@ -65,7 +67,17 @@ export function BarangForm({
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-surface-700">Kategori</label>
-          <Input {...register("kategori")} placeholder="Elektronik" />
+          <select
+            {...register("kategori")}
+            className="w-full h-10 px-3 rounded-lg border border-surface-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+          >
+            <option value="">Pilih Kategori</option>
+            {kategoriOptions.map((k) => (
+              <option key={k.id} value={k.nama}>
+                {k.nama}
+              </option>
+            ))}
+          </select>
           {errors.kategori && (
             <p className="text-xs text-danger-600">{errors.kategori.message}</p>
           )}
