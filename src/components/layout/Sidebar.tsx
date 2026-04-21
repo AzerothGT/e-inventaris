@@ -15,15 +15,14 @@ import { useQuery } from '@tanstack/react-query'
 import { getCurrentUser } from '../../server/functions/auth'
 
 export function Sidebar() {
-  const [isMinimized, setIsMinimized] = React.useState<boolean>(() => {
-    if (typeof document !== 'undefined') {
-      const match = document.cookie.match(/(^| )sidebar_minimized=([^;]+)/)
-      if (match) {
-        return match[2] === 'true'
-      }
+  const [isMinimized, setIsMinimized] = React.useState(true)
+
+  React.useEffect(() => {
+    const match = document.cookie.match(/(^| )sidebar_minimized=([^;]+)/)
+    if (match) {
+      setIsMinimized(match[2] === 'true')
     }
-    return true
-  })
+  }, [])
 
   const toggleSidebar = () => {
     const newVal = !isMinimized

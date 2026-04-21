@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card'
 import { Package, ShoppingCart, CheckCircle, Clock, ArrowRight, User, Tag, Calendar } from 'lucide-react'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -20,6 +21,8 @@ import { QuickActions } from '../../components/dashboard/QuickActions'
 import { OverviewChart } from '../../components/dashboard/OverviewChart'
 
 function Dashboard() {
+  const [greeting, setGreeting] = useState('Selamat Datang')
+
   const { data: user } = useSuspenseQuery({
     queryKey: ['currentUser'],
     queryFn: () => getCurrentUser(),
@@ -40,20 +43,29 @@ function Dashboard() {
     queryFn: () => getApprovalQueue(),
   })
 
-  const getGreeting = () => {
+  useEffect(() => {
     const hour = new Date().getHours()
-    if (hour < 11) return 'Selamat Pagi'
-    if (hour < 15) return 'Selamat Siang'
-    if (hour < 18) return 'Selamat Sore'
-    return 'Selamat Malam'
-  }
+    if (hour < 11) {
+      setGreeting('Selamat Pagi')
+      return
+    }
+    if (hour < 15) {
+      setGreeting('Selamat Siang')
+      return
+    }
+    if (hour < 18) {
+      setGreeting('Selamat Sore')
+      return
+    }
+    setGreeting('Selamat Malam')
+  }, [])
 
   const role = user?.role as any
 
   return (
     <div className="space-y-8 pb-12">
       <PageHeader
-        title={`${getGreeting()},`}
+        title={`${greeting},`}
         gradientTitle={user?.name || 'User'}
         suffix=" 👋"
       />

@@ -15,3 +15,7 @@ todos.json
 *.db
 *.db-shm
 *.db-wal
+
+# Build and Tool Artifacts
+.kilo/
+*.tsbuildinfo
