@@ -75,7 +75,6 @@ function LaporanPage() {
 			<PageHeader
 				title="Laporan"
 				gradientTitle="Sistem"
-				suffix=" 📊"
 			/>
 
 			{/* Stats Overview */}
