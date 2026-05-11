@@ -46,7 +46,7 @@ export function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-surface-500 hover:text-surface-900 hover:bg-surface-100 rounded-lg transition-colors ring-offset-2 focus:ring-2 focus:ring-primary-500 outline-none"
+        className="relative p-2 text-surface-500 hover:text-surface-900 hover:bg-surface-100 rounded-lg transition-colors ring-offset-2 focus:ring-2 focus:ring-primary-500 outline-none cursor-pointer"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
@@ -64,12 +64,12 @@ export function NotificationBell() {
               {unreadCount > 0 && (
                 <button 
                   onClick={() => mutation.mutate({ data: {} })}
-                  className="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
+                  className="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 cursor-pointer"
                 >
                   <Check size={14} /> Tandai semua dibaca
                 </button>
               )}
-              <button onClick={() => setIsOpen(false)} className="text-surface-400 hover:text-surface-600 lg:hidden">
+              <button onClick={() => setIsOpen(false)} className="text-surface-400 hover:text-surface-600 lg:hidden cursor-pointer">
                 <X size={18} />
               </button>
             </div>
@@ -85,7 +85,7 @@ export function NotificationBell() {
                 <div 
                   key={notif.id} 
                   className={cn(
-                    "px-4 py-3 flex flex-col gap-1 transition-colors hover:bg-white/60 relative group",
+                    "px-4 py-3 flex flex-col gap-1 transition-colors hover:bg-white/60 relative group cursor-pointer",
                     !notif.dibaca && "bg-primary-50/30 after:absolute after:left-0 after:top-0 after:bottom-0 after:w-1 after:bg-primary-500"
                   )}
                   onClick={() => !notif.dibaca && mutation.mutate({ data: { id: notif.id } })}
@@ -105,7 +105,7 @@ export function NotificationBell() {
           </div>
           
           <div className="p-3 border-t border-surface-100 bg-surface-50/50 text-center">
-             <button className="text-xs font-semibold text-surface-500 hover:text-primary-600 transition-colors">
+             <button className="text-xs font-semibold text-surface-500 hover:text-primary-600 transition-colors cursor-pointer">
                Lihat Semua Notifikasi
              </button>
           </div>
