@@ -137,7 +137,7 @@ function Dashboard() {
                             <p className="text-xs text-surface-500">Oleh: {item.requesterName} • {item.jumlah} Unit</p>
                           </div>
                         </div>
-                        <div className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border ${STATUS_METADATA[item.status as PermintaanStatus].color}`}>
+                        <div className={`text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider border ${STATUS_METADATA[item.status as PermintaanStatus].color}`}>
                           {STATUS_METADATA[item.status as PermintaanStatus].label}
                         </div>
                       </div>
@@ -214,7 +214,7 @@ function StatCard({ title, value, subtitle, icon, color, highlight, stagger }: a
   return (
     <Card className={`glass-card glass-card-hover lift-card ${stagger}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xs font-bold text-surface-500 uppercase tracking-widest">{title}</CardTitle>
+        <CardTitle className="text-xs font-bold text-surface-500 tracking-widest">{title}</CardTitle>
         <IconBox icon={icon} variant={color} className="shadow-sm" />
       </CardHeader>
       <CardContent>

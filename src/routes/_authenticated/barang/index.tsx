@@ -141,7 +141,7 @@ function BarangListPage() {
 				<DataTableColumnHeader column={column} title="Gedung" />
 			),
 			cell: ({ row }) => (
-				<div className="text-surface-600 uppercase">
+				<div className="text-surface-600">
 					{row.getValue("gedung") || "-"}
 				</div>
 			),
@@ -182,7 +182,7 @@ function BarangListPage() {
 							return "secondary";
 					}
 				};
-				const formatStatus = (s: string) => s.replace("_", " ").toUpperCase();
+				const formatStatus = (s: string) => s.replace("_", " ").toLowerCase();
 
 				return (
 					<Badge variant={getStatusColor(status)}>{formatStatus(status)}</Badge>

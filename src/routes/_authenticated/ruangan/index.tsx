@@ -109,7 +109,7 @@ function RuanganListPage() {
 				<DataTableColumnHeader column={column} title="Gedung" />
 			),
 			cell: ({ row }) => (
-				<div className="text-surface-600 uppercase">
+				<div className="text-surface-600">
 					{row.getValue("gedung")}
 				</div>
 			),

@@ -57,7 +57,7 @@ function LaporanPage() {
 		{
 			key: "status",
 			label: "Kondisi",
-			formatter: (v: string) => v.replace("_", " ").toUpperCase(),
+			formatter: (v: string) => v.replace("_", " ").toLowerCase(),
 		},
 		{ key: "namaRuangan", label: "Ruangan" },
 	];
@@ -70,7 +70,7 @@ function LaporanPage() {
 		{
 			key: "status",
 			label: "Status",
-			formatter: (v: string) => v.replace("_", " ").toUpperCase(),
+			formatter: (v: string) => v.replace("_", " ").toLowerCase(),
 		},
 		{ key: "deskripsi", label: "Deskripsi" },
 		{
@@ -150,7 +150,7 @@ function LaporanPage() {
 						</div>
 
 						<div className="p-4 bg-primary-50/30 rounded-xl border border-primary-100/50">
-							<h4 className="text-xs font-bold text-primary-700 uppercase tracking-wider mb-2">Informasi Ekspor</h4>
+							<h4 className="text-xs font-bold text-primary-700 tracking-wider mb-2">Informasi Ekspor</h4>
 							<ul className="text-xs text-surface-600 space-y-1.5 list-disc list-inside">
 								<li>Total record: <span className="font-bold">{barangList.length}</span> barang</li>
 								<li>Data mencakup: Kode, Nama, Kategori, Kondisi, dan Ruangan</li>
@@ -184,7 +184,7 @@ function LaporanPage() {
 						</div>
 
 						<div className="p-4 bg-primary-50/30 rounded-xl border border-primary-100/50">
-							<h4 className="text-xs font-bold text-primary-700 uppercase tracking-wider mb-2">Informasi Ekspor</h4>
+							<h4 className="text-xs font-bold text-primary-700 tracking-wider mb-2">Informasi Ekspor</h4>
 							<ul className="text-xs text-surface-600 space-y-1.5 list-disc list-inside">
 								<li>Total record: <span className="font-bold">{permintaanList.length}</span> permintaan</li>
 								<li>Data mencakup: Item, Prioritas, Status, dan Tanggal</li>
@@ -203,7 +203,7 @@ function StatCard({ title, value, subtitle, icon, color, stagger }: any) {
 	return (
 		<Card className={`glass-card glass-card-hover lift-card ${stagger}`}>
 			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle className="text-xs font-bold text-surface-50 uppercase tracking-widest">{title}</CardTitle>
+				<CardTitle className="text-xs font-bold text-surface-50 tracking-widest">{title}</CardTitle>
 				<IconBox icon={icon} variant={color} className="shadow-sm" />
 			</CardHeader>
 			<CardContent>
