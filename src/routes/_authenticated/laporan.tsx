@@ -5,7 +5,7 @@ import { getBarangList } from "../../server/functions/barang";
 import { getPermintaanList } from "../../server/functions/permintaan";
 import { getCurrentUser } from "../../server/functions/auth";
 import { PageHeader } from "../../components/ui/PageHeader";
-import { ExportButton } from "../../components/ui/ExportButton";
+
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/Card";
 import {
 	BarChart3,
@@ -44,31 +44,7 @@ function LaporanPage() {
 		queryFn: () => getPermintaanList(),
 	});
 
-	const barangExportColumns = [
-		{ key: "kodeBarang", label: "Kode Barang" },
-		{ key: "nama", label: "Nama Barang" },
-		{ key: "kategori", label: "Kategori" },
-		{ key: "merek", label: "Merek" },
-		{ key: "noSeri", label: "No Seri" },
-		{ key: "tahunPengadaan", label: "Tahun" },
-		{ key: "jumlah", label: "Jumlah" },
-		{ key: "status", label: "Kondisi", formatter: (v: string) => v.replace("_", " ").toUpperCase() },
-		{ key: "namaRuangan", label: "Ruangan" },
-	];
 
-	const permintaanExportColumns = [
-		{ key: "namaBarang", label: "Nama Barang" },
-		{ key: "kategori", label: "Kategori" },
-		{ key: "jumlah", label: "Jumlah" },
-		{ key: "prioritas", label: "Prioritas" },
-		{ key: "status", label: "Status", formatter: (v: string) => v.replace("_", " ").toUpperCase() },
-		{ key: "deskripsi", label: "Deskripsi" },
-		{
-			key: "createdAt",
-			label: "Tanggal Pengajuan",
-			formatter: (v: string) => new Date(v).toLocaleDateString("id-ID")
-		},
-	];
 
 	return (
 		<div className="space-y-8 pb-12">
@@ -128,22 +104,7 @@ function LaporanPage() {
 						</div>
 					</CardHeader>
 					<CardContent className="p-6 space-y-6">
-						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100">
-							<div className="flex items-center gap-3">
-								<FileSpreadsheet className="h-8 w-8 text-success-600" />
-								<div>
-									<p className="text-sm font-bold text-surface-900">Format Spreadsheet</p>
-									<p className="text-[11px] text-surface-500">CSV untuk pengolahan data lanjutan</p>
-								</div>
-							</div>
-							<ExportButton
-								data={barangList}
-								columns={barangExportColumns}
-								filename={`laporan-inventaris-${new Date().toISOString().split('T')[0]}`}
-								title="Laporan Inventaris Barang"
-								subtitle={`Diekspor pada: ${new Date().toLocaleString('id-ID')}`}
-							/>
-						</div>
+
 						<div className="p-4 bg-primary-50/30 rounded-xl border border-primary-100/50">
 							<h4 className="text-xs font-bold text-primary-700 uppercase tracking-wider mb-2">Informasi Ekspor</h4>
 							<ul className="text-xs text-surface-600 space-y-1.5 list-disc list-inside">
@@ -169,22 +130,7 @@ function LaporanPage() {
 						</div>
 					</CardHeader>
 					<CardContent className="p-6 space-y-6">
-						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100">
-							<div className="flex items-center gap-3">
-								<FileText className="h-8 w-8 text-danger-600" />
-								<div>
-									<p className="text-sm font-bold text-surface-900">Dokumen Digital</p>
-									<p className="text-[11px] text-surface-500">PDF untuk arsip dan bukti fisik</p>
-								</div>
-							</div>
-							<ExportButton
-								data={permintaanList}
-								columns={permintaanExportColumns}
-								filename={`laporan-pengadaan-${new Date().toISOString().split('T')[0]}`}
-								title="Laporan Pengadaan Barang"
-								subtitle={`Diekspor pada: ${new Date().toLocaleString('id-ID')}`}
-							/>
-						</div>
+
 						<div className="p-4 bg-warning-50/30 rounded-xl border border-warning-100/50">
 							<h4 className="text-xs font-bold text-warning-700 uppercase tracking-wider mb-2">Informasi Ekspor</h4>
 							<ul className="text-xs text-surface-600 space-y-1.5 list-disc list-inside">

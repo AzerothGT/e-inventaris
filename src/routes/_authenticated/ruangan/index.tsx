@@ -19,7 +19,7 @@ import {
 	deleteRuangan,
 } from "../../../server/functions/ruangan";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { ExportButton } from "../../../components/ui/ExportButton";
+
 import * as React from "react";
 import { TablePageSkeleton } from "../../../components/ui/TablePageSkeleton";
 
@@ -125,12 +125,7 @@ function RuanganListPage() {
 		},
 	];
 
-	const exportColumns = [
-		{ key: "kodeRuangan", label: "Kode Ruangan" },
-		{ key: "nama", label: "Nama Ruangan" },
-		{ key: "tipe", label: "Tipe" },
-		{ key: "gedung", label: "Gedung" },
-	];
+
 
 	return (
 		<div className="space-y-6">
@@ -139,13 +134,7 @@ function RuanganListPage() {
 				gradientTitle="Ruangan"
 				actions={
 					<>
-						<ExportButton
-							data={items}
-							columns={exportColumns}
-							filename="ruangan"
-							title="Daftar Ruangan"
-							subtitle={`Total: ${items.length} ruangan`}
-						/>
+
 						<Button
 							onClick={() => setIsAddOpen(true)}
 							className="glass-button flex items-center gap-2"

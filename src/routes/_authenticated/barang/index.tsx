@@ -22,7 +22,7 @@ import {
 	deleteBarang,
 } from "../../../server/functions/barang";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { ExportButton } from "../../../components/ui/ExportButton";
+
 
 import * as React from "react";
 
@@ -203,20 +203,7 @@ function BarangListPage() {
 		},
 	];
 
-	const exportColumns = [
-		{ key: "kodeBarang", label: "Kode Barang" },
-		{ key: "nama", label: "Nama Barang" },
-		{ key: "kategori", label: "Kategori" },
-		{ key: "merek", label: "Merek" },
-		{ key: "namaRuangan", label: "Ruangan" },
-		{ key: "gedung", label: "Gedung" },
-		{ key: "jumlah", label: "Jumlah" },
-		{
-			key: "status",
-			label: "Status",
-			formatter: (value: string) => value.replace("_", " ").toUpperCase(),
-		},
-	];
+
 
 	return (
 		<div className="space-y-6">
@@ -225,13 +212,7 @@ function BarangListPage() {
 				gradientTitle="Inventaris"
 				actions={
 					<>
-						<ExportButton
-							data={items}
-							columns={exportColumns}
-							filename="inventaris-barang"
-							title="Inventaris Barang"
-							subtitle={`Total: ${items.length} item`}
-						/>
+
 						<Button
 							onClick={() => setIsAddOpen(true)}
 							className="glass-button flex items-center gap-2"

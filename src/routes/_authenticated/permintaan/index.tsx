@@ -21,7 +21,7 @@ import { Dialog } from "../../../components/ui/Dialog";
 import { ApprovalLogTable } from "../../../components/permintaan/ApprovalLogTable";
 import { PermintaanForm } from "../../../components/permintaan/PermintaanForm";
 import { useState } from "react";
-import { ExportButton } from "../../../components/ui/ExportButton";
+
 import { History, ClipboardList, Plus, Eye } from "lucide-react";
 import { PermintaanDetail } from "../../../components/permintaan/PermintaanDetail";
 import { Button } from "../../../components/ui/Button";
@@ -185,24 +185,7 @@ function PermintaanListPage() {
 		},
 	];
 
-	const exportColumns = [
-		{ key: "namaBarang", label: "Nama Barang" },
-		{ key: "merek", label: "Merek" },
-		{ key: "kategori", label: "Kategori" },
-		{ key: "jumlah", label: "Jumlah" },
-		{ key: "prioritas", label: "Prioritas" },
-		{
-			key: "status",
-			label: "Status",
-			formatter: (value: string) => value.replace("_", " ").toUpperCase(),
-		},
-		{ key: "deskripsi", label: "Deskripsi" },
-		{
-			key: "createdAt",
-			label: "Tanggal Pengajuan",
-			formatter: (value: string) => new Date(value).toLocaleDateString("id-ID"),
-		},
-	];
+
 
 	return (
 		<div className="space-y-6">
@@ -211,13 +194,7 @@ function PermintaanListPage() {
 				gradientTitle="Permintaan Barang"
 				actions={
 					<>
-						<ExportButton
-							data={permintaanList || []}
-							columns={exportColumns}
-							filename="permintaan-barang"
-							title="Permintaan Barang"
-							subtitle={`Total: ${permintaanList?.length || 0} permintaan`}
-						/>
+
 						<Button
 							onClick={() => setIsAddOpen(true)}
 							className="glass-button flex items-center gap-2"
