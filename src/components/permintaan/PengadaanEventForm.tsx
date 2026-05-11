@@ -10,6 +10,7 @@ const itemSchema = z.object({
   merek: z.string().optional(),
   kategori: z.string().optional(),
   jumlah: z.number().int().min(1, "Minimal 1"),
+  satuan: z.string().min(1, "Satuan harus diisi"),
   imageUrl: z.string().optional(),
 });
 
@@ -46,7 +47,7 @@ export function PengadaanEventForm({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       prioritas: "sedang",
-      items: [{ namaBarang: "", merek: "", kategori: "", jumlah: 1, imageUrl: "" }],
+      items: [{ namaBarang: "", merek: "", kategori: "", jumlah: 1, satuan: "Unit", imageUrl: "" }],
     },
   });
 
@@ -144,7 +145,7 @@ export function PengadaanEventForm({
               variant="secondary"
               size="sm"
               onClick={() =>
-                append({ namaBarang: "", merek: "", kategori: "", jumlah: 1, imageUrl: "" })
+                append({ namaBarang: "", merek: "", kategori: "", jumlah: 1, satuan: "Unit", imageUrl: "" })
               }
               className="flex items-center gap-1 text-xs"
             >
@@ -194,7 +195,7 @@ export function PengadaanEventForm({
                   )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   <Input
                     {...register(`items.${index}.merek`)}
                     placeholder="Merek / Tipe"
@@ -213,16 +214,20 @@ export function PengadaanEventForm({
                     ))}
                   </select>
 
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      {...register(`items.${index}.jumlah`, {
-                        valueAsNumber: true,
-                      })}
-                      placeholder="Jumlah"
-                      className="hover:border-primary-300 focus:border-primary-500 transition-colors"
-                    />
-                  </div>
+                  <Input
+                    type="number"
+                    {...register(`items.${index}.jumlah`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder="Jumlah"
+                    className="hover:border-primary-300 focus:border-primary-500 transition-colors"
+                  />
+
+                  <Input
+                    {...register(`items.${index}.satuan`)}
+                    placeholder="Satuan (Pcs, Box, etc)"
+                    className="hover:border-primary-300 focus:border-primary-500 transition-colors"
+                  />
                 </div>
 
                 <div className="space-y-2">

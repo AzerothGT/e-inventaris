@@ -149,7 +149,7 @@ export function PengadaanEventDetail({ data }: PengadaanEventDetailProps) {
                     {item.kategori || "-"}
                   </td>
                   <td className="px-4 py-3 text-right font-semibold text-surface-900">
-                    {item.jumlah} unit
+                    {item.jumlah} {item.satuan || "unit"}
                   </td>
                   {data.status === "selesai" && (
                     <>

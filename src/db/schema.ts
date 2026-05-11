@@ -38,6 +38,7 @@ export const barang = sqliteTable('barang', {
   lemari: text('lemari'),
   status: text('status', { enum: ['baik', 'rusak_ringan', 'rusak_berat'] }).notNull(),
   jumlah: integer('jumlah').notNull(),
+  satuan: text('satuan').notNull().default('Unit'),
   imageUrl: text('image_url'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
@@ -96,6 +97,7 @@ export const pengadaanItem = sqliteTable('pengadaan_item', {
   merek: text('merek'),
   kategori: text('kategori'),
   jumlah: integer('jumlah').notNull(),
+  satuan: text('satuan').notNull().default('Unit'),
   // Filled when event is completed (selesai)
   targetRuanganId: text('target_ruangan_id').references(() => ruangan.id),
   targetLemari: text('target_lemari'),

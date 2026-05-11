@@ -38,7 +38,7 @@ export function PermintaanDetail({ data }: PermintaanDetailProps) {
         { label: "Nama Barang", value: data.namaBarang },
         { label: "Merek / Tipe", value: data.merek || "-" },
         { label: "Kategori", value: data.kategori || "-" },
-        { label: "Jumlah", value: `${data.jumlah} Unit` },
+        { label: "Jumlah", value: `${data.jumlah} ${data.satuan || "Unit"}` },
       ]
     },
     {
