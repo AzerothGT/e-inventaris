@@ -199,12 +199,6 @@ function LaporanPage() {
 }
 
 function StatCard({ title, value, subtitle, icon, color, stagger }: any) {
-	const colorMap = {
-		primary: 'bg-primary-100 text-primary-600',
-		warning: 'bg-warning-100 text-warning-600',
-		danger: 'bg-danger-100 text-danger-600',
-		success: 'bg-success-100 text-success-600',
-	}
 
 	return (
 		<Card className={`glass-card glass-card-hover lift-card ${stagger}`}>
