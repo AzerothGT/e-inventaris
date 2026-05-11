@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { Tag, Plus } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { toast } from 'sonner';
+import { IconBox } from '../../../components/ui/IconBox';
 import { TablePageSkeleton } from '../../../components/ui/TablePageSkeleton';
 
 export const Route = createFileRoute('/_authenticated/pengaturan/kategori')({
@@ -88,7 +89,7 @@ function KategoriPage() {
 
       <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
         <div className="flex items-center gap-2 mb-4">
-          <Tag className="h-5 w-5 text-primary-500" />
+          <IconBox icon={Tag} variant="primary" size={20} />
           <h3 className="text-lg font-semibold text-surface-900">Daftar Kategori</h3>
         </div>
 

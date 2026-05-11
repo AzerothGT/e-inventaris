@@ -22,6 +22,7 @@ import {
 	deleteBarang,
 } from "../../../server/functions/barang";
 import { PageHeader } from "../../../components/ui/PageHeader";
+import { IconBox } from "../../../components/ui/IconBox";
 
 
 import * as React from "react";
@@ -226,7 +227,7 @@ function BarangListPage() {
 
 			<div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
 				<div className="flex items-center gap-2 mb-4">
-					<Package className="h-5 w-5 text-primary-500" />
+					<IconBox icon={Package} variant="primary" size={20} />
 					<h3 className="text-lg font-semibold text-surface-900">
 						Semua Barang
 					</h3>

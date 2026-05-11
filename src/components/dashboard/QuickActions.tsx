@@ -1,22 +1,23 @@
 import { Link } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card'
-import { PlusCircle, List, CheckSquare, Package, BarChart3 } from 'lucide-react'
+import { PlusCircle, List, CheckSquare, Package, BarChart3, LucideIcon } from 'lucide-react'
+import { IconBox } from '../ui/IconBox'
 import { UserRole } from '../../lib/approvals'
 
 interface QuickAction {
   title: string
   description: string
-  icon: React.ReactNode
+  icon: LucideIcon
   href: string
   roles: UserRole[] | 'all'
-  variant: 'primary' | 'success' | 'warning' | 'info'
+  variant: 'primary' | 'success' | 'warning' | 'danger' | 'surface'
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
   {
     title: 'Buat Permintaan',
     description: 'Ajukan permintaan pengadaan barang baru',
-    icon: <PlusCircle size={20} />,
+    icon: PlusCircle,
     href: '/permintaan', // Normally this would open a modal, but for now we link to the page
     roles: ['penjaga_lab', 'orang_tu', 'admin'],
     variant: 'primary',
@@ -24,7 +25,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   {
     title: 'Tinjau Persetujuan',
     description: 'Periksa item yang menunggu persetujuan Anda',
-    icon: <CheckSquare size={20} />,
+    icon: CheckSquare,
     href: '/permintaan',
     roles: ['kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     variant: 'warning',
@@ -32,7 +33,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   {
     title: 'Proses Pembelian',
     description: 'Kelola item yang siap dibeli',
-    icon: <Package size={20} />,
+    icon: Package,
     href: '/permintaan',
     roles: ['tu_admin', 'admin'],
     variant: 'success',
@@ -40,15 +41,15 @@ const QUICK_ACTIONS: QuickAction[] = [
   {
     title: 'Daftar Barang',
     description: 'Lihat dan kelola inventaris sekolah',
-    icon: <List size={20} />,
+    icon: List,
     href: '/barang',
     roles: 'all',
-    variant: 'info',
+    variant: 'surface',
   },
   {
     title: 'Laporan Sistem',
     description: 'Lihat statistik dan laporan pengadaan',
-    icon: <BarChart3 size={20} />,
+    icon: BarChart3,
     href: '/dashboard',
     roles: ['admin', 'kepala_sekolah'],
     variant: 'primary',
@@ -61,10 +62,11 @@ export function QuickActions({ role }: { role: UserRole }) {
   )
 
   const variantStyles = {
-    primary: 'bg-primary-50 text-primary-600 border-primary-100 hover:bg-primary-100',
-    success: 'bg-success-50 text-success-600 border-success-100 hover:bg-success-100',
-    warning: 'bg-warning-50 text-warning-600 border-warning-100 hover:bg-warning-100',
-    info: 'bg-surface-50 text-surface-600 border-surface-100 hover:bg-surface-100',
+    primary: 'bg-primary-50/50 hover:bg-primary-50 border-primary-100/50',
+    success: 'bg-success-50/50 hover:bg-success-50 border-success-100/50',
+    warning: 'bg-warning-50/50 hover:bg-warning-50 border-warning-100/50',
+    danger: 'bg-danger-50/50 hover:bg-danger-50 border-danger-100/50',
+    surface: 'bg-surface-50/50 hover:bg-surface-50 border-surface-100/50',
   }
 
   return (
@@ -79,12 +81,10 @@ export function QuickActions({ role }: { role: UserRole }) {
             to={action.href}
             className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 group ${variantStyles[action.variant]}`}
           >
-            <div className={`p-2 rounded-lg bg-white shadow-sm group-hover:scale-110 transition-transform`}>
-              {action.icon}
-            </div>
+            <IconBox icon={action.icon} variant={action.variant} size={20} className="shadow-sm group-hover:scale-110" />
             <div className="text-left">
-              <p className="text-sm font-bold leading-none mb-1">{action.title}</p>
-              <p className="text-[10px] opacity-80 leading-tight">{action.description}</p>
+              <p className="text-sm font-bold text-surface-900 leading-none mb-1">{action.title}</p>
+              <p className="text-[10px] text-surface-500 leading-tight">{action.description}</p>
             </div>
           </Link>
         ))}

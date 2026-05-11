@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card'
 import { Package, ShoppingCart, CheckCircle, Clock, ArrowRight, User, Tag, Calendar } from 'lucide-react'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { IconBox } from '../../components/ui/IconBox'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { getCurrentUser } from '../../server/functions/auth'
 import { getDashboardStats, getRecentActivity, getApprovalQueue } from '../../server/functions/dashboard'
@@ -76,7 +77,7 @@ function Dashboard() {
           title="Total Barang"
           value={stats.totalBarang}
           subtitle="Inventaris tersedia"
-          icon={<Package className="h-5 w-5" />}
+          icon={Package}
           color="primary"
           stagger="stagger-1"
         />
@@ -84,7 +85,7 @@ function Dashboard() {
           title={role === 'penjaga_lab' ? "Permintaan Saya" : "Total Permintaan"}
           value={role === 'penjaga_lab' ? stats.pendingAction : stats.activeRequests}
           subtitle={role === 'penjaga_lab' ? "Sedang diproses" : "Menunggu tindakan"}
-          icon={<ShoppingCart className="h-5 w-5" />}
+          icon={ShoppingCart}
           color="warning"
           stagger="stagger-2"
         />
@@ -92,7 +93,7 @@ function Dashboard() {
           title={role === 'penjaga_lab' ? "Selesai" : "Persetujuan Saya"}
           value={role === 'penjaga_lab' ? stats.completedMonth : stats.pendingAction}
           subtitle="Perlu perhatian"
-          icon={<Clock className="h-5 w-5" />}
+          icon={Clock}
           color="danger"
           highlight={!['penjaga_lab', 'admin'].includes(role) && stats.pendingAction > 0}
           stagger="stagger-3"
@@ -101,7 +102,7 @@ function Dashboard() {
           title="Update Sistem"
           value={recentActivity.length}
           subtitle="Aktivitas hari ini"
-          icon={<CheckCircle className="h-5 w-5" />}
+          icon={CheckCircle}
           color="success"
           stagger="stagger-4"
         />
@@ -130,9 +131,7 @@ function Dashboard() {
                     <div key={item.id} className="p-4 hover:bg-surface-50/50 transition-colors group">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-surface-100 text-surface-600 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors`}>
-                            <Tag size={18} />
-                          </div>
+                          <IconBox icon={Tag} variant="surface" size={18} className="group-hover:bg-primary-50 group-hover:text-primary-600" />
                           <div>
                             <h4 className="font-semibold text-sm text-surface-900">{item.namaBarang}</h4>
                             <p className="text-xs text-surface-500">Oleh: {item.requesterName} • {item.jumlah} Unit</p>
@@ -178,9 +177,7 @@ function Dashboard() {
                 {recentActivity.map((activity: any) => (
                   <div key={activity.id} className="p-4 flex gap-3 hover:bg-surface-50/50 transition-colors">
                     <div className="flex-shrink-0 mt-1">
-                      <div className="w-8 h-8 rounded-full bg-surface-100 flex items-center justify-center text-surface-600">
-                        <User size={14} />
-                      </div>
+                      <IconBox icon={User} variant="surface" size={14} className="w-8 h-8 rounded-full" />
                     </div>
                     <div className="space-y-1 min-w-0">
                       <p className="text-xs text-surface-900 leading-relaxed">
@@ -214,20 +211,11 @@ function Dashboard() {
 }
 
 function StatCard({ title, value, subtitle, icon, color, highlight, stagger }: any) {
-  const colorMap = {
-    primary: 'bg-primary-100 text-primary-600',
-    warning: 'bg-warning-100 text-warning-600',
-    danger: 'bg-danger-100 text-danger-600',
-    success: 'bg-success-100 text-success-600',
-  }
-
   return (
     <Card className={`glass-card glass-card-hover lift-card ${stagger}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xs font-bold text-surface-500 uppercase tracking-widest">{title}</CardTitle>
-        <div className={`w-10 h-10 rounded-xl ${colorMap[color as keyof typeof colorMap]} flex items-center justify-center shadow-sm`}>
-          {icon}
-        </div>
+        <IconBox icon={icon} variant={color} className="shadow-sm" />
       </CardHeader>
       <CardContent>
         <div className={`text-4xl font-black ${highlight ? 'text-danger-600 animate-pulse' : 'text-surface-900'}`}>

@@ -20,6 +20,7 @@ import { PageHeader } from "../../../components/ui/PageHeader";
 import { Dialog } from "../../../components/ui/Dialog";
 import { ApprovalLogTable } from "../../../components/permintaan/ApprovalLogTable";
 import { PermintaanForm } from "../../../components/permintaan/PermintaanForm";
+import { IconBox } from "../../../components/ui/IconBox";
 import { useState } from "react";
 
 import { History, ClipboardList, Plus, Eye } from "lucide-react";
@@ -208,7 +209,7 @@ function PermintaanListPage() {
 
 			<div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
 				<div className="flex items-center gap-2 mb-4">
-					<ClipboardList className="h-5 w-5 text-primary-500" />
+					<IconBox icon={ClipboardList} variant="primary" size={20} />
 					<h3 className="text-lg font-semibold text-surface-900">
 						Semua Permintaan
 					</h3>

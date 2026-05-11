@@ -18,6 +18,7 @@ import {
 	Archive
 } from "lucide-react";
 import { DashboardSkeleton } from "../../components/dashboard/DashboardSkeleton";
+import { IconBox } from "../../components/ui/IconBox";
 
 export const Route = createFileRoute("/_authenticated/laporan")({
 	component: LaporanPage,
@@ -94,7 +95,7 @@ function LaporanPage() {
 					title="Total Barang"
 					value={stats.totalBarang}
 					subtitle="Item terdaftar"
-					icon={<Package className="h-5 w-5" />}
+					icon={Package}
 					color="primary"
 					stagger="stagger-1"
 				/>
@@ -102,7 +103,7 @@ function LaporanPage() {
 					title="Permintaan Aktif"
 					value={stats.activeRequests}
 					subtitle="Dalam proses"
-					icon={<ShoppingCart className="h-5 w-5" />}
+					icon={ShoppingCart}
 					color="warning"
 					stagger="stagger-2"
 				/>
@@ -110,7 +111,7 @@ function LaporanPage() {
 					title="Persetujuan"
 					value={stats.pendingAction}
 					subtitle="Perlu tindakan"
-					icon={<BarChart3 className="h-5 w-5" />}
+					icon={BarChart3}
 					color="danger"
 					stagger="stagger-3"
 				/>
@@ -118,7 +119,7 @@ function LaporanPage() {
 					title="Tuntas"
 					value={stats.completedMonth}
 					subtitle="Bulan ini"
-					icon={<Archive className="h-5 w-5" />}
+					icon={Archive}
 					color="success"
 					stagger="stagger-4"
 				/>
@@ -129,9 +130,7 @@ function LaporanPage() {
 					<CardContent className="p-6 space-y-6">
 						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
 							<div className="flex items-center gap-3">
-								<div className="p-2 rounded-lg bg-primary-100 text-primary-600">
-									<Archive size={20} />
-								</div>
+								<IconBox icon={Archive} variant="primary" />
 								<div>
 									<h3 className="font-semibold tracking-tight text-lg text-surface-900">
 										Laporan Inventaris
@@ -165,9 +164,7 @@ function LaporanPage() {
 					<CardContent className="p-6 space-y-6">
 						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
 							<div className="flex items-center gap-3">
-								<div className="p-2 rounded-lg bg-warning-100 text-warning-600">
-									<ClipboardList size={20} />
-								</div>
+								<IconBox icon={ClipboardList} variant="warning" />
 								<div>
 									<h3 className="font-semibold tracking-tight text-lg text-surface-900">
 										Laporan Pengadaan
@@ -213,9 +210,7 @@ function StatCard({ title, value, subtitle, icon, color, stagger }: any) {
 		<Card className={`glass-card glass-card-hover lift-card ${stagger}`}>
 			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 				<CardTitle className="text-xs font-bold text-surface-50 uppercase tracking-widest">{title}</CardTitle>
-				<div className={`w-10 h-10 rounded-xl ${colorMap[color as keyof typeof colorMap]} flex items-center justify-center shadow-sm`}>
-					{icon}
-				</div>
+				<IconBox icon={icon} variant={color} className="shadow-sm" />
 			</CardHeader>
 			<CardContent>
 				<div className="text-4xl font-black text-surface-900">
