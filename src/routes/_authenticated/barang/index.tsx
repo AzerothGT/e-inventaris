@@ -135,6 +135,17 @@ function BarangListPage() {
 			),
 		},
 		{
+			accessorKey: "gedung",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Gedung" />
+			),
+			cell: ({ row }) => (
+				<div className="text-surface-600 uppercase">
+					{row.getValue("gedung") || "-"}
+				</div>
+			),
+		},
+		{
 			accessorKey: "jumlah",
 			header: ({ column }) => (
 				<DataTableColumnHeader
@@ -198,6 +209,7 @@ function BarangListPage() {
 		{ key: "kategori", label: "Kategori" },
 		{ key: "merek", label: "Merek" },
 		{ key: "namaRuangan", label: "Ruangan" },
+		{ key: "gedung", label: "Gedung" },
 		{ key: "jumlah", label: "Jumlah" },
 		{
 			key: "status",

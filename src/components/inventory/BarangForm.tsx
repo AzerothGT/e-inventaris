@@ -22,7 +22,7 @@ interface BarangFormProps {
   initialData?: Partial<BarangFormData>
   onSubmit: SubmitHandler<BarangFormData>
   onCancel: () => void
-  ruanganOptions: { id: string; nama: string }[]
+  ruanganOptions: { id: string; nama: string; gedung?: string | null }[]
   kategoriOptions: { id: string; nama: string }[]
   isLoading?: boolean
 }
@@ -109,7 +109,7 @@ export function BarangForm({
             <option value="">Pilih Ruangan</option>
             {ruanganOptions.map((r) => (
               <option key={r.id} value={r.id}>
-                {r.nama}
+                {r.nama} {r.gedung ? `(${r.gedung})` : ""}
               </option>
             ))}
           </select>

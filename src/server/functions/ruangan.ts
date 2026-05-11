@@ -23,6 +23,7 @@ export const createRuangan = createServerFn({ method: 'POST' })
     kodeRuangan: z.string().min(1, 'Kode ruangan harus diisi'),
     nama: z.string().min(1, 'Nama ruangan harus diisi'),
     tipe: z.string().min(1, 'Tipe ruangan harus diisi'),
+    gedung: z.string().min(1, 'Gedung harus diisi'),
   }))
   .handler(async ({ data }) => {
     const newRuangan = {
@@ -30,6 +31,7 @@ export const createRuangan = createServerFn({ method: 'POST' })
       kodeRuangan: data.kodeRuangan,
       nama: data.nama,
       tipe: data.tipe,
+      gedung: data.gedung,
       createdAt: new Date(),
     };
     
@@ -44,6 +46,7 @@ export const updateRuangan = createServerFn({ method: 'POST' })
     kodeRuangan: z.string().min(1, 'Kode ruangan harus diisi'),
     nama: z.string().min(1, 'Nama ruangan harus diisi'),
     tipe: z.string().min(1, 'Tipe ruangan harus diisi'),
+    gedung: z.string().min(1, 'Gedung harus diisi'),
   }))
   .handler(async ({ data }) => {
     const { id, ...updateData } = data;

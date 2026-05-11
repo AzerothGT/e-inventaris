@@ -22,6 +22,7 @@ export const ruangan = sqliteTable('ruangan', {
   kodeRuangan: text('kode_ruangan').notNull().unique(),
   nama: text('nama').notNull(),
   tipe: text('tipe').notNull(),
+  gedung: text('gedung'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 

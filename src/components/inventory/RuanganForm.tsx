@@ -9,6 +9,7 @@ const ruanganSchema = z.object({
   kodeRuangan: z.string().min(1, "Kode ruangan harus diisi"),
   nama: z.string().min(1, "Nama ruangan harus diisi"),
   tipe: z.string().min(1, "Tipe ruangan harus diisi"),
+  gedung: z.string().min(1, "Gedung harus diisi"),
 })
 
 type RuanganFormData = z.infer<typeof ruanganSchema>
@@ -56,6 +57,13 @@ export function RuanganForm({
         <Input {...register("tipe")} placeholder="Laboratorium" />
         {errors.tipe && (
           <p className="text-xs text-danger-600">{errors.tipe.message}</p>
+        )}
+      </div>
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-surface-700">Gedung</label>
+        <Input {...register("gedung")} placeholder="Gedung A" />
+        {errors.gedung && (
+          <p className="text-xs text-danger-600">{errors.gedung.message}</p>
         )}
       </div>
 

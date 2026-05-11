@@ -103,6 +103,17 @@ function RuanganListPage() {
 			),
 		},
 		{
+			accessorKey: "gedung",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Gedung" />
+			),
+			cell: ({ row }) => (
+				<div className="text-surface-600 uppercase">
+					{row.getValue("gedung")}
+				</div>
+			),
+		},
+		{
 			id: "actions",
 			cell: ({ row }) => (
 				<DataTableRowActions
@@ -118,6 +129,7 @@ function RuanganListPage() {
 		{ key: "kodeRuangan", label: "Kode Ruangan" },
 		{ key: "nama", label: "Nama Ruangan" },
 		{ key: "tipe", label: "Tipe" },
+		{ key: "gedung", label: "Gedung" },
 	];
 
 	return (

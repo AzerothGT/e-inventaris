@@ -25,6 +25,7 @@ export const getBarangList = createServerFn({ method: "GET" }).handler(
 			createdAt: row.barang.createdAt,
 			ruanganId: row.barang.ruanganId,
 			namaRuangan: row.ruangan?.nama ?? null,
+			gedung: row.ruangan?.gedung ?? null,
 		}));
 	},
 );
