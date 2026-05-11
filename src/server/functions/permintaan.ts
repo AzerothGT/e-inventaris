@@ -86,9 +86,11 @@ export const getPermintaanList = createServerFn({ method: "GET" })
         createdAt: permintaanPengadaan.createdAt,
         requesterName: users.name,
         requesterRole: users.role,
+        namaRuangan: ruangan.nama,
       })
       .from(permintaanPengadaan)
       .leftJoin(users, eq(permintaanPengadaan.diajukanOleh, users.id))
+      .leftJoin(ruangan, eq(permintaanPengadaan.targetRuanganId, ruangan.id))
       .orderBy(permintaanPengadaan.createdAt);
 
     return list;
@@ -147,9 +149,15 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
     if (data.kondisiDiterima) updateData.kondisiDiterima = data.kondisiDiterima;
 
     // Handle "selesai" - Create Inventory Item or Update Existing
+    let targetRoomName = "";
     if (data.status === 'selesai') {
       if (!data.targetRuanganId || !data.kondisiDiterima) {
         throw new Error("Data inventory (ruangan & kondisi) harus diisi untuk menyelesaikan permintaan");
+      }
+
+      const [targetRoom] = await db.select().from(ruangan).where(eq(ruangan.id, data.targetRuanganId)).limit(1);
+      if (targetRoom) {
+        targetRoomName = targetRoom.nama;
       }
 
       // Check if item already exists with the same metadata (Nama, Merek, Ruangan, Status, Lemari)
@@ -210,17 +218,14 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
       action: `Update Status ke ${data.status.replace('_', ' ')}`,
       previousStatus: permintaan.status,
       newStatus: data.status,
-      catatan: data.catatan || (data.status === 'selesai' ? `Barang diterima di ${data.targetRuanganId}` : undefined),
+      catatan: data.catatan || (data.status === 'selesai' ? `Barang diterima di ${targetRoomName || data.targetRuanganId}` : undefined),
       createdAt: new Date(),
     });
 
     // Notify original requester
     let locationPesan = "";
-    if (data.status === 'selesai' && data.targetRuanganId) {
-      const [targetRoom] = await db.select().from(ruangan).where(eq(ruangan.id, data.targetRuanganId)).limit(1);
-      if (targetRoom) {
-        locationPesan = ` di ${targetRoom.nama}`;
-      }
+    if (data.status === 'selesai' && targetRoomName) {
+      locationPesan = ` di ${targetRoomName}`;
     }
 
     const newStatusLabel = STATUS_METADATA[data.status as PermintaanStatus].label;

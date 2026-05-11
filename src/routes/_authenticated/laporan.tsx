@@ -72,6 +72,8 @@ function LaporanPage() {
 			label: "Status",
 			formatter: (v: string) => v.replace("_", " ").toLowerCase(),
 		},
+		{ key: "namaRuangan", label: "Ruangan" },
+		{ key: "targetLemari", label: "Posisi" },
 		{ key: "deskripsi", label: "Deskripsi" },
 		{
 			key: "createdAt",
