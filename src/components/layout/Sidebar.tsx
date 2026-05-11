@@ -44,19 +44,19 @@ export function Sidebar() {
       title: 'Dashboard',
       icon: LayoutDashboard,
       to: '/dashboard',
-      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Barang',
       icon: Package,
       to: '/barang',
-      roles: ['tu_admin', 'penjaga_lab', 'orang_tu', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
+      roles: ['tu_admin', 'penjaga_lab', 'orang_tu', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengajuan',
       icon: FilePen,
       to: '/permintaan',
-      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Gudang',
@@ -68,7 +68,7 @@ export function Sidebar() {
       title: 'Laporan',
       icon: FileText,
       to: '/laporan',
-      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
+      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengguna',

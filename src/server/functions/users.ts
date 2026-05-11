@@ -56,7 +56,7 @@ export const createUser = createServerFn({ method: "POST" })
       username: z.string().min(3, "Username minimal 3 karakter"),
       password: z.string().min(6, "Password minimal 6 karakter"),
       name: z.string().min(1, "Nama harus diisi"),
-      role: z.enum(['admin', 'kaprog', 'penjaga_lab', 'orang_tu', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'tu_admin']),
+      role: z.enum(['admin', 'kaprog', 'penjaga_lab', 'orang_tu', 'wakasek', 'kepala_sekolah', 'tu_admin']),
     })
   )
   .handler(async ({ data }) => {
@@ -86,7 +86,7 @@ export const updateUser = createServerFn({ method: "POST" })
       id: z.string(),
       username: z.string().min(3, "Username minimal 3 karakter"),
       name: z.string().min(1, "Nama harus diisi"),
-      role: z.enum(['admin', 'kaprog', 'penjaga_lab', 'orang_tu', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'tu_admin']),
+      role: z.enum(['admin', 'kaprog', 'penjaga_lab', 'orang_tu', 'wakasek', 'kepala_sekolah', 'tu_admin']),
     })
   )
   .handler(async ({ data }) => {

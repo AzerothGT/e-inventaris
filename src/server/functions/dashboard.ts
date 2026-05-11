@@ -35,7 +35,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
         statusToWatch = ['menunggu_kaprog', 'menunggu_wakasek', 'menunggu_kepsek', 'disetujui', 'proses_pembelian'];
       } else if (role === 'kaprog') {
         statusToWatch = ['menunggu_kaprog'];
-      } else if (role === 'wakasek_kurikulum' || role === 'wakasek_kesiswaan') {
+      } else if (role === 'wakasek') {
         statusToWatch = ['menunggu_wakasek'];
       } else if (role === 'kepala_sekolah') {
         statusToWatch = ['menunggu_kepsek'];
@@ -132,7 +132,7 @@ export const getApprovalQueue = createServerFn({ method: "GET" })
       statusToWatch = ['menunggu_kaprog', 'menunggu_wakasek', 'menunggu_kepsek', 'disetujui', 'proses_pembelian'];
     } else if (role === 'kaprog') {
       statusToWatch = ['menunggu_kaprog'];
-    } else if (role === 'wakasek_kurikulum' || role === 'wakasek_kesiswaan') {
+    } else if (role === 'wakasek') {
       statusToWatch = ['menunggu_wakasek'];
     } else if (role === 'kepala_sekolah') {
       statusToWatch = ['menunggu_kepsek'];

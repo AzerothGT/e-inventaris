@@ -9,7 +9,7 @@ const userSchema = z.object({
   username: z.string().min(3, "Username minimal 3 karakter"),
   password: z.string().min(6, "Password minimal 6 karakter").optional().or(z.literal("")),
   name: z.string().min(1, "Nama harus diisi"),
-  role: z.enum(['admin', 'kaprog', 'penjaga_lab', 'orang_tu', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'tu_admin']),
+  role: z.enum(['admin', 'kaprog', 'penjaga_lab', 'orang_tu', 'wakasek', 'kepala_sekolah', 'tu_admin']),
 })
 
 type UserFormData = z.infer<typeof userSchema>

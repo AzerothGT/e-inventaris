@@ -26,7 +26,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     description: 'Periksa item yang menunggu persetujuan Anda',
     icon: <CheckSquare size={20} />,
     href: '/permintaan',
-    roles: ['kaprog', 'wakasek_kurikulum', 'wakasek_kesiswaan', 'kepala_sekolah', 'admin'],
+    roles: ['kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     variant: 'warning',
   },
   {

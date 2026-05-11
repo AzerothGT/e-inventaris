@@ -12,8 +12,7 @@ export type UserRole =
   | 'kaprog'
   | 'penjaga_lab'
   | 'orang_tu'
-  | 'wakasek_kurikulum'
-  | 'wakasek_kesiswaan'
+  | 'wakasek'
   | 'kepala_sekolah'
   | 'tu_admin';
 
@@ -22,8 +21,7 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   kaprog: 'Kepala Program',
   penjaga_lab: 'Penjaga Lab',
   orang_tu: 'Staf Tata Usaha',
-  wakasek_kurikulum: 'Wakasek Kurikulum',
-  wakasek_kesiswaan: 'Wakasek Kesiswaan',
+  wakasek: 'Wakasek',
   kepala_sekolah: 'Kepala Sekolah',
   tu_admin: 'Admin Tata Usaha',
 };
@@ -33,8 +31,7 @@ export const ROLE_DEPARTMENTS: Record<UserRole, string> = {
   kaprog: 'Kepala Program',
   penjaga_lab: 'Penjaga Lab',
   orang_tu: 'Staf Tata Usaha',
-  wakasek_kurikulum: 'Wakasek Kurikulum',
-  wakasek_kesiswaan: 'Wakasek Kesiswaan',
+  wakasek: 'Wakasek',
   kepala_sekolah: 'Kepala Sekolah',
   tu_admin: 'Admin Tata Usaha',
 };
@@ -78,7 +75,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Setujui (Wakasek)',
     from: 'menunggu_wakasek',
     to: 'menunggu_kepsek',
-    roles: ['wakasek_kurikulum', 'wakasek_kesiswaan', 'admin'],
+    roles: ['wakasek', 'admin'],
     variant: 'success',
   },
   {
@@ -86,7 +83,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Tolak',
     from: 'menunggu_wakasek',
     to: 'ditolak',
-    roles: ['wakasek_kurikulum', 'wakasek_kesiswaan', 'admin'],
+    roles: ['wakasek', 'admin'],
     variant: 'destructive',
     requiresReason: true,
   },

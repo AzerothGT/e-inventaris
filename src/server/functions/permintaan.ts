@@ -232,7 +232,7 @@ export const updatePermintaanStatus = createServerFn({ method: "POST" })
 
     // Notify next approvers if applicable
     if (data.status === 'menunggu_wakasek') {
-      await notifyRoles(['wakasek_kurikulum', 'wakasek_kesiswaan', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Wakasek`);
+      await notifyRoles(['wakasek', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Wakasek`);
     } else if (data.status === 'menunggu_kepsek') {
       await notifyRoles(['kepala_sekolah', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Kepsek`);
     } else if (data.status === 'disetujui') {
