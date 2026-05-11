@@ -125,21 +125,22 @@ function LaporanPage() {
 			</div>
 
 			<div className="grid gap-6 lg:grid-cols-2">
-				{/* Inventory Report Section */}
 				<Card className="glass-card shadow-sm border-surface-200 stagger-5 overflow-hidden">
-					<CardHeader className="border-b border-surface-100 bg-surface-50/30">
-						<div className="flex items-center gap-3">
-							<div className="p-2 rounded-lg bg-primary-100 text-primary-600">
-								<Archive size={20} />
-							</div>
-							<div>
-								<CardTitle className="text-lg">Laporan Inventaris</CardTitle>
-								<p className="text-xs text-surface-500 mt-1">Ekspor seluruh data barang yang tersedia</p>
-							</div>
-						</div>
-					</CardHeader>
 					<CardContent className="p-6 space-y-6">
-						<div className="flex items-center justify-end p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
+						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
+							<div className="flex items-center gap-3">
+								<div className="p-2 rounded-lg bg-primary-100 text-primary-600">
+									<Archive size={20} />
+								</div>
+								<div>
+									<h3 className="font-semibold tracking-tight text-lg text-surface-900">
+										Laporan Inventaris
+									</h3>
+									<p className="text-xs text-surface-500 mt-1">
+										Ekspor seluruh data barang yang tersedia
+									</p>
+								</div>
+							</div>
 							<ExportButton
 								data={barangList}
 								columns={barangExportColumns}
@@ -160,21 +161,22 @@ function LaporanPage() {
 					</CardContent>
 				</Card>
 
-				{/* Procurement Report Section */}
 				<Card className="glass-card shadow-sm border-surface-200 stagger-6 overflow-hidden">
-					<CardHeader className="border-b border-surface-100 bg-surface-50/30">
-						<div className="flex items-center gap-3">
-							<div className="p-2 rounded-lg bg-warning-100 text-warning-600">
-								<ClipboardList size={20} />
-							</div>
-							<div>
-								<CardTitle className="text-lg">Laporan Pengadaan</CardTitle>
-								<p className="text-xs text-surface-500 mt-1">Ekspor riwayat permintaan barang</p>
-							</div>
-						</div>
-					</CardHeader>
 					<CardContent className="p-6 space-y-6">
-						<div className="flex items-center justify-end p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
+						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
+							<div className="flex items-center gap-3">
+								<div className="p-2 rounded-lg bg-warning-100 text-warning-600">
+									<ClipboardList size={20} />
+								</div>
+								<div>
+									<h3 className="font-semibold tracking-tight text-lg text-surface-900">
+										Laporan Pengadaan
+									</h3>
+									<p className="text-xs text-surface-500 mt-1">
+										Ekspor riwayat permintaan barang
+									</p>
+								</div>
+							</div>
 							<ExportButton
 								data={permintaanList}
 								columns={permintaanExportColumns}
