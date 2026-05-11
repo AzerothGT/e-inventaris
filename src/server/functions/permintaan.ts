@@ -1,9 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "../../db";
-import { permintaanPengadaan, barang, approvalLogs, users, notifikasi, ruangan } from "../../db/schema";
+import {
+  pengadaanEvent,
+  pengadaanItem,
+  barang,
+  approvalLogs,
+  users,
+  notifikasi,
+} from "../../db/schema";
 import { getAuthSession } from "../../lib/auth";
 import { z } from "zod";
-import { isValidTransition, PermintaanStatus, UserRole, STATUS_METADATA } from "../../lib/approvals";
+import {
+  isValidTransition,
+  PermintaanStatus,
+  UserRole,
+  STATUS_METADATA,
+} from "../../lib/approvals";
 import { eq, desc, inArray, and } from "drizzle-orm";
 
 async function sendNotification(userId: string, tipe: string, pesan: string) {
@@ -18,238 +30,297 @@ async function sendNotification(userId: string, tipe: string, pesan: string) {
 }
 
 async function notifyRoles(roles: string[], tipe: string, pesan: string) {
-  const targetUsers = await db.select().from(users).where(inArray(users.role, roles as any));
+  const targetUsers = await db
+    .select()
+    .from(users)
+    .where(inArray(users.role, roles as any));
   for (const user of targetUsers) {
     await sendNotification(user.id, tipe, pesan);
   }
 }
 
-export const createPermintaan = createServerFn({ method: "POST" })
+// ─── Create Event ─────────────────────────────────────────────────────────────
+
+export const createPengadaanEvent = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
-      namaBarang: z.string().min(1, "Nama barang harus diisi"),
-      merek: z.string().optional(),
-      kategori: z.string().optional(),
-      jumlah: z.number().int().min(1, "Jumlah minimal 1"),
-      deskripsi: z.string().min(1, "Alasan harus diisi"),
+      namaEvent: z.string().min(1, "Nama event harus diisi"),
+      deskripsi: z.string().min(1, "Deskripsi harus diisi"),
       prioritas: z.enum(["rendah", "sedang", "tinggi"]),
+      items: z
+        .array(
+          z.object({
+            namaBarang: z.string().min(1, "Nama barang harus diisi"),
+            merek: z.string().optional(),
+            kategori: z.string().optional(),
+            jumlah: z.number().int().min(1, "Jumlah minimal 1"),
+          })
+        )
+        .min(1, "Minimal 1 item harus ditambahkan"),
     })
   )
   .handler(async ({ data }) => {
     const session = await getAuthSession();
-    if (!session) {
-      throw new Error("Anda harus login untuk melakukan permintaan");
-    }
+    if (!session) throw new Error("Anda harus login untuk melakukan permintaan");
 
-    const newPermintaan = {
-      id: crypto.randomUUID(),
-      ...data,
-      status: "menunggu_kaprog" as const,
+    const eventId = crypto.randomUUID();
+
+    await db.insert(pengadaanEvent).values({
+      id: eventId,
+      namaEvent: data.namaEvent,
+      deskripsi: data.deskripsi,
+      prioritas: data.prioritas,
+      status: "menunggu_kaprog",
       diajukanOleh: session.id,
       createdAt: new Date(),
-    };
+    });
 
-    await db.insert(permintaanPengadaan).values(newPermintaan);
+    await db.insert(pengadaanItem).values(
+      data.items.map((item) => ({
+        id: crypto.randomUUID(),
+        eventId,
+        namaBarang: item.namaBarang,
+        merek: item.merek,
+        kategori: item.kategori,
+        jumlah: item.jumlah,
+        createdAt: new Date(),
+      }))
+    );
 
-    // Initial log
     await db.insert(approvalLogs).values({
       id: crypto.randomUUID(),
-      permintaanId: newPermintaan.id,
+      permintaanId: eventId,
       userId: session.id,
       action: "Mengajukan Permintaan",
       newStatus: "menunggu_kaprog",
       createdAt: new Date(),
     });
 
-    // Notify Kaprog & Admin
-    await notifyRoles(['kaprog', 'admin'], 'Permintaan Baru', `Ada permintaan baru: ${newPermintaan.namaBarang} dari ${session.name}`);
+    await notifyRoles(
+      ["kaprog", "admin"],
+      "Permintaan Baru",
+      `Ada permintaan baru: "${data.namaEvent}" dari ${session.name}`
+    );
 
-    return { success: true, data: newPermintaan };
+    return { success: true, id: eventId };
   });
 
-export const getPermintaanList = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const list = await db
+// ─── Get Event List ───────────────────────────────────────────────────────────
+
+export const getPengadaanEventList = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const events = await db
       .select({
-        id: permintaanPengadaan.id,
-        namaBarang: permintaanPengadaan.namaBarang,
-        merek: permintaanPengadaan.merek,
-        kategori: permintaanPengadaan.kategori,
-        jumlah: permintaanPengadaan.jumlah,
-        deskripsi: permintaanPengadaan.deskripsi,
-        prioritas: permintaanPengadaan.prioritas,
-        status: permintaanPengadaan.status,
-        diajukanOleh: permintaanPengadaan.diajukanOleh,
-        targetRuanganId: permintaanPengadaan.targetRuanganId,
-        targetLemari: permintaanPengadaan.targetLemari,
-        kondisiDiterima: permintaanPengadaan.kondisiDiterima,
-        createdAt: permintaanPengadaan.createdAt,
+        id: pengadaanEvent.id,
+        namaEvent: pengadaanEvent.namaEvent,
+        deskripsi: pengadaanEvent.deskripsi,
+        prioritas: pengadaanEvent.prioritas,
+        status: pengadaanEvent.status,
+        diajukanOleh: pengadaanEvent.diajukanOleh,
+        createdAt: pengadaanEvent.createdAt,
         requesterName: users.name,
         requesterRole: users.role,
-        namaRuangan: ruangan.nama,
       })
-      .from(permintaanPengadaan)
-      .leftJoin(users, eq(permintaanPengadaan.diajukanOleh, users.id))
-      .leftJoin(ruangan, eq(permintaanPengadaan.targetRuanganId, ruangan.id))
-      .orderBy(permintaanPengadaan.createdAt);
+      .from(pengadaanEvent)
+      .leftJoin(users, eq(pengadaanEvent.diajukanOleh, users.id))
+      .orderBy(desc(pengadaanEvent.createdAt));
 
-    return list;
+    const allItems = await db.select().from(pengadaanItem);
+
+    return events.map((e) => ({
+      ...e,
+      items: allItems.filter((i) => i.eventId === e.id),
+    }));
+  }
+);
+
+// ─── Get Items for an Event ───────────────────────────────────────────────────
+
+export const getPengadaanItems = createServerFn({ method: "GET" })
+  .inputValidator(z.string())
+  .handler(async ({ data: eventId }) => {
+    return db
+      .select()
+      .from(pengadaanItem)
+      .where(eq(pengadaanItem.eventId, eventId));
   });
 
-export const updatePermintaanStatus = createServerFn({ method: "POST" })
+// ─── Update Event Status ──────────────────────────────────────────────────────
+
+export const updatePengadaanStatus = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
       id: z.string(),
       status: z.enum([
-        'menunggu_kaprog', 
-        'menunggu_wakasek', 
-        'menunggu_kepsek', 
-        'disetujui', 
-        'proses_pembelian', 
-        'selesai', 
-        'ditolak'
+        "menunggu_kaprog",
+        "menunggu_wakasek",
+        "menunggu_kepsek",
+        "disetujui",
+        "proses_pembelian",
+        "selesai",
+        "ditolak",
       ]),
-      // Optional data for final step
-      targetRuanganId: z.string().optional(),
-      targetLemari: z.string().optional(),
-      kondisiDiterima: z.enum(['baik', 'rusak_ringan', 'rusak_berat']).optional(),
       catatan: z.string().optional(),
+      // Only used when status === 'selesai'
+      itemUpdates: z
+        .array(
+          z.object({
+            itemId: z.string(),
+            targetRuanganId: z.string(),
+            targetLemari: z.string().optional(),
+            kondisiDiterima: z.enum(["baik", "rusak_ringan", "rusak_berat"]),
+          })
+        )
+        .optional(),
     })
   )
   .handler(async ({ data }) => {
     const session = await getAuthSession();
-    if (!session) {
-      throw new Error("Unauthorized");
-    }
+    if (!session) throw new Error("Unauthorized");
 
-    const [permintaan] = await db
+    const [event] = await db
       .select()
-      .from(permintaanPengadaan)
-      .where(eq(permintaanPengadaan.id, data.id))
+      .from(pengadaanEvent)
+      .where(eq(pengadaanEvent.id, data.id))
       .limit(1);
 
-    if (!permintaan) {
-      throw new Error("Permintaan tidak ditemukan");
-    }
+    if (!event) throw new Error("Permintaan tidak ditemukan");
 
-    if (!isValidTransition(permintaan.status as PermintaanStatus, data.status as PermintaanStatus, session.role as UserRole)) {
+    if (
+      !isValidTransition(
+        event.status as PermintaanStatus,
+        data.status as PermintaanStatus,
+        session.role as UserRole
+      )
+    ) {
       throw new Error("Transisi status tidak valid untuk role Anda");
     }
 
     const updateData: any = { status: data.status };
-    
-    // Capture transition metadata
-    if (data.status === 'disetujui') {
+    if (data.status === "disetujui") {
       updateData.disetujuiOleh = session.id;
     }
 
-    // Capture inventory metadata if provided (final step)
-    if (data.targetRuanganId) updateData.targetRuanganId = data.targetRuanganId;
-    if (data.targetLemari) updateData.targetLemari = data.targetLemari;
-    if (data.kondisiDiterima) updateData.kondisiDiterima = data.kondisiDiterima;
-
-    // Handle "selesai" - Create Inventory Item or Update Existing
-    let targetRoomName = "";
-    if (data.status === 'selesai') {
-      if (!data.targetRuanganId || !data.kondisiDiterima) {
-        throw new Error("Data inventory (ruangan & kondisi) harus diisi untuk menyelesaikan permintaan");
+    // Handle selesai: update each item + create inventory
+    if (data.status === "selesai") {
+      if (!data.itemUpdates || data.itemUpdates.length === 0) {
+        throw new Error(
+          "Data penerimaan per item harus diisi untuk menyelesaikan permintaan"
+        );
       }
 
-      const [targetRoom] = await db.select().from(ruangan).where(eq(ruangan.id, data.targetRuanganId)).limit(1);
-      if (targetRoom) {
-        targetRoomName = targetRoom.nama;
-      }
-
-      // Check if item already exists with the same metadata (Nama, Merek, Ruangan, Status, Lemari)
-      const [existingItem] = await db
-        .select()
-        .from(barang)
-        .where(
-          and(
-            eq(barang.nama, permintaan.namaBarang),
-            eq(barang.merek, permintaan.merek || "Tidak Spesifik"),
-            eq(barang.ruanganId, data.targetRuanganId),
-            eq(barang.status, data.kondisiDiterima),
-            eq(barang.lemari, data.targetLemari || "")
-          )
-        )
-        .limit(1);
-
-      if (existingItem) {
-        // Increment quantity
+      for (const upd of data.itemUpdates) {
+        // Update item record
         await db
-          .update(barang)
+          .update(pengadaanItem)
           .set({
-            jumlah: existingItem.jumlah + permintaan.jumlah,
+            targetRuanganId: upd.targetRuanganId,
+            targetLemari: upd.targetLemari || "",
+            kondisiDiterima: upd.kondisiDiterima,
           })
-          .where(eq(barang.id, existingItem.id));
-      } else {
-        // Create a unique code for the new item
-        const shortId = data.id.slice(0, 4).toUpperCase();
-        const kodeBarang = `BRG-${new Date().getFullYear()}-${shortId}`;
+          .where(eq(pengadaanItem.id, upd.itemId));
 
-        // Insert into barang table
-        await db.insert(barang).values({
-          id: crypto.randomUUID(),
-          kodeBarang,
-          nama: permintaan.namaBarang,
-          merek: permintaan.merek || "Tidak Spesifik",
-          kategori: permintaan.kategori || "Umum",
-          jumlah: permintaan.jumlah,
-          ruanganId: data.targetRuanganId,
-          lemari: data.targetLemari || "",
-          status: data.kondisiDiterima,
-          tahunPengadaan: new Date().getFullYear(),
-          createdAt: new Date(),
-        });
+        // Fetch the item to get its details
+        const [item] = await db
+          .select()
+          .from(pengadaanItem)
+          .where(eq(pengadaanItem.id, upd.itemId))
+          .limit(1);
+
+        if (!item) continue;
+
+        // Check for existing matching barang
+        const [existingBarang] = await db
+          .select()
+          .from(barang)
+          .where(
+            and(
+              eq(barang.nama, item.namaBarang),
+              eq(barang.merek, item.merek || "Tidak Spesifik"),
+              eq(barang.ruanganId, upd.targetRuanganId),
+              eq(barang.status, upd.kondisiDiterima),
+              eq(barang.lemari, upd.targetLemari || "")
+            )
+          )
+          .limit(1);
+
+        if (existingBarang) {
+          await db
+            .update(barang)
+            .set({ jumlah: existingBarang.jumlah + item.jumlah })
+            .where(eq(barang.id, existingBarang.id));
+        } else {
+          const shortId = item.id.slice(0, 4).toUpperCase();
+          const kodeBarang = `BRG-${new Date().getFullYear()}-${shortId}`;
+          await db.insert(barang).values({
+            id: crypto.randomUUID(),
+            kodeBarang,
+            nama: item.namaBarang,
+            merek: item.merek || "Tidak Spesifik",
+            kategori: item.kategori || "Umum",
+            jumlah: item.jumlah,
+            ruanganId: upd.targetRuanganId,
+            lemari: upd.targetLemari || "",
+            status: upd.kondisiDiterima,
+            tahunPengadaan: new Date().getFullYear(),
+            createdAt: new Date(),
+          });
+        }
       }
     }
 
     await db
-      .update(permintaanPengadaan)
+      .update(pengadaanEvent)
       .set(updateData)
-      .where(eq(permintaanPengadaan.id, data.id));
+      .where(eq(pengadaanEvent.id, data.id));
 
-    // Log the transition
     await db.insert(approvalLogs).values({
       id: crypto.randomUUID(),
       permintaanId: data.id,
       userId: session.id,
-      action: `Update Status ke ${data.status.replace('_', ' ')}`,
-      previousStatus: permintaan.status,
+      action: `Update Status ke ${data.status.replace(/_/g, " ")}`,
+      previousStatus: event.status,
       newStatus: data.status,
-      catatan: data.catatan || (data.status === 'selesai' ? `Barang diterima di ${targetRoomName || data.targetRuanganId}` : undefined),
+      catatan: data.catatan,
       createdAt: new Date(),
     });
 
-    // Notify original requester
-    let locationPesan = "";
-    if (data.status === 'selesai' && targetRoomName) {
-      locationPesan = ` di ${targetRoomName}`;
-    }
-
-    const newStatusLabel = STATUS_METADATA[data.status as PermintaanStatus].label;
+    const newStatusLabel =
+      STATUS_METADATA[data.status as PermintaanStatus].label;
     await sendNotification(
-      permintaan.diajukanOleh, 
-      'Update Status', 
-      `Permintaan "${permintaan.namaBarang}" sekarang: ${newStatusLabel}${locationPesan}`
+      event.diajukanOleh,
+      "Update Status",
+      `Permintaan "${event.namaEvent}" sekarang: ${newStatusLabel}`
     );
 
-    // Notify next approvers if applicable
-    if (data.status === 'menunggu_wakasek') {
-      await notifyRoles(['wakasek', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Wakasek`);
-    } else if (data.status === 'menunggu_kepsek') {
-      await notifyRoles(['kepala_sekolah', 'admin'], 'Persetujuan Diperlukan', `Permintaan "${permintaan.namaBarang}" menunggu persetujuan Kepsek`);
-    } else if (data.status === 'disetujui') {
-      await notifyRoles(['tu_admin', 'admin'], 'Proses Pembelian', `Permintaan "${permintaan.namaBarang}" telah disetujui, siap dibeli`);
+    if (data.status === "menunggu_wakasek") {
+      await notifyRoles(
+        ["wakasek", "admin"],
+        "Persetujuan Diperlukan",
+        `Permintaan "${event.namaEvent}" menunggu persetujuan Wakasek`
+      );
+    } else if (data.status === "menunggu_kepsek") {
+      await notifyRoles(
+        ["kepala_sekolah", "admin"],
+        "Persetujuan Diperlukan",
+        `Permintaan "${event.namaEvent}" menunggu persetujuan Kepsek`
+      );
+    } else if (data.status === "disetujui") {
+      await notifyRoles(
+        ["tu_admin", "admin"],
+        "Proses Pembelian",
+        `Permintaan "${event.namaEvent}" telah disetujui, siap dibeli`
+      );
     }
 
     return { success: true };
   });
 
+// ─── Approval Logs ────────────────────────────────────────────────────────────
+
 export const getApprovalLogs = createServerFn({ method: "GET" })
   .inputValidator(z.string())
-  .handler(async ({ data: permintaanId }) => {
+  .handler(async ({ data: eventId }) => {
     const logs = await db
       .select({
         id: approvalLogs.id,
@@ -263,7 +334,7 @@ export const getApprovalLogs = createServerFn({ method: "GET" })
       })
       .from(approvalLogs)
       .leftJoin(users, eq(approvalLogs.userId, users.id))
-      .where(eq(approvalLogs.permintaanId, permintaanId))
+      .where(eq(approvalLogs.permintaanId, eventId))
       .orderBy(desc(approvalLogs.createdAt));
 
     return logs;

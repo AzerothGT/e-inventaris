@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getDashboardStats } from "../../server/functions/dashboard";
 import { getBarangList } from "../../server/functions/barang";
-import { getPermintaanList } from "../../server/functions/permintaan";
+import { getPengadaanEventList } from "../../server/functions/permintaan";
 import { getCurrentUser } from "../../server/functions/auth";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { ExportButton } from "../../components/ui/ExportButton";
@@ -12,8 +12,6 @@ import {
 	BarChart3,
 	Package,
 	ShoppingCart,
-	FileSpreadsheet,
-	FileText,
 	ClipboardList,
 	Archive
 } from "lucide-react";
@@ -43,7 +41,7 @@ function LaporanPage() {
 
 	const { data: permintaanList } = useSuspenseQuery({
 		queryKey: ["permintaan"],
-		queryFn: () => getPermintaanList(),
+		queryFn: () => getPengadaanEventList(),
 	});
 
 	const barangExportColumns = [
@@ -63,17 +61,14 @@ function LaporanPage() {
 	];
 
 	const permintaanExportColumns = [
-		{ key: "namaBarang", label: "Nama Barang" },
-		{ key: "kategori", label: "Kategori" },
-		{ key: "jumlah", label: "Jumlah" },
+		{ key: "namaEvent", label: "Nama Event" },
 		{ key: "prioritas", label: "Prioritas" },
 		{
 			key: "status",
 			label: "Status",
-			formatter: (v: string) => v.replace("_", " ").toLowerCase(),
+			formatter: (v: string) => v.replace(/_/g, " ").toLowerCase(),
 		},
-		{ key: "namaRuangan", label: "Ruangan" },
-		{ key: "targetLemari", label: "Posisi" },
+		{ key: "requesterName", label: "Diajukan Oleh" },
 		{ key: "deskripsi", label: "Deskripsi" },
 		{
 			key: "createdAt",

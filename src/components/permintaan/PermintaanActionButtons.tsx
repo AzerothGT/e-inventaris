@@ -1,19 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getAvailableActions, PermintaanStatus, UserRole } from "../../lib/approvals";
-import { updatePermintaanStatus } from "../../server/functions/permintaan";
+import { updatePengadaanStatus, getPengadaanItems } from "../../server/functions/permintaan";
 import { getRuanganList } from "../../server/functions/ruangan";
 import { Button } from "../ui/Button";
 import { Dialog } from "../ui/Dialog";
 import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
-import { 
-  Check, 
-  X, 
-  ShoppingCart, 
-  PackageCheck, 
+import {
+  Check,
+  X,
+  ShoppingCart,
+  PackageCheck,
   Ban,
-  Loader2
+  Loader2,
 } from "lucide-react";
 
 interface PermintaanActionButtonsProps {
@@ -21,6 +21,15 @@ interface PermintaanActionButtonsProps {
   currentStatus: PermintaanStatus;
   userRole: UserRole;
   onSuccess?: () => void;
+}
+
+interface ItemReceiveData {
+  itemId: string;
+  namaBarang: string;
+  jumlah: number;
+  targetRuanganId: string;
+  targetLemari: string;
+  kondisiDiterima: "baik" | "rusak_ringan" | "rusak_berat";
 }
 
 export function PermintaanActionButtons({
@@ -35,42 +44,53 @@ export function PermintaanActionButtons({
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [comment, setComment] = useState("");
   const [pendingAction, setPendingAction] = useState<any>(null);
-  
-  const [receiveData, setReceiveData] = useState({
-    targetRuanganId: "",
-    targetLemari: "",
-    kondisiDiterima: "baik" as "baik" | "rusak_ringan" | "rusak_berat",
-  });
+  const [itemReceiveData, setItemReceiveData] = useState<ItemReceiveData[]>([]);
 
   const availableActions = getAvailableActions(currentStatus, userRole);
 
   const getActionIcon = (id: string) => {
-    if (id.startsWith('approve_')) return <Check className="h-4 w-4" />;
-    if (id.startsWith('reject_')) return <X className="h-4 w-4" />;
-    if (id === 'start_purchase') return <ShoppingCart className="h-4 w-4" />;
-    if (id === 'complete_purchase') return <PackageCheck className="h-4 w-4" />;
-    if (id === 'cancel_request') return <Ban className="h-4 w-4" />;
+    if (id.startsWith("approve_")) return <Check className="h-4 w-4" />;
+    if (id.startsWith("reject_")) return <X className="h-4 w-4" />;
+    if (id === "start_purchase") return <ShoppingCart className="h-4 w-4" />;
+    if (id === "complete_purchase") return <PackageCheck className="h-4 w-4" />;
+    if (id === "cancel_request") return <Ban className="h-4 w-4" />;
     return null;
   };
 
   const { data: ruanganList } = useQuery({
-    queryKey: ['ruangan'],
+    queryKey: ["ruangan"],
     queryFn: () => getRuanganList(),
-    enabled: isReceiveDialogOpen, // Only fetch when needed
+    enabled: isReceiveDialogOpen,
   });
 
+  const { data: eventItems } = useQuery({
+    queryKey: ["pengadaanItems", permintaanId],
+    queryFn: () => getPengadaanItems({ data: permintaanId }),
+    enabled: isReceiveDialogOpen,
+  });
+
+  // Initialise per-item receive data when items load
+  const initItemReceiveData = (items: any[]) => {
+    setItemReceiveData(
+      items.map((item) => ({
+        itemId: item.id,
+        namaBarang: item.namaBarang,
+        jumlah: item.jumlah,
+        targetRuanganId: "",
+        targetLemari: "",
+        kondisiDiterima: "baik",
+      }))
+    );
+  };
+
   const mutation = useMutation({
-    mutationFn: updatePermintaanStatus,
+    mutationFn: updatePengadaanStatus,
     onSuccess: () => {
       toast.success("Status permintaan berhasil diperbarui");
-      // Explicitly invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ['permintaan'] });
-      queryClient.invalidateQueries({ queryKey: ['approvalLogs', permintaanId] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-      
-      // Forces TanStack Start to refresh the current route's data
+      queryClient.invalidateQueries({ queryKey: ["permintaan"] });
+      queryClient.invalidateQueries({ queryKey: ["approvalLogs", permintaanId] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       router.invalidate();
-      
       setIsReceiveDialogOpen(false);
       setIsRejectDialogOpen(false);
       setComment("");
@@ -86,6 +106,8 @@ export function PermintaanActionButtons({
     setPendingAction(action);
     if (action.requiresData) {
       setIsReceiveDialogOpen(true);
+      // Pre-init with existing items if already loaded
+      if (eventItems) initItemReceiveData(eventItems);
     } else if (action.requiresReason) {
       setIsRejectDialogOpen(true);
     } else {
@@ -98,30 +120,45 @@ export function PermintaanActionButtons({
       toast.error("Silakan berikan alasan");
       return;
     }
-    mutation.mutate({ 
-      data: { 
-        id: permintaanId, 
-        status: pendingAction.to,
-        catatan: comment
-      } 
+    mutation.mutate({
+      data: { id: permintaanId, status: pendingAction.to, catatan: comment },
     });
   };
 
   const handleConfirmReceive = () => {
-    if (!receiveData.targetRuanganId) {
-      toast.error("Pilih ruangan terlebih dahulu");
+    const missing = itemReceiveData.find((d) => !d.targetRuanganId);
+    if (missing) {
+      toast.error(`Pilih ruangan untuk barang: ${missing.namaBarang}`);
       return;
     }
-    mutation.mutate({ 
-      data: { 
-        id: permintaanId, 
-        status: 'selesai',
-        targetRuanganId: receiveData.targetRuanganId,
-        targetLemari: receiveData.targetLemari,
-        kondisiDiterima: receiveData.kondisiDiterima
-      } 
+    mutation.mutate({
+      data: {
+        id: permintaanId,
+        status: "selesai",
+        itemUpdates: itemReceiveData.map((d) => ({
+          itemId: d.itemId,
+          targetRuanganId: d.targetRuanganId,
+          targetLemari: d.targetLemari,
+          kondisiDiterima: d.kondisiDiterima,
+        })),
+      },
     });
   };
+
+  const updateItemField = (
+    itemId: string,
+    field: keyof ItemReceiveData,
+    value: string
+  ) => {
+    setItemReceiveData((prev) =>
+      prev.map((d) => (d.itemId === itemId ? { ...d, [field]: value } : d))
+    );
+  };
+
+  // When receive dialog opens and items arrive, init data
+  if (isReceiveDialogOpen && eventItems && itemReceiveData.length === 0) {
+    initItemReceiveData(eventItems);
+  }
 
   if (availableActions.length === 0) return null;
 
@@ -147,60 +184,116 @@ export function PermintaanActionButtons({
         ))}
       </div>
 
-      <Dialog 
-        isOpen={isReceiveDialogOpen} 
+      {/* Receive Dialog — per item */}
+      <Dialog
+        isOpen={isReceiveDialogOpen}
         onClose={() => setIsReceiveDialogOpen(false)}
         title="Terima Barang & Masuk Inventory"
+        size="lg"
       >
-        <div className="space-y-4">
+        <div className="space-y-5">
           <p className="text-sm text-surface-500">
-            Silakan tentukan lokasi penyimpanan barang ini untuk didaftarkan ke inventory.
+            Tentukan lokasi penyimpanan dan kondisi untuk setiap barang yang diterima.
           </p>
-          
-          <div className="space-y-2">
-            <label className="text-sm font-semibold">Pilih Ruangan</label>
-            <select
-              className="w-full h-10 px-3 rounded-lg border border-surface-200 bg-white"
-              value={receiveData.targetRuanganId}
-              onChange={(e) => setReceiveData({ ...receiveData, targetRuanganId: e.target.value })}
+
+          <div className="space-y-4 max-h-[55vh] overflow-y-auto pr-1 custom-scrollbar">
+            {itemReceiveData.map((itemData, idx) => (
+              <div
+                key={itemData.itemId}
+                className="p-4 rounded-xl border border-surface-200 bg-white/70 space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-surface-900 text-sm">
+                      {itemData.namaBarang}
+                    </p>
+                    <p className="text-xs text-surface-400">
+                      {itemData.jumlah} unit
+                    </p>
+                  </div>
+                  <span className="text-xs font-bold text-surface-400 uppercase tracking-wider">
+                    #{idx + 1}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-surface-600">
+                      Ruangan *
+                    </label>
+                    <select
+                      className="w-full h-9 px-3 rounded-lg border border-surface-200 bg-white text-sm"
+                      value={itemData.targetRuanganId}
+                      onChange={(e) =>
+                        updateItemField(itemData.itemId, "targetRuanganId", e.target.value)
+                      }
+                    >
+                      <option value="">-- Pilih --</option>
+                      {ruanganList?.map((r: any) => (
+                        <option key={r.id} value={r.id}>
+                          {r.nama} ({r.kodeRuangan})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-surface-600">
+                      Lemari/Posisi
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full h-9 px-3 rounded-lg border border-surface-200 bg-white text-sm"
+                      placeholder="Contoh: Lemari A1"
+                      value={itemData.targetLemari}
+                      onChange={(e) =>
+                        updateItemField(itemData.itemId, "targetLemari", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-surface-600">
+                      Kondisi
+                    </label>
+                    <select
+                      className="w-full h-9 px-3 rounded-lg border border-surface-200 bg-white text-sm"
+                      value={itemData.kondisiDiterima}
+                      onChange={(e) =>
+                        updateItemField(
+                          itemData.itemId,
+                          "kondisiDiterima",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="baik">Baik / Baru</option>
+                      <option value="rusak_ringan">Rusak Ringan</option>
+                      <option value="rusak_berat">Rusak Berat</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {itemReceiveData.length === 0 && (
+              <div className="py-8 text-center text-surface-400 text-sm">
+                Memuat daftar barang...
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Button
+              variant="ghost"
+              onClick={() => setIsReceiveDialogOpen(false)}
             >
-              <option value="">-- Pilih Ruangan --</option>
-              {ruanganList?.map((r: any) => (
-                <option key={r.id} value={r.id}>{r.nama} ({r.kodeRuangan})</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold">Lemari/Posisi (Opsional)</label>
-            <input
-              type="text"
-              className="w-full h-10 px-3 rounded-lg border border-surface-200 bg-white"
-              placeholder="Contoh: Lemari A1"
-              value={receiveData.targetLemari}
-              onChange={(e) => setReceiveData({ ...receiveData, targetLemari: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold">Kondisi Barang</label>
-            <select
-              className="w-full h-10 px-3 rounded-lg border border-surface-200 bg-white"
-              value={receiveData.kondisiDiterima}
-              onChange={(e) => setReceiveData({ ...receiveData, kondisiDiterima: e.target.value as any })}
-            >
-              <option value="baik">Sangat Baik / Baru</option>
-              <option value="rusak_ringan">Rusak Ringan (Lecet/Box Rusak)</option>
-              <option value="rusak_berat">Rusak Berat</option>
-            </select>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="ghost" onClick={() => setIsReceiveDialogOpen(false)}>Batal</Button>
-            <Button 
-              variant="success" 
+              Batal
+            </Button>
+            <Button
+              variant="success"
               onClick={handleConfirmReceive}
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || itemReceiveData.length === 0}
             >
               {mutation.isPending ? "Memproses..." : "Konfirmasi & Selesai"}
             </Button>
@@ -208,15 +301,19 @@ export function PermintaanActionButtons({
         </div>
       </Dialog>
 
-      <Dialog 
-        isOpen={isRejectDialogOpen} 
+      {/* Reject / Cancel Dialog */}
+      <Dialog
+        isOpen={isRejectDialogOpen}
         onClose={() => setIsRejectDialogOpen(false)}
         title={pendingAction?.label || "Konfirmasi"}
       >
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-semibold">
-              Alasan {pendingAction?.label?.toLowerCase() === 'batalkan' ? 'Pembatalan' : 'Penolakan'}
+              Alasan{" "}
+              {pendingAction?.label?.toLowerCase() === "batalkan"
+                ? "Pembatalan"
+                : "Penolakan"}
             </label>
             <textarea
               className="w-full mt-5 min-h-[100px] p-3 rounded-xl border border-surface-200 bg-white text-sm focus:ring-2 focus:ring-primary-600 focus:outline-none resize-none transition-all"
@@ -227,8 +324,13 @@ export function PermintaanActionButtons({
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="ghost" onClick={() => setIsRejectDialogOpen(false)}>Kembali</Button>
-            <Button 
+            <Button
+              variant="ghost"
+              onClick={() => setIsRejectDialogOpen(false)}
+            >
+              Kembali
+            </Button>
+            <Button
               variant={pendingAction?.variant || "destructive"}
               onClick={handleConfirmReject}
               disabled={mutation.isPending || !comment.trim()}

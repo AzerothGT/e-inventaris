@@ -41,6 +41,7 @@ export const barang = sqliteTable('barang', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 
+// Legacy table — kept for DB compatibility, no longer used by UI
 export const permintaanPengadaan = sqliteTable('permintaan_pengadaan', {
   id: text('id').primaryKey(),
   namaBarang: text('nama_barang').notNull(),
@@ -50,12 +51,12 @@ export const permintaanPengadaan = sqliteTable('permintaan_pengadaan', {
   deskripsi: text('deskripsi').notNull(),
   prioritas: text('prioritas', { enum: ['rendah', 'sedang', 'tinggi'] }).notNull(),
   status: text('status', { enum: [
-    'menunggu_kaprog', 
-    'menunggu_wakasek', 
-    'menunggu_kepsek', 
-    'disetujui', 
-    'proses_pembelian', 
-    'selesai', 
+    'menunggu_kaprog',
+    'menunggu_wakasek',
+    'menunggu_kepsek',
+    'disetujui',
+    'proses_pembelian',
+    'selesai',
     'ditolak'
   ] }).notNull(),
   diajukanOleh: text('diajukan_oleh').references(() => users.id).notNull(),
@@ -63,6 +64,41 @@ export const permintaanPengadaan = sqliteTable('permintaan_pengadaan', {
   targetLemari: text('target_lemari'),
   kondisiDiterima: text('kondisi_diterima', { enum: ['baik', 'rusak_ringan', 'rusak_berat'] }),
   disetujuiOleh: text('disetujui_oleh').references(() => users.id),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
+// New event-based procurement
+export const pengadaanEvent = sqliteTable('pengadaan_event', {
+  id: text('id').primaryKey(),
+  namaEvent: text('nama_event').notNull(),
+  deskripsi: text('deskripsi').notNull(),
+  prioritas: text('prioritas', { enum: ['rendah', 'sedang', 'tinggi'] }).notNull(),
+  status: text('status', { enum: [
+    'menunggu_kaprog',
+    'menunggu_wakasek',
+    'menunggu_kepsek',
+    'disetujui',
+    'proses_pembelian',
+    'selesai',
+    'ditolak'
+  ] }).notNull(),
+  diajukanOleh: text('diajukan_oleh').references(() => users.id).notNull(),
+  disetujuiOleh: text('disetujui_oleh').references(() => users.id),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
+// Line items for each event
+export const pengadaanItem = sqliteTable('pengadaan_item', {
+  id: text('id').primaryKey(),
+  eventId: text('event_id').references(() => pengadaanEvent.id).notNull(),
+  namaBarang: text('nama_barang').notNull(),
+  merek: text('merek'),
+  kategori: text('kategori'),
+  jumlah: integer('jumlah').notNull(),
+  // Filled when event is completed (selesai)
+  targetRuanganId: text('target_ruangan_id').references(() => ruangan.id),
+  targetLemari: text('target_lemari'),
+  kondisiDiterima: text('kondisi_diterima', { enum: ['baik', 'rusak_ringan', 'rusak_berat'] }),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 
@@ -75,9 +111,10 @@ export const notifikasi = sqliteTable('notifikasi', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 
+// approvalLogs now references pengadaanEvent (eventId stored in permintaanId column for compat)
 export const approvalLogs = sqliteTable('approval_logs', {
   id: text('id').primaryKey(),
-  permintaanId: text('permintaan_id').references(() => permintaanPengadaan.id).notNull(),
+  permintaanId: text('permintaan_id').notNull(), // references pengadaanEvent.id
   userId: text('user_id').references(() => users.id).notNull(),
   action: text('action').notNull(),
   previousStatus: text('previous_status'),
