@@ -139,20 +139,7 @@ function LaporanPage() {
 						</div>
 					</CardHeader>
 					<CardContent className="p-6 space-y-6">
-						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
-							<div className="flex items-center gap-3">
-								<div className="p-2 rounded-lg bg-success-50 text-success-600">
-									<FileSpreadsheet className="h-6 w-6" />
-								</div>
-								<div>
-									<p className="text-sm font-bold text-surface-900">
-										Export Data Inventaris
-									</p>
-									<p className="text-[11px] text-surface-500">
-										Pilih format laporan yang diinginkan
-									</p>
-								</div>
-							</div>
+						<div className="flex items-center justify-end p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
 							<ExportButton
 								data={barangList}
 								columns={barangExportColumns}
@@ -187,20 +174,7 @@ function LaporanPage() {
 						</div>
 					</CardHeader>
 					<CardContent className="p-6 space-y-6">
-						<div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
-							<div className="flex items-center gap-3">
-								<div className="p-2 rounded-lg bg-danger-50 text-danger-600">
-									<FileText className="h-6 w-6" />
-								</div>
-								<div>
-									<p className="text-sm font-bold text-surface-900">
-										Export Data Pengadaan
-									</p>
-									<p className="text-[11px] text-surface-500">
-										Pilih format laporan yang diinginkan
-									</p>
-								</div>
-							</div>
+						<div className="flex items-center justify-end p-4 bg-white/50 rounded-xl border border-surface-100 shadow-sm">
 							<ExportButton
 								data={permintaanList}
 								columns={permintaanExportColumns}
