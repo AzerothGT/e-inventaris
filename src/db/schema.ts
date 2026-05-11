@@ -38,6 +38,7 @@ export const barang = sqliteTable('barang', {
   lemari: text('lemari'),
   status: text('status', { enum: ['baik', 'rusak_ringan', 'rusak_berat'] }).notNull(),
   jumlah: integer('jumlah').notNull(),
+  imageUrl: text('image_url'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 
@@ -99,6 +100,7 @@ export const pengadaanItem = sqliteTable('pengadaan_item', {
   targetRuanganId: text('target_ruangan_id').references(() => ruangan.id),
   targetLemari: text('target_lemari'),
   kondisiDiterima: text('kondisi_diterima', { enum: ['baik', 'rusak_ringan', 'rusak_berat'] }),
+  imageUrl: text('image_url'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 

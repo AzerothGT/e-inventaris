@@ -54,6 +54,7 @@ export const createPengadaanEvent = createServerFn({ method: "POST" })
             merek: z.string().optional(),
             kategori: z.string().optional(),
             jumlah: z.number().int().min(1, "Jumlah minimal 1"),
+            imageUrl: z.string().optional(),
           })
         )
         .min(1, "Minimal 1 item harus ditambahkan"),
@@ -83,6 +84,7 @@ export const createPengadaanEvent = createServerFn({ method: "POST" })
         merek: item.merek,
         kategori: item.kategori,
         jumlah: item.jumlah,
+        imageUrl: item.imageUrl,
         createdAt: new Date(),
       }))
     );
@@ -262,6 +264,7 @@ export const updatePengadaanStatus = createServerFn({ method: "POST" })
             ruanganId: upd.targetRuanganId,
             lemari: upd.targetLemari || "",
             status: upd.kondisiDiterima,
+            imageUrl: item.imageUrl,
             tahunPengadaan: new Date().getFullYear(),
             createdAt: new Date(),
           });

@@ -3,13 +3,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { CalendarDays, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, Plus, Trash2, Image as ImageIcon, Link as LinkIcon, X } from "lucide-react";
 
 const itemSchema = z.object({
   namaBarang: z.string().min(1, "Nama barang harus diisi"),
   merek: z.string().optional(),
   kategori: z.string().optional(),
   jumlah: z.number().int().min(1, "Minimal 1"),
+  imageUrl: z.string().optional(),
 });
 
 const eventSchema = z.object({
@@ -38,16 +39,30 @@ export function PengadaanEventForm({
     register,
     control,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<PengadaanEventFormData>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       prioritas: "sedang",
-      items: [{ namaBarang: "", merek: "", kategori: "", jumlah: 1 }],
+      items: [{ namaBarang: "", merek: "", kategori: "", jumlah: 1, imageUrl: "" }],
     },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
+
+  const handleFileUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setValue(`items.${index}.imageUrl`, base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm">
@@ -129,7 +144,7 @@ export function PengadaanEventForm({
               variant="secondary"
               size="sm"
               onClick={() =>
-                append({ namaBarang: "", merek: "", kategori: "", jumlah: 1 })
+                append({ namaBarang: "", merek: "", kategori: "", jumlah: 1, imageUrl: "" })
               }
               className="flex items-center gap-1 text-xs"
             >
@@ -208,6 +223,58 @@ export function PengadaanEventForm({
                       className="hover:border-primary-300 focus:border-primary-500 transition-colors"
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-surface-400 uppercase tracking-wider ml-1">
+                    Gambar Barang (Link atau Upload)
+                  </label>
+                  <div className="flex gap-3">
+                    <div className="relative flex-1 group">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-surface-400 group-focus-within:text-primary-500 transition-colors">
+                        <LinkIcon className="h-4 w-4" />
+                      </div>
+                      <Input
+                        {...register(`items.${index}.imageUrl`)}
+                        placeholder="https://example.com/image.jpg"
+                        className="pl-9 hover:border-primary-300 focus:border-primary-500 transition-colors"
+                      />
+                    </div>
+                    
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload(index, e)}
+                        className="hidden"
+                        id={`file-upload-${index}`}
+                      />
+                      <label
+                        htmlFor={`file-upload-${index}`}
+                        className="flex h-10 items-center gap-2 px-4 rounded-lg border border-surface-200 bg-white hover:bg-surface-50 hover:border-primary-300 text-sm font-medium text-surface-700 cursor-pointer transition-all active:scale-95 shadow-sm"
+                      >
+                        <ImageIcon className="h-4 w-4 text-primary-500" />
+                        <span>Upload</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {watch(`items.${index}.imageUrl`) && (
+                    <div className="relative mt-2 w-full aspect-video rounded-xl border border-surface-100 bg-surface-50/50 overflow-hidden group">
+                      <img
+                        src={watch(`items.${index}.imageUrl`)}
+                        alt="Preview"
+                        className="w-full h-full object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setValue(`items.${index}.imageUrl`, "")}
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-white/80 backdrop-blur-sm text-danger-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 {errors.items?.[index]?.jumlah && (
                   <p className="text-xs font-medium text-danger-600">

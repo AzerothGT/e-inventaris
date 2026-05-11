@@ -128,7 +128,19 @@ export function PengadaanEventDetail({ data }: PengadaanEventDetailProps) {
               {(data.items ?? []).map((item: any, i: number) => (
                 <tr key={item.id ?? i} className="hover:bg-surface-50/50 transition-colors">
                   <td className="px-4 py-3 font-medium text-surface-900">
-                    {item.namaBarang}
+                    <div className="flex items-center gap-3">
+                      {item.imageUrl && (
+                        <div className="w-10 h-10 rounded-lg border border-surface-200 overflow-hidden bg-surface-50 shrink-0 shadow-sm">
+                          <img src={item.imageUrl} alt={item.namaBarang} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      {!item.imageUrl && (
+                        <div className="w-10 h-10 rounded-lg border border-surface-200 bg-surface-100 flex items-center justify-center shrink-0">
+                          <Package className="h-4 w-4 text-surface-400" />
+                        </div>
+                      )}
+                      <span>{item.namaBarang}</span>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-surface-500">
                     {item.merek || "-"}
