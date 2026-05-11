@@ -66,9 +66,13 @@ export const createPengadaanEvent = createServerFn({ method: "POST" })
     if (!session) throw new Error("Anda harus login untuk melakukan permintaan");
 
     const eventId = crypto.randomUUID();
+    const shortId = eventId.slice(0, 4).toUpperCase();
+    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const kodePengadaan = `PR-${today}-${shortId}`;
 
     await db.insert(pengadaanEvent).values({
       id: eventId,
+      kodePengadaan,
       namaEvent: data.namaEvent,
       deskripsi: data.deskripsi,
       prioritas: data.prioritas,
@@ -116,6 +120,7 @@ export const getPengadaanEventList = createServerFn({ method: "GET" }).handler(
     const events = await db
       .select({
         id: pengadaanEvent.id,
+        kodePengadaan: pengadaanEvent.kodePengadaan,
         namaEvent: pengadaanEvent.namaEvent,
         deskripsi: pengadaanEvent.deskripsi,
         prioritas: pengadaanEvent.prioritas,

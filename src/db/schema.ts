@@ -86,6 +86,7 @@ export const pengadaanEvent = sqliteTable('pengadaan_event', {
   ] }).notNull(),
   diajukanOleh: text('diajukan_oleh').references(() => users.id).notNull(),
   disetujuiOleh: text('disetujui_oleh').references(() => users.id),
+  kodePengadaan: text('kode_pengadaan').unique(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 

@@ -92,6 +92,17 @@ function PermintaanListPage() {
 
   const columns: ColumnDef<any>[] = [
     {
+      accessorKey: "kodePengadaan",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Kode" />
+      ),
+      cell: ({ row }) => (
+        <span className="font-mono text-xs font-semibold text-surface-500 bg-surface-100 px-2 py-1 rounded">
+          {row.getValue("kodePengadaan") || "-"}
+        </span>
+      ),
+    },
+    {
       accessorKey: "namaEvent",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Nama Event" />

@@ -38,9 +38,14 @@ export function PengadaanEventDetail({ data }: PengadaanEventDetailProps) {
           <Tag className="h-5 w-5" />
         </div>
         <div>
-          <h4 className="text-xs font-bold text-surface-500 uppercase tracking-widest mb-1">
-            Nama Event
-          </h4>
+          <div className="flex items-center gap-2 mb-1">
+            <h4 className="text-xs font-bold text-surface-500 uppercase tracking-widest">
+              Nama Event
+            </h4>
+            <span className="text-[10px] font-mono bg-white px-1.5 py-0.5 rounded border border-primary-200 text-primary-700 font-bold">
+              {data.kodePengadaan || "-"}
+            </span>
+          </div>
           <p className="text-lg font-bold text-primary-700">{data.namaEvent}</p>
         </div>
       </div>
