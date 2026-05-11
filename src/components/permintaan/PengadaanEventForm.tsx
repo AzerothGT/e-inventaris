@@ -134,162 +134,219 @@ export function PengadaanEventForm({
           )}
         </div>
 
-        {/* Items */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-surface-700">
-              Daftar Barang yang Diajukan
-            </label>
+        {/* Items Table */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-surface-100 flex items-center justify-center text-surface-600">
+                <Plus className="h-4 w-4" />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-surface-900">
+                  Daftar Barang
+                </label>
+                <p className="text-[10px] text-surface-500 font-medium">
+                  Tambahkan detail barang yang ingin diajukan
+                </p>
+              </div>
+            </div>
             <Button
               type="button"
               variant="secondary"
               size="sm"
               onClick={() =>
-                append({ namaBarang: "", merek: "", kategori: "", jumlah: 1, satuan: "Unit", imageUrl: "" })
+                append({
+                  namaBarang: "",
+                  merek: "",
+                  kategori: "",
+                  jumlah: 1,
+                  satuan: "Unit",
+                  imageUrl: "",
+                })
               }
-              className="flex items-center gap-1 text-xs"
+              className="flex items-center gap-1.5 text-xs font-semibold px-4"
             >
-              <Plus className="h-3 w-3" />
+              <Plus className="h-3.5 w-3.5" />
               Tambah Barang
             </Button>
           </div>
 
           {errors.items && !Array.isArray(errors.items) && (
-            <p className="text-xs font-medium text-danger-600">
+            <p className="text-xs font-medium text-danger-600 px-1">
               {errors.items.message}
             </p>
           )}
 
-          <div className="space-y-3">
-            {fields.map((field, index) => (
-              <div
-                key={field.id}
-                className="p-4 rounded-xl border border-surface-200 bg-white/70 space-y-3"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-surface-500 uppercase tracking-wider">
-                    Barang #{index + 1}
-                  </span>
-                  {fields.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => remove(index)}
-                      className="text-danger-400 hover:text-danger-600 transition-colors"
-                      title="Hapus barang"
+          <div className="overflow-hidden rounded-xl border border-surface-200 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left border-collapse">
+                <thead>
+                  <tr className="bg-surface-50/50 border-b border-surface-200">
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider w-10">
+                      #
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider min-w-[200px]">
+                      Nama Barang *
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider min-w-[120px]">
+                      Merek
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider min-w-[150px]">
+                      Kategori
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider w-24">
+                      Jumlah
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider w-24">
+                      Satuan
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider w-20 text-center">
+                      Media
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-bold text-surface-400 uppercase tracking-wider w-12 text-center">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-surface-100">
+                  {fields.map((field, index) => (
+                    <tr
+                      key={field.id}
+                      className="group hover:bg-surface-50/30 transition-colors"
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
+                      <td className="px-4 py-3 text-xs font-medium text-surface-400">
+                        {index + 1}
+                      </td>
+                      <td className="px-2 py-2">
+                        <Input
+                          {...register(`items.${index}.namaBarang`)}
+                          placeholder="Contoh: Laptop"
+                          className="h-9 text-xs border-transparent bg-transparent hover:bg-white hover:border-surface-200 focus:bg-white focus:border-primary-500 focus:ring-0 transition-all"
+                        />
+                        {errors.items?.[index]?.namaBarang && (
+                          <p className="text-[10px] font-medium text-danger-600 mt-1 px-2">
+                            {errors.items[index]?.namaBarang?.message}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-2 py-2">
+                        <Input
+                          {...register(`items.${index}.merek`)}
+                          placeholder="Merek"
+                          className="h-9 text-xs border-transparent bg-transparent hover:bg-white hover:border-surface-200 focus:bg-white focus:border-primary-500 focus:ring-0 transition-all"
+                        />
+                      </td>
+                      <td className="px-2 py-2">
+                        <select
+                          {...register(`items.${index}.kategori`)}
+                          className="w-full h-9 px-3 rounded-lg border border-transparent bg-transparent hover:bg-white hover:border-surface-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-xs transition-all"
+                        >
+                          <option value="">Kategori</option>
+                          {kategoriOptions.map((k) => (
+                            <option key={k.id} value={k.nama}>
+                              {k.nama}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-2 py-2">
+                        <Input
+                          type="number"
+                          {...register(`items.${index}.jumlah`, {
+                            valueAsNumber: true,
+                          })}
+                          className="h-9 text-xs border-transparent bg-transparent hover:bg-white hover:border-surface-200 focus:bg-white focus:border-primary-500 focus:ring-0 transition-all text-center"
+                        />
+                      </td>
+                      <td className="px-2 py-2">
+                        <Input
+                          {...register(`items.${index}.satuan`)}
+                          placeholder="Unit"
+                          className="h-9 text-xs border-transparent bg-transparent hover:bg-white hover:border-surface-200 focus:bg-white focus:border-primary-500 focus:ring-0 transition-all"
+                        />
+                      </td>
+                      <td className="px-2 py-2">
+                        <div className="flex items-center justify-center gap-2">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileUpload(index, e)}
+                            className="hidden"
+                            id={`file-upload-${index}`}
+                          />
+                          <label
+                            htmlFor={`file-upload-${index}`}
+                            className="p-1.5 rounded-lg border border-surface-200 bg-white hover:bg-surface-50 hover:border-primary-300 text-primary-500 cursor-pointer transition-all active:scale-90 shadow-sm"
+                            title="Upload Gambar"
+                          >
+                            <ImageIcon className="h-3.5 w-3.5" />
+                          </label>
 
-                <div className="space-y-2">
-                  <Input
-                    {...register(`items.${index}.namaBarang`)}
-                    placeholder="Nama Barang *"
-                    className="hover:border-primary-300 focus:border-primary-500 transition-colors"
-                  />
-                  {errors.items?.[index]?.namaBarang && (
-                    <p className="text-xs font-medium text-danger-600">
-                      {errors.items[index]?.namaBarang?.message}
-                    </p>
-                  )}
-                </div>
+                          <div className="relative group/link">
+                            <button
+                              type="button"
+                              className="p-1.5 rounded-lg border border-surface-200 bg-white hover:bg-surface-50 hover:border-primary-300 text-surface-500 cursor-pointer transition-all active:scale-90 shadow-sm"
+                              title="Paste Link Gambar"
+                            >
+                              <LinkIcon className="h-3.5 w-3.5" />
+                            </button>
+                            <div className="absolute bottom-full right-0 mb-2 hidden group-focus-within/link:block z-50">
+                              <Input
+                                {...register(`items.${index}.imageUrl`)}
+                                placeholder="https://..."
+                                className="w-48 h-8 text-[10px] bg-white shadow-xl border-surface-200"
+                              />
+                            </div>
+                          </div>
+                          
+                          {watch(`items.${index}.imageUrl`) && (
+                            <div className="relative group/thumb">
+                              <div className="w-8 h-8 rounded border border-surface-200 overflow-hidden bg-white shadow-sm cursor-help">
+                                <img
+                                  src={watch(`items.${index}.imageUrl`)}
+                                  alt="Preview"
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setValue(`items.${index}.imageUrl`, "")}
+                                  className="absolute inset-0 bg-danger-500/80 text-white opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </div>
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/thumb:block z-50 pointer-events-none">
+                                <div className="bg-white p-1 rounded-lg shadow-xl border border-surface-200 w-40 overflow-hidden">
+                                  <img
+                                    src={watch(`items.${index}.imageUrl`)}
+                                    alt="Large Preview"
+                                    className="w-full h-auto rounded-md"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </td>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  <Input
-                    {...register(`items.${index}.merek`)}
-                    placeholder="Merek / Tipe"
-                    className="hover:border-primary-300 focus:border-primary-500 transition-colors"
-                  />
-
-                  <select
-                    {...register(`items.${index}.kategori`)}
-                    className="w-full h-10 px-3 rounded-lg border border-surface-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm transition-all hover:border-primary-300"
-                  >
-                    <option value="">Kategori</option>
-                    {kategoriOptions.map((k) => (
-                      <option key={k.id} value={k.nama}>
-                        {k.nama}
-                      </option>
-                    ))}
-                  </select>
-
-                  <Input
-                    type="number"
-                    {...register(`items.${index}.jumlah`, {
-                      valueAsNumber: true,
-                    })}
-                    placeholder="Jumlah"
-                    className="hover:border-primary-300 focus:border-primary-500 transition-colors"
-                  />
-
-                  <Input
-                    {...register(`items.${index}.satuan`)}
-                    placeholder="Satuan (Pcs, Box, etc)"
-                    className="hover:border-primary-300 focus:border-primary-500 transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-surface-400 uppercase tracking-wider ml-1">
-                    Gambar Barang (Link atau Upload)
-                  </label>
-                  <div className="flex gap-3">
-                    <div className="relative flex-1 group">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-surface-400 group-focus-within:text-primary-500 transition-colors">
-                        <LinkIcon className="h-4 w-4" />
-                      </div>
-                      <Input
-                        {...register(`items.${index}.imageUrl`)}
-                        placeholder="https://example.com/image.jpg"
-                        className="pl-9 hover:border-primary-300 focus:border-primary-500 transition-colors"
-                      />
-                    </div>
-                    
-                    <div className="relative">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(index, e)}
-                        className="hidden"
-                        id={`file-upload-${index}`}
-                      />
-                      <label
-                        htmlFor={`file-upload-${index}`}
-                        className="flex h-10 items-center gap-2 px-4 rounded-lg border border-surface-200 bg-white hover:bg-surface-50 hover:border-primary-300 text-sm font-medium text-surface-700 cursor-pointer transition-all active:scale-95 shadow-sm"
-                      >
-                        <ImageIcon className="h-4 w-4 text-primary-500" />
-                        <span>Upload</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {watch(`items.${index}.imageUrl`) && (
-                    <div className="relative mt-2 w-full aspect-video rounded-xl border border-surface-100 bg-surface-50/50 overflow-hidden group">
-                      <img
-                        src={watch(`items.${index}.imageUrl`)}
-                        alt="Preview"
-                        className="w-full h-full object-contain"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setValue(`items.${index}.imageUrl`, "")}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-white/80 backdrop-blur-sm text-danger-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-                {errors.items?.[index]?.jumlah && (
-                  <p className="text-xs font-medium text-danger-600">
-                    {errors.items[index]?.jumlah?.message}
-                  </p>
-                )}
-              </div>
-            ))}
+                      <td className="px-2 py-2 text-center">
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="p-2 text-surface-300 hover:text-danger-500 hover:bg-danger-50 rounded-lg transition-all"
+                          title="Hapus barang"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+
 
         <div className="flex justify-end gap-3 pt-4 border-t border-surface-100/50 mt-8">
           {onCancel && (
