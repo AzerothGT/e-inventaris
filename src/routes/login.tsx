@@ -101,7 +101,7 @@ function LoginPage() {
                     Password
                   </label>
                   <div className="relative group/forgot">
-                    <span tabIndex={0} role="button" className="text-sm font-medium text-primary-600 hover:text-primary-500 transition-all cursor-help border-b border-dashed border-transparent hover:border-primary-500 pb-0.5">
+                    <span tabIndex={0} className="text-sm font-medium text-primary-600 hover:text-primary-500 transition-all cursor-help border-b border-dashed border-transparent hover:border-primary-500 pb-0.5">
                       Lupa password?
                     </span>
                     <div className="absolute bottom-full right-0 mb-1.5 px-3 py-1.5 bg-surface-800 text-white text-xs font-normal rounded-lg opacity-0 group-hover/forgot:opacity-100 group-focus-within/forgot:opacity-100 transition-all duration-200 pointer-events-none translate-y-1 group-hover/forgot:translate-y-0 group-focus-within/forgot:translate-y-0 shadow-lg whitespace-nowrap z-20">
