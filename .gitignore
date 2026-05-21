@@ -16,6 +16,10 @@ todos.json
 *.db-shm
 *.db-wal
 
+# Git worktrees
+.worktrees/
+worktrees/
+
 # Build and Tool Artifacts
 .kilo/
 *.tsbuildinfo
