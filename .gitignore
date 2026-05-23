@@ -15,6 +15,9 @@ todos.json
 *.db
 *.db-shm
 *.db-wal
+.cursor
+.agents
+.opencode
 
 # Git worktrees
 .worktrees/
