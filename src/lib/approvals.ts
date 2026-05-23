@@ -113,7 +113,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Proses Pembelian',
     from: 'disetujui',
     to: 'proses_pembelian',
-    roles: ['tu_admin', 'admin'],
+    roles: ['tu_admin', 'orang_tu', 'admin'],
     variant: 'default',
   },
 
@@ -123,7 +123,7 @@ export const APPROVAL_CONFIG: ApprovalAction[] = [
     label: 'Barang Diterima',
     from: 'proses_pembelian',
     to: 'selesai',
-    roles: ['tu_admin', 'admin'],
+    roles: ['tu_admin', 'orang_tu', 'admin'],
     variant: 'success',
     requiresData: true,
   },

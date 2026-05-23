@@ -29,7 +29,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
 
     // 3. Persetujuan Saya (Role-based)
     let approvalNeededCount = 0;
-    if (role !== 'penjaga_lab') {
+    if (role !== 'penjaga_lab' && role !== 'orang_tu') {
       let statusToWatch: PermintaanStatus[] = [];
       if (role === 'admin') {
         statusToWatch = ['menunggu_kaprog', 'menunggu_wakasek', 'menunggu_kepsek', 'disetujui', 'proses_pembelian'];
@@ -39,7 +39,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
         statusToWatch = ['menunggu_wakasek'];
       } else if (role === 'kepala_sekolah') {
         statusToWatch = ['menunggu_kepsek'];
-      } else if (role === 'tu_admin') {
+      } else if (role === 'tu_admin' || role === 'orang_tu') {
         statusToWatch = ['disetujui', 'proses_pembelian'];
       }
 
@@ -50,7 +50,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
           .where(sql`${permintaanPengadaan.status} IN ${statusToWatch}`);
         approvalNeededCount = result.value;
       }
-    } else if (role === 'penjaga_lab' || role === 'orang_tu') {
+    } else if (role === 'penjaga_lab') {
       // For Requesters, "Persetujuan Saya" might mean "My Pending Requests"
       const [result] = await db
         .select({ value: count() })
@@ -125,7 +125,7 @@ export const getApprovalQueue = createServerFn({ method: "GET" })
     if (!session) throw new Error("Unauthorized");
 
     const role = session.role as UserRole;
-    if (role === 'penjaga_lab' || role === 'orang_tu') return [];
+    if (role === 'penjaga_lab') return [];
 
     let statusToWatch: PermintaanStatus[] = [];
     if (role === 'admin') {
@@ -136,7 +136,7 @@ export const getApprovalQueue = createServerFn({ method: "GET" })
       statusToWatch = ['menunggu_wakasek'];
     } else if (role === 'kepala_sekolah') {
       statusToWatch = ['menunggu_kepsek'];
-    } else if (role === 'tu_admin') {
+    } else if (role === 'tu_admin' || role === 'orang_tu') {
       statusToWatch = ['disetujui', 'proses_pembelian'];
     }
 

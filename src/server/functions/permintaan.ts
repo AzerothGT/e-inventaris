@@ -318,7 +318,7 @@ export const updatePengadaanStatus = createServerFn({ method: "POST" })
       );
     } else if (data.status === "disetujui") {
       await notifyRoles(
-        ["tu_admin", "admin"],
+        ["tu_admin", "orang_tu", "admin"],
         "Proses Pembelian",
         `Permintaan "${event.namaEvent}" telah disetujui, siap dibeli`
       );

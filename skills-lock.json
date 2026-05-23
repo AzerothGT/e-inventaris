@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "Use Case Documentation": {
+      "source": "danhvb/my-ba-skills",
+      "sourceType": "github",
+      "skillPath": "multi-agent-ba/.agent/skills/senior-ba/use-case-documentation/SKILL.md",
+      "computedHash": "6bbab0e4976c6a20c2acaa130d44d72d861a76e5a897091fce0a28b04bba839c"
+    }
+  }
+}
