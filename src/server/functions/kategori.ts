@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { db } from '../../db';
-import { kategori } from '../../db/schema';
+import { kategori, barang, pengadaanItem, permintaanPengadaan } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -37,7 +37,39 @@ export const updateKategori = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const { id, ...updateData } = data;
     
-    await db.update(kategori).set(updateData).where(eq(kategori.id, id));
+    await db.transaction(async (tx) => {
+      const existing = await tx
+        .select({ nama: kategori.nama })
+        .from(kategori)
+        .where(eq(kategori.id, id))
+        .limit(1);
+
+      if (existing.length > 0) {
+        const oldNama = existing[0].nama;
+        const newNama = updateData.nama;
+
+        await tx.update(kategori).set(updateData).where(eq(kategori.id, id));
+
+        if (oldNama !== newNama) {
+          await tx
+            .update(barang)
+            .set({ kategori: newNama })
+            .where(eq(barang.kategori, oldNama));
+
+          await tx
+            .update(pengadaanItem)
+            .set({ kategori: newNama })
+            .where(eq(pengadaanItem.kategori, oldNama));
+
+          await tx
+            .update(permintaanPengadaan)
+            .set({ kategori: newNama })
+            .where(eq(permintaanPengadaan.kategori, oldNama));
+        }
+      } else {
+        await tx.update(kategori).set(updateData).where(eq(kategori.id, id));
+      }
+    });
 
     return { success: true };
   });
@@ -51,3 +83,4 @@ export const deleteKategori = createServerFn({ method: 'POST' })
 
     return { success: true };
   });
+

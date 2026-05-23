@@ -169,6 +169,7 @@ export function UserTableActions({ user }: UserTableActionsProps) {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="••••••••"
+              autoComplete="new-password"
             />
           </div>
           <div className="flex justify-end gap-3 pt-4">

@@ -195,7 +195,9 @@ export const updatePengadaanStatus = createServerFn({ method: "POST" })
 
     if (!event) throw new Error("Permintaan tidak ditemukan");
 
+    const isAdmin = session.role === "admin";
     if (
+      !isAdmin &&
       !isValidTransition(
         event.status as PermintaanStatus,
         data.status as PermintaanStatus,
@@ -208,6 +210,56 @@ export const updatePengadaanStatus = createServerFn({ method: "POST" })
     const updateData: any = { status: data.status };
     if (data.status === "disetujui") {
       updateData.disetujuiOleh = session.id;
+    }
+
+    // If rolling back from 'selesai' to something else, revert inventory additions
+    if (event.status === "selesai" && data.status !== "selesai") {
+      const items = await db
+        .select()
+        .from(pengadaanItem)
+        .where(eq(pengadaanItem.eventId, event.id));
+
+      for (const item of items) {
+        if (item.targetRuanganId) {
+          // Find matching barang in inventory
+          const [invBarang] = await db
+            .select()
+            .from(barang)
+            .where(
+              and(
+                eq(barang.nama, item.namaBarang),
+                eq(barang.merek, item.merek || "Tidak Spesifik"),
+                eq(barang.ruanganId, item.targetRuanganId),
+                eq(barang.status, item.kondisiDiterima || "baik"),
+                eq(barang.lemari, item.targetLemari || "")
+              )
+            )
+            .limit(1);
+
+          if (invBarang) {
+            if (invBarang.jumlah <= item.jumlah) {
+              // Delete the barang record if quantity is fully reverted
+              await db.delete(barang).where(eq(barang.id, invBarang.id));
+            } else {
+              // Decrement quantity
+              await db
+                .update(barang)
+                .set({ jumlah: invBarang.jumlah - item.jumlah })
+                .where(eq(barang.id, invBarang.id));
+            }
+          }
+
+          // Reset the receiving fields on the pengadaanItem
+          await db
+            .update(pengadaanItem)
+            .set({
+              targetRuanganId: null,
+              targetLemari: null,
+              kondisiDiterima: null,
+            })
+            .where(eq(pengadaanItem.id, item.id));
+        }
+      }
     }
 
     // Handle selesai: update each item + create inventory
@@ -285,11 +337,15 @@ export const updatePengadaanStatus = createServerFn({ method: "POST" })
       .set(updateData)
       .where(eq(pengadaanEvent.id, data.id));
 
+    const isOverride = isAdmin && !isValidTransition(event.status as PermintaanStatus, data.status as PermintaanStatus, session.role as UserRole);
+
     await db.insert(approvalLogs).values({
       id: crypto.randomUUID(),
       permintaanId: data.id,
       userId: session.id,
-      action: `Update Status ke ${data.status.replace(/_/g, " ")}`,
+      action: isOverride
+        ? `Override Status ke ${data.status.replace(/_/g, " ")} (Admin)`
+        : `Update Status ke ${data.status.replace(/_/g, " ")}`,
       previousStatus: event.status,
       newStatus: data.status,
       catatan: data.catatan,

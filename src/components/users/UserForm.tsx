@@ -66,7 +66,7 @@ export function UserForm({
         {!isEdit && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-surface-700">Password</label>
-            <Input type="password" {...register("password")} placeholder="••••••••" />
+            <Input type="password" {...register("password")} placeholder="••••••••" autoComplete="new-password" />
             {errors.password && (
               <p className="text-xs text-danger-600">{errors.password.message}</p>
             )}

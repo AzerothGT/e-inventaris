@@ -14,7 +14,8 @@ import { PermintaanActionButtons } from "../../../components/permintaan/Perminta
 import { DataTable } from "../../../components/ui/DataTable";
 import { DataTableColumnHeader } from "../../../components/ui/DataTableColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
-import { PermintaanStatus, UserRole } from "../../../lib/approvals";
+import { PermintaanStatus, UserRole, STATUS_METADATA } from "../../../lib/approvals";
+import { ExportButton } from "../../../components/ui/ExportButton";
 import { getCurrentUser } from "../../../server/functions/auth";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Dialog } from "../../../components/ui/Dialog";
@@ -52,6 +53,40 @@ export const Route = createFileRoute("/_authenticated/permintaan/")({
   ),
 });
 
+const permintaanExportColumns = [
+  { key: "kodePengadaan", label: "Nomor Pengajuan" },
+  { key: "namaEvent", label: "Nama Event" },
+  { key: "deskripsi", label: "Deskripsi" },
+  {
+    key: "prioritas",
+    label: "Prioritas",
+    formatter: (v: string) => (v ? v.toUpperCase() : ""),
+  },
+  {
+    key: "status",
+    label: "Status",
+    formatter: (v: string) =>
+      v ? (STATUS_METADATA[v as PermintaanStatus]?.label || v).toUpperCase() : "",
+  },
+  {
+    key: "items",
+    label: "Barang",
+    formatter: (items: any[]) =>
+      items
+        ? items
+            .map((i) => `${i.namaBarang} (${i.jumlah} ${i.satuan || "Unit"})`)
+            .join(", ")
+        : "",
+  },
+  { key: "requesterName", label: "Pengaju" },
+  {
+    key: "createdAt",
+    label: "Tanggal Pengajuan",
+    formatter: (v: any) =>
+      v ? new Date(v).toLocaleDateString("id-ID") : "",
+  },
+];
+
 function PermintaanListPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -74,6 +109,7 @@ function PermintaanListPage() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [filteredItems, setFilteredItems] = useState<any[]>(eventList || []);
 
   const createMutation = useMutation({
     mutationFn: createPengadaanEvent,
@@ -94,7 +130,7 @@ function PermintaanListPage() {
     {
       accessorKey: "kodePengadaan",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Kode" />
+        <DataTableColumnHeader column={column} title="Nomor Pengajuan" />
       ),
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-surface-500 bg-surface-100 px-2 py-1 rounded">
@@ -143,10 +179,10 @@ function PermintaanListPage() {
           <span
             className={`capitalize font-medium ${
               prioritas === "tinggi"
-                ? "text-red-500"
+                ? "text-danger-600"
                 : prioritas === "sedang"
-                ? "text-yellow-500"
-                : "text-green-500"
+                ? "text-warning-600"
+                : "text-success-600"
             }`}
           >
             {prioritas}
@@ -208,7 +244,14 @@ function PermintaanListPage() {
         title="Pengajuan"
         gradientTitle="Permintaan Barang"
         actions={
-          <>
+          <div className="flex items-center gap-2">
+            <ExportButton
+              data={filteredItems}
+              columns={permintaanExportColumns}
+              filename={`permintaan-pengadaan-${new Date().toISOString().split("T")[0]}`}
+              title="Daftar Permintaan Pengadaan Barang"
+              subtitle={`Diekspor pada: ${new Date().toLocaleString("id-ID")}`}
+            />
             <Button
               onClick={() => setIsAddOpen(true)}
               className="glass-button flex items-center gap-2"
@@ -216,7 +259,7 @@ function PermintaanListPage() {
               <Plus className="h-4 w-4" />
               Buat Permintaan
             </Button>
-          </>
+          </div>
         }
       />
 
@@ -231,6 +274,7 @@ function PermintaanListPage() {
         <DataTable
           columns={columns}
           data={eventList || []}
+          onFilteredDataChange={setFilteredItems}
           searchPlaceholder="Cari event pengadaan..."
           searchColumn="namaEvent"
         />

@@ -5,16 +5,19 @@ import { getUsers, createUser } from "../../server/functions/users"
 import { PageHeader } from "../../components/ui/PageHeader"
 import { DataTable } from "../../components/ui/DataTable"
 import { Button } from "../../components/ui/Button"
-import { UserPlus, Shield } from "lucide-react"
+import { UserPlus, Shield, Users } from "lucide-react"
 import { Dialog } from "../../components/ui/Dialog"
 import { UserForm } from "../../components/users/UserForm"
 import { UserTableActions } from "../../components/users/UserTableActions"
 import { ROLE_DEPARTMENTS, UserRole } from "../../lib/approvals"
 import { Badge } from "../../components/ui/Badge"
 import { toast } from "sonner"
+import { IconBox } from "../../components/ui/IconBox"
+import { TablePageSkeleton } from "../../components/ui/TablePageSkeleton"
 
 export const Route = createFileRoute("/_authenticated/users")({
   component: UserManagementPage,
+  pendingComponent: () => <TablePageSkeleton title="Manajemen" gradientTitle="Pengguna" />,
 })
 
 function UserManagementPage() {
@@ -106,11 +109,15 @@ function UserManagementPage() {
         }
       />
 
-      <div className="bg-white/40 backdrop-blur-md rounded-2xl border border-white/40 shadow-sm overflow-hidden">
+      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
+        <div className="flex items-center gap-2 mb-4">
+          <IconBox icon={Users} variant="primary" size={20} />
+          <h3 className="text-lg font-semibold text-surface-900">Daftar Pengguna</h3>
+        </div>
         <DataTable
           columns={columns}
           data={users || []}
-          searchPlaceholder="Cari pengguna berdasarkan nama atau username..."
+          searchPlaceholder="Cari pengguna..."
           searchColumn="name"
         />
       </div>

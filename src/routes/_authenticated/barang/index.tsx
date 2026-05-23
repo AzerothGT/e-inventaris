@@ -16,13 +16,18 @@ import { DataTableColumnHeader } from "../../../components/ui/DataTableColumnHea
 import { DataTableRowActions } from "../../../components/ui/DataTableRowActions";
 import { Dialog } from "../../../components/ui/Dialog";
 import { BarangForm } from "../../../components/inventory/BarangForm";
+import { MultipleBarangForm } from "../../../components/inventory/MultipleBarangForm";
 import {
 	createBarang,
+	createMultipleBarang,
 	updateBarang,
 	deleteBarang,
 } from "../../../server/functions/barang";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { IconBox } from "../../../components/ui/IconBox";
+import { ExportButton } from "../../../components/ui/ExportButton";
+import { toast } from "sonner";
+import { cn } from "../../../lib/utils";
 
 
 import * as React from "react";
@@ -45,6 +50,22 @@ export const Route = createFileRoute("/_authenticated/barang/")({
 
 import { useRouter } from "@tanstack/react-router";
 
+const barangExportColumns = [
+	{ key: "kodeBarang", label: "Kode Barang" },
+	{ key: "nama", label: "Nama Barang" },
+	{ key: "kategori", label: "Kategori" },
+	{ key: "merek", label: "Merek" },
+	{ key: "noSeri", label: "No Seri" },
+	{ key: "tahunPengadaan", label: "Tahun" },
+	{ key: "jumlah", label: "Jumlah" },
+	{
+		key: "status",
+		label: "Kondisi",
+		formatter: (v: string) => (v ? v.replace("_", " ").toLowerCase() : ""),
+	},
+	{ key: "namaRuangan", label: "Ruangan" },
+];
+
 function BarangListPage() {
 	const router = useRouter();
 	const queryClient = useQueryClient();
@@ -53,8 +74,10 @@ function BarangListPage() {
 	const { data: categories } = useSuspenseQuery(kategoriQueries.list());
 
 	const [isAddOpen, setIsAddOpen] = React.useState(false);
+	const [formMode, setFormMode] = React.useState<"single" | "multiple">("single");
 	const [editingItem, setEditingItem] = React.useState<any>(null);
 	const [deletingItem, setDeletingItem] = React.useState<any>(null);
+	const [filteredItems, setFilteredItems] = React.useState<any[]>(items);
 
 	const createMutation = useMutation({
 		mutationFn: createBarang,
@@ -62,6 +85,24 @@ function BarangListPage() {
 			await queryClient.invalidateQueries({ queryKey: barangQueries.all() });
 			await router.invalidate();
 			setIsAddOpen(false);
+			toast.success("Barang berhasil ditambahkan");
+		},
+		onError: (error: any) => {
+			toast.error(error.message || "Gagal menambahkan barang");
+		},
+	});
+
+	const createMultipleMutation = useMutation({
+		mutationFn: createMultipleBarang,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: barangQueries.all() });
+			await router.invalidate();
+			setIsAddOpen(false);
+			setFormMode("single");
+			toast.success("Semua barang berhasil ditambahkan");
+		},
+		onError: (error: any) => {
+			toast.error(error.message || "Gagal menambahkan barang");
 		},
 	});
 
@@ -71,6 +112,10 @@ function BarangListPage() {
 			await queryClient.invalidateQueries({ queryKey: barangQueries.all() });
 			await router.invalidate();
 			setEditingItem(null);
+			toast.success("Barang berhasil diperbarui");
+		},
+		onError: (error: any) => {
+			toast.error(error.message || "Gagal memperbarui barang");
 		},
 	});
 
@@ -80,6 +125,10 @@ function BarangListPage() {
 			await queryClient.invalidateQueries({ queryKey: barangQueries.all() });
 			await router.invalidate();
 			setDeletingItem(null);
+			toast.success("Barang berhasil dihapus");
+		},
+		onError: (error: any) => {
+			toast.error(error.message || "Gagal menghapus barang");
 		},
 	});
 
@@ -114,6 +163,9 @@ function BarangListPage() {
 			cell: ({ row }) => (
 				<div className="text-surface-600">{row.getValue("kategori")}</div>
 			),
+			filterFn: (row, id, value) => {
+				return value.includes(row.getValue(id));
+			},
 		},
 		{
 			accessorKey: "merek",
@@ -134,6 +186,9 @@ function BarangListPage() {
 					{row.getValue("namaRuangan") || "-"}
 				</div>
 			),
+			filterFn: (row, id, value) => {
+				return value.includes(row.getValue(id));
+			},
 		},
 		{
 			accessorKey: "gedung",
@@ -212,8 +267,14 @@ function BarangListPage() {
 				title="Daftar"
 				gradientTitle="Inventaris"
 				actions={
-					<>
-
+					<div className="flex items-center gap-2">
+						<ExportButton
+							data={filteredItems}
+							columns={barangExportColumns}
+							filename={`daftar-inventaris-${new Date().toISOString().split("T")[0]}`}
+							title="Daftar Inventaris Barang"
+							subtitle={`Diekspor pada: ${new Date().toLocaleString("id-ID")}`}
+						/>
 						<Button
 							onClick={() => setIsAddOpen(true)}
 							className="glass-button flex items-center gap-2"
@@ -221,7 +282,7 @@ function BarangListPage() {
 							<Plus className="h-4 w-4" />
 							Tambah Barang
 						</Button>
-					</>
+					</div>
 				}
 			/>
 
@@ -236,6 +297,7 @@ function BarangListPage() {
 				<DataTable
 					columns={columns}
 					data={items}
+					onFilteredDataChange={setFilteredItems}
 					searchPlaceholder="Cari barang..."
 					searchColumn="nama"
 					facetedFilters={[
@@ -252,6 +314,22 @@ function BarangListPage() {
 								},
 							],
 						},
+						{
+							columnId: "kategori",
+							title: "Kategori",
+							options: categories.map((c) => ({
+								label: c.nama,
+								value: c.nama,
+							})),
+						},
+						{
+							columnId: "namaRuangan",
+							title: "Ruangan",
+							options: rooms.map((r) => ({
+								label: r.nama,
+								value: r.nama,
+							})),
+						},
 					]}
 				/>
 			</div>
@@ -259,16 +337,67 @@ function BarangListPage() {
 			{/* Add Modal */}
 			<Dialog
 				isOpen={isAddOpen}
-				onClose={() => setIsAddOpen(false)}
+				onClose={() => {
+					setIsAddOpen(false);
+					setFormMode("single");
+				}}
 				title="Tambah Barang Baru"
+				size={formMode === "single" ? "md" : "xl"}
 			>
-				<BarangForm
-					ruanganOptions={rooms}
-					kategoriOptions={categories}
-					onSubmit={(data) => createMutation.mutate({ data })}
-					onCancel={() => setIsAddOpen(false)}
-					isLoading={createMutation.isPending}
-				/>
+				<div className="space-y-6">
+					<div className="flex justify-center">
+						<div className="flex bg-surface-100 p-1 rounded-xl border border-surface-200/50">
+							<button
+								type="button"
+								onClick={() => setFormMode("single")}
+								className={cn(
+									"px-4 py-1.5 text-xs font-bold rounded-lg transition-all",
+									formMode === "single"
+										? "bg-white text-surface-900 shadow-sm"
+										: "text-surface-500 hover:text-surface-900"
+								)}
+							>
+								Satu Barang
+							</button>
+							<button
+								type="button"
+								onClick={() => setFormMode("multiple")}
+								className={cn(
+									"px-4 py-1.5 text-xs font-bold rounded-lg transition-all",
+									formMode === "multiple"
+										? "bg-white text-surface-900 shadow-sm"
+										: "text-surface-500 hover:text-surface-900"
+								)}
+							>
+								Banyak Barang
+							</button>
+						</div>
+					</div>
+
+					{formMode === "single" ? (
+						<BarangForm
+							ruanganOptions={rooms}
+							kategoriOptions={categories}
+							onSubmit={(data) => createMutation.mutate({ data })}
+							onCancel={() => {
+								setIsAddOpen(false);
+								setFormMode("single");
+							}}
+							isLoading={createMutation.isPending}
+						/>
+					) : (
+						<MultipleBarangForm
+							ruanganOptions={rooms}
+							kategoriOptions={categories}
+							onSubmit={(data) => createMultipleMutation.mutate({ data })}
+							onCancel={() => {
+								setIsAddOpen(false);
+								setFormMode("single");
+							}}
+							isLoading={createMultipleMutation.isPending}
+						/>
+					)}
+				</div>
 			</Dialog>
 
 			{/* Edit Modal */}

@@ -200,7 +200,7 @@ function StatCard({ title, value, subtitle, icon, color, stagger }: any) {
 	return (
 		<Card className={`glass-card glass-card-hover lift-card ${stagger}`}>
 			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle className="text-xs font-bold text-surface-50 tracking-widest">{title}</CardTitle>
+				<CardTitle className="text-xs font-bold text-surface-500 tracking-widest">{title}</CardTitle>
 				<IconBox icon={icon} variant={color} className="shadow-sm" />
 			</CardHeader>
 			<CardContent>
