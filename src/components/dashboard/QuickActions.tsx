@@ -61,14 +61,6 @@ export function QuickActions({ role }: { role: UserRole }) {
     (action) => action.roles === 'all' || action.roles.includes(role)
   )
 
-  const variantStyles = {
-    primary: 'bg-primary-50/50 hover:bg-primary-50 border-primary-100/50',
-    success: 'bg-success-50/50 hover:bg-success-50 border-success-100/50',
-    warning: 'bg-warning-50/50 hover:bg-warning-50 border-warning-100/50',
-    danger: 'bg-danger-50/50 hover:bg-danger-50 border-danger-100/50',
-    surface: 'bg-surface-50/50 hover:bg-surface-50 border-surface-100/50',
-  }
-
   return (
     <Card className="glass-card shadow-sm border-surface-200 stagger-7">
       <CardHeader>
@@ -79,7 +71,7 @@ export function QuickActions({ role }: { role: UserRole }) {
           <Link
             key={i}
             to={action.href}
-            className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 group ${variantStyles[action.variant]}`}
+            className="flex items-center gap-3 p-3 rounded-xl border border-primary-100/50 bg-primary-50/50 hover:bg-primary-50 transition-all duration-200 group"
           >
             <IconBox icon={action.icon} variant={action.variant} size={20} className="shadow-sm group-hover:scale-110" />
             <div className="text-left">

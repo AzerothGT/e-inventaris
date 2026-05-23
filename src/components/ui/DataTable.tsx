@@ -40,6 +40,7 @@ interface DataTableProps<TData, TValue> {
       icon?: React.ComponentType<{ className?: string }>
     }[]
   }[]
+  onFilteredDataChange?: (data: TData[]) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +49,7 @@ export function DataTable<TData, TValue>({
   searchPlaceholder = "Cari data...",
   searchColumn = "nama",
   facetedFilters = [],
+  onFilteredDataChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -73,6 +75,19 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  const filteredData = React.useMemo(() => {
+    return table.getFilteredRowModel().rows.map((row) => row.original)
+  }, [table.getFilteredRowModel().rows])
+
+  React.useEffect(() => {
+    if (onFilteredDataChange) {
+      const timer = setTimeout(() => {
+        onFilteredDataChange(filteredData)
+      }, 0)
+      return () => clearTimeout(timer)
+    }
+  }, [filteredData, onFilteredDataChange])
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -80,6 +95,11 @@ export function DataTable<TData, TValue>({
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
             <Input
+              type="search"
+              name="search"
+              autoComplete="new-password"
+              data-lpignore="true"
+              data-1p-ignore
               placeholder={searchPlaceholder}
               value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ""}
               onChange={(event) =>

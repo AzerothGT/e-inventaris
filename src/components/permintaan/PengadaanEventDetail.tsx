@@ -25,10 +25,10 @@ export function PengadaanEventDetail({ data }: PengadaanEventDetailProps) {
 
   const prioritasColor =
     data.prioritas === "tinggi"
-      ? "text-red-500"
+      ? "text-danger-600"
       : data.prioritas === "sedang"
-      ? "text-yellow-500"
-      : "text-green-500";
+      ? "text-warning-600"
+      : "text-success-600";
 
   return (
     <div className="space-y-6 max-h-[75vh] overflow-y-auto pr-2 custom-scrollbar">

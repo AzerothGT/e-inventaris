@@ -13,6 +13,7 @@ Last Updated: 2026-05-01 01:25 (GMT+7)
 | ERD Design: Barang, Ruangan, Permintaan, Logs | ✅ | 2026-04-21 02:59 |
 | Drizzle ORM Schema & Migrations | ✅ | 2026-04-21 04:12 |
 | **Inventory Module** | | |
+| Create server function `createMultipleBarang` in `src/server/functions/barang.ts` | ✅ | 2026-05-01 01:30 |
 | CRUD Operations for Barang & Ruangan | ✅ | 2026-04-21 09:15 |
 | TanStack Table Integration (Sorting & Filtering) | ✅ | 2026-04-21 10:37 |
 | Inventory Status Badge & Condition Logic | ✅ | 2026-04-21 11:05 |

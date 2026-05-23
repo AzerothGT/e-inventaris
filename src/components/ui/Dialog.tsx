@@ -72,7 +72,7 @@ export function Dialog({ isOpen, onClose, title, children, className, size = 'md
           </button>
         </div>
         <div className="p-6">
-          {children}
+          {isOpen && children}
         </div>
       </div>
     </dialog>
