@@ -285,7 +285,7 @@ function PermintaanListPage() {
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         title="Buat Permintaan Pengadaan"
-        size="lg"
+        size="xl"
       >
         <PengadaanEventForm
           onSubmit={(data) => createMutation.mutate({ data })}
