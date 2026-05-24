@@ -219,7 +219,7 @@ export function PermintaanActionButtons({
 
         {userRole === "admin" && (
           <Button
-            variant="outline"
+            variant="secondary"
             size="icon"
             title="Edit Status (Admin Override)"
             disabled={mutation.isPending}
@@ -228,7 +228,7 @@ export function PermintaanActionButtons({
               setOverrideComment("");
               setIsAdminDialogOpen(true);
             }}
-            className="h-9 w-9 text-primary-600 border-primary-200 hover:bg-primary-50"
+            className="h-9 w-9"
           >
             <Settings className="h-4 w-4" />
           </Button>

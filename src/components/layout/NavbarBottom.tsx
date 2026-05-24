@@ -4,13 +4,20 @@ import {
   Package,
   FilePen,
   Warehouse,
-  Bell,
+  FileText,
   Users,
 } from 'lucide-react'
-
-const CURRENT_ROLE = 'tu_admin'
+import { useQuery } from '@tanstack/react-query'
+import { getCurrentUser } from '../../server/functions/auth'
 
 export function NavbarBottom() {
+  const { data: user } = useQuery({
+    queryKey: ['session'],
+    queryFn: () => getCurrentUser(),
+  })
+
+  const currentRole = user?.role || 'guest'
+
   const menuItems = [
     {
       title: 'Dashboard',
@@ -33,24 +40,18 @@ export function NavbarBottom() {
     {
       title: 'Gudang',
       icon: <Warehouse size={20} />,
-      to: '/gudang',
+      to: '/ruangan',
       roles: ['tu_admin', 'penjaga_lab', 'admin'],
     },
     {
-      title: 'Notifikasi',
-      icon: <Bell size={20} />,
-      to: '/notifikasi',
+      title: 'Laporan',
+      icon: <FileText size={20} />,
+      to: '/laporan',
       roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
-    },
-    {
-      title: 'Pengguna',
-      icon: <Users size={20} />,
-      to: '/pengaturan/users',
-      roles: ['kepala_sekolah', 'admin'],
     },
   ]
 
-  const filteredMenu = menuItems.filter(item => item.roles.includes(CURRENT_ROLE))
+  const filteredMenu = menuItems.filter(item => item.roles.includes(currentRole as any))
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-surface-200 lg:hidden flex justify-around items-center h-16 pb-0">

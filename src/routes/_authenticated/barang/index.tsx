@@ -342,7 +342,7 @@ function BarangListPage() {
 					setFormMode("single");
 				}}
 				title="Tambah Barang Baru"
-				size={formMode === "single" ? "md" : "xl"}
+				size={formMode === "single" ? "lg" : "xl"}
 			>
 				<div className="space-y-6">
 					<div className="flex justify-center">
@@ -405,6 +405,7 @@ function BarangListPage() {
 				isOpen={!!editingItem}
 				onClose={() => setEditingItem(null)}
 				title="Edit Barang"
+				size="lg"
 			>
 				{editingItem && (
 					<BarangForm

@@ -20,7 +20,7 @@ export function TablePageSkeleton({ title, gradientTitle }: TablePageSkeletonPro
 
       <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <Skeleton className="h-5 w-5 rounded-md" />
+          <Skeleton className="h-9 w-9 rounded-lg" />
           <Skeleton className="h-6 w-40" />
         </div>
 

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "../../db";
-import { permintaanPengadaan, barang, approvalLogs, users } from "../../db/schema";
+import { pengadaanEvent, pengadaanItem, barang, approvalLogs, users } from "../../db/schema";
 import { getAuthSession } from "../../lib/auth";
 import { eq, and, ne, count, sql, desc } from "drizzle-orm";
 import { PermintaanStatus, UserRole } from "../../lib/approvals";
@@ -19,11 +19,11 @@ export const getDashboardStats = createServerFn({ method: "GET" })
     // 2. Permintaan Aktif (Not selesai or ditolak)
     const [activeRequestsCount] = await db
       .select({ value: count() })
-      .from(permintaanPengadaan)
+      .from(pengadaanEvent)
       .where(
         and(
-          ne(permintaanPengadaan.status, "selesai"),
-          ne(permintaanPengadaan.status, "ditolak")
+          ne(pengadaanEvent.status, "selesai"),
+          ne(pengadaanEvent.status, "ditolak")
         )
       );
 
@@ -46,20 +46,20 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       if (statusToWatch.length > 0) {
         const [result] = await db
           .select({ value: count() })
-          .from(permintaanPengadaan)
-          .where(sql`${permintaanPengadaan.status} IN ${statusToWatch}`);
+          .from(pengadaanEvent)
+          .where(sql`${pengadaanEvent.status} IN ${statusToWatch}`);
         approvalNeededCount = result.value;
       }
     } else if (role === 'penjaga_lab') {
-      // For Requesters, "Persetujuan Saya" might mean "My Pending Requests"
+      // For Requesters, "Persetujuan Saya" means "My Pending Requests"
       const [result] = await db
         .select({ value: count() })
-        .from(permintaanPengadaan)
+        .from(pengadaanEvent)
         .where(
           and(
-            eq(permintaanPengadaan.diajukanOleh, userId),
-            ne(permintaanPengadaan.status, 'selesai'),
-            ne(permintaanPengadaan.status, 'ditolak')
+            eq(pengadaanEvent.diajukanOleh, userId),
+            ne(pengadaanEvent.status, 'selesai'),
+            ne(pengadaanEvent.status, 'ditolak')
           )
         );
       approvalNeededCount = result.value;
@@ -93,7 +93,6 @@ export const getRecentActivity = createServerFn({ method: "GET" })
     const session = await getAuthSession();
     if (!session) throw new Error("Unauthorized");
 
-
     // Fetch last 10 logs with user info
     let query = db
       .select({
@@ -104,17 +103,13 @@ export const getRecentActivity = createServerFn({ method: "GET" })
         userName: users.name,
         userRole: users.role,
         permintaanId: approvalLogs.permintaanId,
-        namaBarang: permintaanPengadaan.namaBarang,
+        namaEvent: pengadaanEvent.namaEvent,
       })
       .from(approvalLogs)
       .leftJoin(users, eq(approvalLogs.userId, users.id))
-      .leftJoin(permintaanPengadaan, eq(approvalLogs.permintaanId, permintaanPengadaan.id))
+      .leftJoin(pengadaanEvent, eq(approvalLogs.permintaanId, pengadaanEvent.id))
       .orderBy(desc(approvalLogs.createdAt))
       .limit(10);
-
-    // If it's a requester, maybe they only want to see their own request updates?
-    // But usually activity feeds show "system activity" for transparency.
-    // Let's keep it broad for now but maybe filter for pure requesters if they have too much noise.
 
     return await query;
   });
@@ -144,18 +139,22 @@ export const getApprovalQueue = createServerFn({ method: "GET" })
 
     const queue = await db
       .select({
-        id: permintaanPengadaan.id,
-        namaBarang: permintaanPengadaan.namaBarang,
-        jumlah: permintaanPengadaan.jumlah,
-        prioritas: permintaanPengadaan.prioritas,
-        status: permintaanPengadaan.status,
-        createdAt: permintaanPengadaan.createdAt,
+        id: pengadaanEvent.id,
+        namaEvent: pengadaanEvent.namaEvent,
+        prioritas: pengadaanEvent.prioritas,
+        status: pengadaanEvent.status,
+        createdAt: pengadaanEvent.createdAt,
         requesterName: users.name,
+        itemCount: sql<number>`count(${pengadaanItem.id})`,
+        totalJumlah: sql<number>`sum(${pengadaanItem.jumlah})`,
       })
-      .from(permintaanPengadaan)
-      .leftJoin(users, eq(permintaanPengadaan.diajukanOleh, users.id))
-      .where(sql`${permintaanPengadaan.status} IN ${statusToWatch}`)
-      .orderBy(desc(permintaanPengadaan.createdAt));
+      .from(pengadaanEvent)
+      .leftJoin(users, eq(pengadaanEvent.diajukanOleh, users.id))
+      .leftJoin(pengadaanItem, eq(pengadaanEvent.id, pengadaanItem.eventId))
+      .where(sql`${pengadaanEvent.status} IN ${statusToWatch}`)
+      .groupBy(pengadaanEvent.id, users.name)
+      .orderBy(desc(pengadaanEvent.createdAt));
 
     return queue;
   });
+

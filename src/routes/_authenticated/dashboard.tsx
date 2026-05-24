@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card'
-import { Package, ShoppingCart, CheckCircle, Clock, ArrowRight, User, Tag, Calendar } from 'lucide-react'
+import { Package, ShoppingCart, CheckCircle, Clock, ArrowRight, User, Tag, Calendar, XCircle, PlusCircle } from 'lucide-react'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { IconBox } from '../../components/ui/IconBox'
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -111,7 +111,7 @@ function Dashboard() {
       <div className="grid gap-6 lg:grid-cols-7">
         <div className="lg:col-span-4 space-y-6">
           {/* Main Content Area */}
-          {role !== 'penjaga_lab' && approvalQueue.length > 0 ? (
+          {role !== 'penjaga_lab' && approvalQueue.length > 0 && (
             <Card className="glass-card shadow-sm border-surface-200 stagger-5 overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between border-b border-surface-100 bg-surface-50/30">
                 <div>
@@ -133,8 +133,8 @@ function Dashboard() {
                         <div className="flex items-center gap-3">
                           <IconBox icon={Tag} variant="surface" size={18} className="group-hover:bg-primary-50 group-hover:text-primary-600" />
                           <div>
-                            <h4 className="font-semibold text-sm text-surface-900">{item.namaBarang}</h4>
-                            <p className="text-xs text-surface-500">Oleh: {item.requesterName} • {item.jumlah} Unit</p>
+                            <h4 className="font-semibold text-sm text-surface-900">{item.namaEvent}</h4>
+                            <p className="text-xs text-surface-500">Oleh: {item.requesterName} • {item.itemCount} jenis ({item.totalJumlah} unit)</p>
                           </div>
                         </div>
                         <div className={`text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider border ${STATUS_METADATA[item.status as PermintaanStatus].color}`}>
@@ -158,9 +158,9 @@ function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-          ) : (
-            <OverviewChart />
           )}
+
+          <OverviewChart />
 
           {/* Quick Actions (only for desktop layout, can be moved) */}
           <QuickActions role={role} />
@@ -174,28 +174,53 @@ function Dashboard() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-surface-100">
-                {recentActivity.map((activity: any) => (
-                  <div key={activity.id} className="p-4 flex gap-3 hover:bg-surface-50/50 transition-colors">
-                    <div className="flex-shrink-0 mt-1">
-                      <IconBox icon={User} variant="surface" size={14} className="w-8 h-8 rounded-full" />
-                    </div>
-                    <div className="space-y-1 min-w-0">
-                      <p className="text-xs text-surface-900 leading-relaxed">
-                        <span className="font-bold">{activity.userName}</span> {activity.action.toLowerCase()}
-                        <span className="font-medium text-primary-600 ml-1 italic">"{activity.namaBarang}"</span>
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-surface-400">
-                          {format(new Date(activity.createdAt), 'HH:mm', { locale: id })}
-                        </span>
-                        <span className="w-1 h-1 rounded-full bg-surface-300" />
-                        <span className="text-[10px] font-medium text-surface-500 capitalize">
-                          {activity.newStatus.replace('_', ' ')}
-                        </span>
+                {recentActivity.map((activity: any) => {
+                  let ActivityIcon = User
+                  let iconVariant: 'surface' | 'success' | 'danger' | 'primary' | 'warning' = 'surface'
+
+                  const actionLower = activity.action.toLowerCase()
+                  const newStatusLower = (activity.newStatus || '').toLowerCase()
+
+                  if (actionLower.includes('selesai') || newStatusLower === 'selesai') {
+                    ActivityIcon = CheckCircle
+                    iconVariant = 'success'
+                  } else if (newStatusLower === 'ditolak') {
+                    ActivityIcon = XCircle
+                    iconVariant = 'danger'
+                  } else if (actionLower.includes('mengajukan') || actionLower.includes('buat')) {
+                    ActivityIcon = PlusCircle
+                    iconVariant = 'primary'
+                  } else if (newStatusLower === 'proses_pembelian' || actionLower.includes('pembelian')) {
+                    ActivityIcon = Package
+                    iconVariant = 'warning'
+                  } else if (actionLower.includes('tinjau') || actionLower.includes('update')) {
+                    ActivityIcon = Clock
+                    iconVariant = 'primary'
+                  }
+
+                  return (
+                    <div key={activity.id} className="p-4 flex gap-3 hover:bg-surface-50/50 transition-colors">
+                      <div className="flex-shrink-0 mt-1">
+                        <IconBox icon={ActivityIcon} variant={iconVariant} size={14} className="w-8 h-8 rounded-full" />
+                      </div>
+                      <div className="space-y-1 min-w-0">
+                        <p className="text-xs text-surface-900 leading-relaxed">
+                          <span className="font-bold">{activity.userName}</span> {activity.action.toLowerCase()}
+                          <span className="font-medium text-primary-600 ml-1 italic">"{activity.namaEvent || 'Permintaan'}"</span>
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-surface-400">
+                            {format(new Date(activity.createdAt), 'HH:mm', { locale: id })}
+                          </span>
+                          <span className="w-1 h-1 rounded-full bg-surface-300" />
+                          <span className="text-[10px] font-medium text-surface-500 capitalize">
+                            {activity.newStatus.replace('_', ' ')}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
                 {recentActivity.length === 0 && (
                   <div className="p-8 text-center text-surface-400 italic text-sm">
                     Belum ada aktivitas tercatat
@@ -214,7 +239,7 @@ function StatCard({ title, value, subtitle, icon, color, highlight, stagger }: a
   return (
     <Card className={`glass-card glass-card-hover lift-card ${stagger}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xs font-bold text-surface-500 tracking-widest">{title}</CardTitle>
+        <CardTitle className="text-xs font-bold text-surface-500 tracking-widest uppercase">{title}</CardTitle>
         <IconBox icon={icon} variant={color} className="shadow-sm" />
       </CardHeader>
       <CardContent>
@@ -226,3 +251,4 @@ function StatCard({ title, value, subtitle, icon, color, highlight, stagger }: a
     </Card>
   )
 }
+
