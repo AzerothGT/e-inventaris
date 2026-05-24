@@ -133,7 +133,7 @@ function PermintaanListPage() {
         <DataTableColumnHeader column={column} title="Nomor Pengajuan" />
       ),
       cell: ({ row }) => (
-        <span className="font-mono text-xs font-semibold text-surface-500 bg-surface-100 px-2 py-1 rounded">
+        <span className="font-mono text-xs text-surface-600">
           {row.getValue("kodePengadaan") || "-"}
         </span>
       ),
@@ -145,7 +145,7 @@ function PermintaanListPage() {
       ),
       cell: ({ row }) => (
         <div>
-          <p className="font-semibold text-surface-900">
+          <p className="text-surface-900">
             {row.getValue("namaEvent")}
           </p>
           <p className="text-xs text-surface-400 mt-0.5">

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "../../db";
-import { pengadaanEvent, pengadaanItem, barang, approvalLogs, users } from "../../db/schema";
+import { pengadaanEvent, pengadaanItem, barang, approvalLogs, users, ruangan } from "../../db/schema";
 import { getAuthSession } from "../../lib/auth";
 import { eq, and, ne, count, sql, desc } from "drizzle-orm";
 import { PermintaanStatus, UserRole } from "../../lib/approvals";
@@ -158,3 +158,110 @@ export const getApprovalQueue = createServerFn({ method: "GET" })
     return queue;
   });
 
+export const getLowStockItems = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const session = await getAuthSession();
+    if (!session) throw new Error("Unauthorized");
+
+    const list = await db
+      .select()
+      .from(barang)
+      .leftJoin(ruangan, eq(barang.ruanganId, ruangan.id))
+      .where(sql`${barang.jumlah} <= 10`)
+      .orderBy(barang.jumlah)
+      .limit(5);
+
+    return list.map((row) => ({
+      id: row.barang.id,
+      nama: row.barang.nama,
+      jumlah: row.barang.jumlah,
+      satuan: row.barang.satuan,
+      namaRuangan: row.ruangan?.nama ?? null,
+    }));
+  });
+
+export const getIncomingProcurements = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const session = await getAuthSession();
+    if (!session) throw new Error("Unauthorized");
+
+    const incoming = await db
+      .select({
+        id: pengadaanEvent.id,
+        namaEvent: pengadaanEvent.namaEvent,
+        prioritas: pengadaanEvent.prioritas,
+        status: pengadaanEvent.status,
+        createdAt: pengadaanEvent.createdAt,
+        requesterName: users.name,
+        itemCount: sql<number>`count(${pengadaanItem.id})`,
+        totalJumlah: sql<number>`sum(${pengadaanItem.jumlah})`,
+      })
+      .from(pengadaanEvent)
+      .leftJoin(users, eq(pengadaanEvent.diajukanOleh, users.id))
+      .leftJoin(pengadaanItem, eq(pengadaanEvent.id, pengadaanItem.eventId))
+      .where(sql`${pengadaanEvent.status} IN ('disetujui', 'proses_pembelian')`)
+      .groupBy(pengadaanEvent.id, users.name)
+      .orderBy(desc(pengadaanEvent.createdAt))
+      .limit(5);
+
+    return incoming;
+  });
+
+export const getTrendData = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const session = await getAuthSession();
+    if (!session) throw new Error("Unauthorized");
+
+    // Build array for last 7 months (oldest → newest)
+    const months: { label: string; yearMonth: string; totalSubmitted: number; totalSelesai: number }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth() - i);
+      d.setHours(0, 0, 0, 0);
+      const yearMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleDateString('id-ID', { month: 'short' });
+      months.push({ label, yearMonth, totalSubmitted: 0, totalSelesai: 0 });
+    }
+
+    const sevenMonthsAgo = new Date();
+    sevenMonthsAgo.setDate(1);
+    sevenMonthsAgo.setMonth(sevenMonthsAgo.getMonth() - 6);
+    sevenMonthsAgo.setHours(0, 0, 0, 0);
+
+    // Count new pengadaanEvent submissions per month
+    // createdAt stored as Unix seconds (Drizzle mode:'timestamp')
+    const submitted = await db
+      .select({
+        month: sql<string>`strftime('%Y-%m', datetime(${pengadaanEvent.createdAt}, 'unixepoch', 'localtime'))`,
+        cnt: count(),
+      })
+      .from(pengadaanEvent)
+      .where(sql`${pengadaanEvent.createdAt} >= ${Math.floor(sevenMonthsAgo.getTime() / 1000)}`)
+      .groupBy(sql`strftime('%Y-%m', datetime(${pengadaanEvent.createdAt}, 'unixepoch', 'localtime'))`);
+
+    // Count selesai approvalLogs per month
+    const selesai = await db
+      .select({
+        month: sql<string>`strftime('%Y-%m', datetime(${approvalLogs.createdAt}, 'unixepoch', 'localtime'))`,
+        cnt: count(),
+      })
+      .from(approvalLogs)
+      .where(
+        and(
+          eq(approvalLogs.newStatus, 'selesai'),
+          sql`${approvalLogs.createdAt} >= ${Math.floor(sevenMonthsAgo.getTime() / 1000)}`
+        )
+      )
+      .groupBy(sql`strftime('%Y-%m', datetime(${approvalLogs.createdAt}, 'unixepoch', 'localtime'))`);
+
+    // Map counts onto our months array
+    for (const m of months) {
+      const sub = submitted.find((s) => s.month === m.yearMonth);
+      const sel = selesai.find((s) => s.month === m.yearMonth);
+      m.totalSubmitted = sub ? Number(sub.cnt) : 0;
+      m.totalSelesai = sel ? Number(sel.cnt) : 0;
+    }
+
+    return months.map(({ label, totalSubmitted, totalSelesai }) => ({ label, totalSubmitted, totalSelesai }));
+  });
