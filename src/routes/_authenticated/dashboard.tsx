@@ -329,7 +329,7 @@ function Dashboard() {
                   return (
                     <div key={activity.id} className="py-2.5 px-4 flex items-center justify-between hover:bg-surface-50/50 transition-colors">
                       <div className="flex items-center gap-3 min-w-0">
-                        <IconBox icon={ActivityIcon} variant={iconVariant} size={14} className="w-8 h-8 rounded-full flex-shrink-0" />
+                        <IconBox icon={ActivityIcon} variant={iconVariant} size={14} className="w-8 h-8 rounded-full shrink-0" />
                         <div className="min-w-0">
                           <p className="text-xs text-surface-900 leading-relaxed truncate">
                             <span className="font-bold text-surface-950">{activity.userName}</span> {activity.action.toLowerCase()}

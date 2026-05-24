@@ -157,7 +157,7 @@ export function DashboardSkeleton() {
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div key={i} className="py-2.5 px-4 flex items-center justify-between">
                     <div className="flex items-center gap-3 min-w-0">
-                      <Skeleton className="w-8 h-8 rounded-full flex-shrink-0" />
+                      <Skeleton className="w-8 h-8 rounded-full shrink-0" />
                       <div className="min-w-0">
                         <Skeleton className="h-3.5 w-64 mb-1.5" />
                         <div className="flex gap-2">

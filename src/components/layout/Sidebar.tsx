@@ -80,10 +80,10 @@ export function Sidebar() {
   const filteredMenu = menuItems.filter(item => item.roles.includes(currentRole as any))
 
   return (
-    <aside className={`border-r border-white/40 bg-white/70 backdrop-blur-xl flex flex-col h-full flex-shrink-0 transition-all duration-300 relative z-20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] ${isMinimized ? 'w-20' : 'w-64'}`}>
+    <aside className={`border-r border-white/40 bg-white/70 backdrop-blur-xl flex flex-col h-full shrink-0 transition-all duration-300 relative z-20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] ${isMinimized ? 'w-20' : 'w-64'}`}>
       <div className={`h-16 flex items-center border-b border-white/10 transition-all duration-300 ${isMinimized ? 'justify-center px-0' : 'px-6'}`}>
         <div className={`flex items-center gap-2 text-primary-600 font-bold tracking-tight overflow-hidden ${isMinimized ? '' : 'text-xl'}`}>
-          <div className="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center shrink-0">
             <Package size={isMinimized ? 24 : 20} className="transition-all duration-300" />
           </div>
           {!isMinimized && <span className="whitespace-nowrap transition-opacity duration-300">E-Inventaris</span>}
@@ -97,13 +97,13 @@ export function Sidebar() {
             <Link
               key={item.to}
               to={item.to}
-              className={`sidebar-link ${isMinimized ? 'justify-center !px-0' : ''}`}
+              className={`sidebar-link ${isMinimized ? 'justify-center px-0!' : ''}`}
               activeProps={{
                 className: 'sidebar-link-active',
               }}
               title={isMinimized ? item.title : undefined}
             >
-              <Icon size={isMinimized ? 28 : 20} className="flex-shrink-0 transition-all duration-300" />
+              <Icon size={isMinimized ? 28 : 20} className="shrink-0 transition-all duration-300" />
               {!isMinimized && <span className="whitespace-nowrap">{item.title}</span>}
             </Link>
           )
