@@ -16,19 +16,19 @@ export function DataTableRowActions<TData>({
   return (
     <div className="flex items-center justify-end gap-2">
       <Button
-        variant="ghost"
-        size="sm"
+        variant="secondary"
+        size="icon"
         onClick={() => onEdit(row.original)}
-        className="h-8 w-8 p-0 text-primary-600 hover:text-primary-700 hover:bg-primary-50"
+        className="h-8 w-8 text-primary-600 hover:text-primary-700 hover:bg-primary-100/50"
       >
         <Edit2 className="h-4 w-4" />
         <span className="sr-only">Edit</span>
       </Button>
       <Button
-        variant="ghost"
-        size="sm"
+        variant="secondary"
+        size="icon"
         onClick={() => onDelete(row.original)}
-        className="h-8 w-8 p-0 text-danger-600 hover:text-danger-700 hover:bg-danger-50"
+        className="h-8 w-8 text-danger-600 hover:text-danger-700 hover:bg-danger-100/50"
       >
         <Trash2 className="h-4 w-4" />
         <span className="sr-only">Hapus</span>

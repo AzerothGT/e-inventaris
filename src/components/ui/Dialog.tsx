@@ -71,7 +71,7 @@ export function Dialog({ isOpen, onClose, title, children, className, size = 'md
             <X size={20} />
           </button>
         </div>
-        <div className="p-6">
+        <div className="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
           {isOpen && children}
         </div>
       </div>
