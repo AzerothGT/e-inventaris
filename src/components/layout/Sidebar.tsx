@@ -5,7 +5,6 @@ import {
   Package,
   FilePen,
   Warehouse,
-  FileText,
   Users,
   ChevronLeft,
   ChevronRight,
@@ -63,12 +62,6 @@ export function Sidebar() {
       icon: Warehouse,
       to: '/ruangan',
       roles: ['tu_admin', 'penjaga_lab', 'admin'],
-    },
-    {
-      title: 'Laporan',
-      icon: FileText,
-      to: '/laporan',
-      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengguna',

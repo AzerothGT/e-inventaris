@@ -4,7 +4,6 @@ import {
   Package,
   FilePen,
   Warehouse,
-  FileText,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getCurrentUser } from '../../server/functions/auth'
@@ -41,12 +40,6 @@ export function NavbarBottom() {
       icon: <Warehouse size={20} strokeWidth={1.5} />,
       to: '/ruangan',
       roles: ['tu_admin', 'penjaga_lab', 'admin'],
-    },
-    {
-      title: 'Laporan',
-      icon: <FileText size={20} strokeWidth={1.5} />,
-      to: '/laporan',
-      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
   ]
 

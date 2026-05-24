@@ -13,7 +13,6 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
-import { Route as AuthenticatedLaporanRouteImport } from './routes/_authenticated/laporan'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedRuanganIndexRouteImport } from './routes/_authenticated/ruangan/index'
 import { Route as AuthenticatedPermintaanIndexRouteImport } from './routes/_authenticated/permintaan/index'
@@ -38,11 +37,6 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
   id: '/users',
   path: '/users',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedLaporanRoute = AuthenticatedLaporanRouteImport.update({
-  id: '/laporan',
-  path: '/laporan',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -85,7 +79,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/laporan': typeof AuthenticatedLaporanRoute
   '/users': typeof AuthenticatedUsersRoute
   '/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
   '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
@@ -97,7 +90,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/laporan': typeof AuthenticatedLaporanRoute
   '/users': typeof AuthenticatedUsersRoute
   '/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
   '/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
@@ -111,7 +103,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/laporan': typeof AuthenticatedLaporanRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
   '/_authenticated/permintaan/tambah': typeof AuthenticatedPermintaanTambahRoute
@@ -125,7 +116,6 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
-    | '/laporan'
     | '/users'
     | '/pengaturan/kategori'
     | '/permintaan/tambah'
@@ -137,7 +127,6 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
-    | '/laporan'
     | '/users'
     | '/pengaturan/kategori'
     | '/permintaan/tambah'
@@ -150,7 +139,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/dashboard'
-    | '/_authenticated/laporan'
     | '/_authenticated/users'
     | '/_authenticated/pengaturan/kategori'
     | '/_authenticated/permintaan/tambah'
@@ -193,13 +181,6 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof AuthenticatedUsersRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/laporan': {
-      id: '/_authenticated/laporan'
-      path: '/laporan'
-      fullPath: '/laporan'
-      preLoaderRoute: typeof AuthenticatedLaporanRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -249,7 +230,6 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedLaporanRoute: typeof AuthenticatedLaporanRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedPengaturanKategoriRoute: typeof AuthenticatedPengaturanKategoriRoute
   AuthenticatedPermintaanTambahRoute: typeof AuthenticatedPermintaanTambahRoute
@@ -260,7 +240,6 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedLaporanRoute: AuthenticatedLaporanRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedPengaturanKategoriRoute: AuthenticatedPengaturanKategoriRoute,
   AuthenticatedPermintaanTambahRoute: AuthenticatedPermintaanTambahRoute,
