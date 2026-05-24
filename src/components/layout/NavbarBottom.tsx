@@ -5,7 +5,6 @@ import {
   FilePen,
   Warehouse,
   FileText,
-  Users,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getCurrentUser } from '../../server/functions/auth'
@@ -21,31 +20,31 @@ export function NavbarBottom() {
   const menuItems = [
     {
       title: 'Dashboard',
-      icon: <LayoutDashboard size={20} />,
+      icon: <LayoutDashboard size={20} strokeWidth={1.5} />,
       to: '/dashboard',
       roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Barang',
-      icon: <Package size={20} />,
+      icon: <Package size={20} strokeWidth={1.5} />,
       to: '/barang',
       roles: ['tu_admin', 'penjaga_lab', 'orang_tu', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Pengajuan',
-      icon: <FilePen size={20} />,
+      icon: <FilePen size={20} strokeWidth={1.5} />,
       to: '/permintaan',
       roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },
     {
       title: 'Gudang',
-      icon: <Warehouse size={20} />,
+      icon: <Warehouse size={20} strokeWidth={1.5} />,
       to: '/ruangan',
       roles: ['tu_admin', 'penjaga_lab', 'admin'],
     },
     {
       title: 'Laporan',
-      icon: <FileText size={20} />,
+      icon: <FileText size={20} strokeWidth={1.5} />,
       to: '/laporan',
       roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
     },

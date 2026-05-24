@@ -150,10 +150,10 @@ function BarangListPage() {
 				<DataTableColumnHeader column={column} title="Nama Barang" />
 			),
 			cell: ({ row }) => (
-				<div className="font-medium text-surface-900">
-					{row.getValue("nama")}
-				</div>
-			),
+			<div className="font-medium text-surface-900 capitalize">
+				{(row.getValue("nama") as string)?.toLowerCase()}
+			</div>
+		),
 		},
 		{
 			accessorKey: "kategori",

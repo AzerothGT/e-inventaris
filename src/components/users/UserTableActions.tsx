@@ -1,6 +1,5 @@
 import * as React from "react"
-import { createPortal } from "react-dom"
-import { MoreHorizontal, Edit, Trash2, KeyRound } from "lucide-react"
+import { Edit, Trash2, KeyRound } from "lucide-react"
 import { Button } from "../ui/Button"
 import { Dialog } from "../ui/Dialog"
 import { UserForm } from "./UserForm"
@@ -23,22 +22,8 @@ export function UserTableActions({ user }: UserTableActionsProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false)
   const [isResetPasswordOpen, setIsResetPasswordOpen] = React.useState(false)
   const [newPassword, setNewPassword] = React.useState("")
-  const [dropdownOpen, setDropdownOpen] = React.useState(false)
-  const [coords, setCoords] = React.useState({ top: 0, left: 0 })
-  const triggerRef = React.useRef<HTMLButtonElement>(null)
 
   const queryClient = useQueryClient()
-
-  // Calculate position when opening
-  React.useEffect(() => {
-    if (dropdownOpen && triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect()
-      setCoords({
-        top: rect.bottom + window.scrollY,
-        left: rect.right - 192 + window.scrollX, // 192 is w-48
-      })
-    }
-  }, [dropdownOpen])
 
   const updateMutation = useMutation({
     mutationFn: updateUser,
@@ -78,58 +63,38 @@ export function UserTableActions({ user }: UserTableActionsProps) {
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="p-2 hover:bg-surface-100 rounded-lg transition-colors"
-      >
-        <MoreHorizontal size={16} className="text-surface-500" />
-      </button>
-
-      {dropdownOpen && typeof document !== 'undefined' && createPortal(
-        <>
-          <div
-            className="fixed inset-0 z-[60]"
-            onClick={() => setDropdownOpen(false)}
-          />
-          <div 
-            className="fixed w-48 bg-white rounded-xl shadow-xl border border-surface-200 py-1 z-[70] animate-in fade-in zoom-in-95 duration-100"
-            style={{ 
-              top: `${coords.top + 4}px`, 
-              left: `${coords.left}px` 
-            }}
-          >
-            <button
-              onClick={() => {
-                setIsEditDialogOpen(true)
-                setDropdownOpen(false)
-              }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-surface-700 hover:bg-surface-50"
-            >
-              <Edit size={14} /> Edit Profil
-            </button>
-            <button
-              onClick={() => {
-                setIsResetPasswordOpen(true)
-                setDropdownOpen(false)
-              }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-surface-700 hover:bg-surface-50"
-            >
-              <KeyRound size={14} /> Reset Password
-            </button>
-            <button
-              onClick={() => {
-                setIsDeleteDialogOpen(true)
-                setDropdownOpen(false)
-              }}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-danger-600 hover:bg-danger-50"
-            >
-              <Trash2 size={14} /> Hapus Pengguna
-            </button>
-          </div>
-        </>,
-        document.body
-      )}
+      <div className="flex items-center justify-end gap-2">
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={() => setIsEditDialogOpen(true)}
+          className="h-8 w-8 text-primary-600 hover:text-primary-700 hover:bg-primary-100/50"
+          title="Edit Profil"
+        >
+          <Edit className="h-4 w-4" />
+          <span className="sr-only">Edit</span>
+        </Button>
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={() => setIsResetPasswordOpen(true)}
+          className="h-8 w-8 text-warning-600 hover:text-warning-700 hover:bg-warning-100/50"
+          title="Reset Password"
+        >
+          <KeyRound className="h-4 w-4" />
+          <span className="sr-only">Reset Password</span>
+        </Button>
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={() => setIsDeleteDialogOpen(true)}
+          className="h-8 w-8 text-danger-600 hover:text-danger-700 hover:bg-danger-100/50"
+          title="Hapus Pengguna"
+        >
+          <Trash2 className="h-4 w-4" />
+          <span className="sr-only">Hapus</span>
+        </Button>
+      </div>
 
       {/* Edit Dialog */}
       <Dialog 
