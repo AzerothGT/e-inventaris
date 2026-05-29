@@ -30,3 +30,8 @@ worktrees/
 # Build and Tool Artifacts
 .kilo/
 *.tsbuildinfo
+scratch/
+pnpm-lock.yaml.*
+*.db-journal
+*implementation_plan.html
+tasks.md
