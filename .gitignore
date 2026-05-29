@@ -1,31 +1,31 @@
-node_modules
+node_modules/
 .DS_Store
-dist
-dist-ssr
+dist/
+dist-ssr/
 *.local
 count.txt
 .env
 .env*.local
-.nitro
-.tanstack
-.wrangler
-.output
-.vinxi
+.nitro/
+.tanstack/
+.wrangler/
+.output/
+.vinxi/
 todos.json
-.vercel
+.vercel/
 *.db
 *.db-shm
 *.db-wal
-.agents
-.cursor
-.opencode
-.worktrees
-.vscode
-docs
+.agents/
+.cursor/
+.opencode/
+.worktrees/
+.vscode/
+docs/
 
 # Git worktrees
-.worktrees/
 worktrees/
+
 
 # Build and Tool Artifacts
 .kilo/
