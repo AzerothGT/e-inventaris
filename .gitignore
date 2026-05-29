@@ -5,6 +5,7 @@ dist-ssr
 *.local
 count.txt
 .env
+.env*.local
 .nitro
 .tanstack
 .wrangler
@@ -21,7 +22,6 @@ todos.json
 .worktrees
 .vscode
 docs
-.worktrees
 
 # Git worktrees
 .worktrees/
@@ -35,3 +35,7 @@ pnpm-lock.yaml.*
 *.db-journal
 *implementation_plan.html
 tasks.md
+.eslintcache
+coverage/
+*.log
+.pnpm-debug.log*
