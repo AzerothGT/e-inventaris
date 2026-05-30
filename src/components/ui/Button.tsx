@@ -15,8 +15,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       default: "bg-primary-600 text-white hover:bg-primary-700 shadow-sm",
       destructive: "bg-danger-600 text-white hover:bg-danger-700 shadow-sm",
       success: "bg-success-600 text-white hover:bg-success-700 shadow-sm",
-      outline: "border border-surface-300 bg-white/80 backdrop-blur-sm hover:bg-surface-100 text-surface-900 shadow-sm",
-      secondary: "bg-surface-200/50 text-surface-900 hover:bg-surface-200 backdrop-blur-sm border border-surface-300/50",
+      outline: "border border-surface-300 bg-white hover:bg-surface-100 text-surface-900 shadow-sm",
+      secondary: "bg-surface-200/50 text-surface-900 hover:bg-surface-200 border border-surface-300/50",
       ghost: "hover:bg-surface-100 hover:text-surface-900",
       link: "text-primary-600 underline-offset-4 hover:underline",
     }
