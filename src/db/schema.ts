@@ -127,3 +127,13 @@ export const approvalLogs = sqliteTable('approval_logs', {
   catatan: text('catatan'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
+
+export const pushSubscriptions = sqliteTable('push_subscriptions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').references(() => users.id).notNull(),
+  endpoint: text('endpoint').notNull().unique(),
+  p256dh: text('p256dh').notNull(),
+  auth: text('auth').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
