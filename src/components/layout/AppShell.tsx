@@ -8,10 +8,14 @@ import { getCurrentUser, logoutUser } from '../../server/functions/auth'
 import { useRouter } from '@tanstack/react-router'
 import { ROLE_DEPARTMENTS, UserRole } from '../../lib/approvals'
 import { toast } from 'sonner'
+import { registerPush, unregisterPush, getPushSubscriptionState } from '../../lib/push'
+import { cn } from '../../lib/utils'
 
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [profileOpen, setProfileOpen] = React.useState(false)
+  const [isPushEnabled, setIsPushEnabled] = React.useState(false)
+  const [isPushPending, setIsPushPending] = React.useState(false)
   const queryClient = useQueryClient()
   const router = useRouter()
 
@@ -38,6 +42,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       .substring(0, 2)
   }
 
+  React.useEffect(() => {
+    getPushSubscriptionState().then((state) => {
+      setIsPushEnabled(state.subscribed)
+    })
+  }, [])
+
+  const handleTogglePush = async () => {
+    setIsPushPending(true)
+    try {
+      if (isPushEnabled) {
+        await unregisterPush()
+        setIsPushEnabled(false)
+        toast.success('Push notifikasi dimatikan')
+      } else {
+        await registerPush()
+        setIsPushEnabled(true)
+        toast.success('Push notifikasi diaktifkan')
+      }
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.message || 'Gagal mengubah push notifikasi')
+    } finally {
+      setIsPushPending(false)
+    }
+  }
+
+
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-50 font-sans text-surface-950">
@@ -49,7 +80,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Navbar */}
-        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-white/40 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10 w-full relative shadow-sm">
+        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-white/40 flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 w-full relative shadow-sm">
           <div className="flex items-center">
             {/* Mobile Navbar Branding */}
             <div className="flex items-center gap-2 text-primary-600 font-bold text-lg tracking-tight lg:hidden">
@@ -95,7 +126,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     className="fixed inset-0 z-40"
                     onClick={() => setProfileOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-surface-200 py-1 z-50 transform origin-top-right transition-all">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-surface-200 py-1.5 z-50 transform origin-top-right transition-all">
+                    <div className="px-4 py-1.5 border-b border-surface-100 flex items-center justify-between text-[10px] font-bold text-surface-400 tracking-wider">
+                      <span>PENGATURAN</span>
+                    </div>
+                    <div className="px-4 py-3 flex items-center justify-between border-b border-surface-100">
+                      <div className="flex flex-col pr-2">
+                        <span className="text-xs font-semibold text-surface-700">Push Notifikasi</span>
+                        <span className="text-[9px] text-surface-400 leading-tight">Terima info persetujuan & pengadaan</span>
+                      </div>
+                      <button
+                        onClick={handleTogglePush}
+                        disabled={isPushPending}
+                        className={cn(
+                          "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50",
+                          isPushEnabled ? "bg-primary-600" : "bg-surface-200"
+                        )}
+                        aria-label="Toggle push notification"
+                      >
+                        <span
+                          className={cn(
+                            "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                            isPushEnabled ? "translate-x-4" : "translate-x-0"
+                          )}
+                        />
+                      </button>
+                    </div>
                     <button
                       onClick={() => logoutMutation.mutate({})}
                       disabled={logoutMutation.isPending}

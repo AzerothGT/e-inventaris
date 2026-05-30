@@ -40,3 +40,4 @@ tasks.md
 coverage/
 *.log
 .pnpm-debug.log*
+vapid-keys.json
