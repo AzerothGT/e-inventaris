@@ -141,15 +141,15 @@ function Dashboard() {
                 <div className="divide-y divide-surface-100">
                   {approvalQueue.map((item: any) => (
                     <div key={item.id} className="py-2.5 px-4 hover:bg-surface-50/50 transition-colors group">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <IconBox icon={Tag} variant="surface" size={18} className="group-hover:bg-primary-50 group-hover:text-primary-600" />
-                          <div>
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <IconBox icon={Tag} variant="surface" size={18} className="group-hover:bg-primary-50 group-hover:text-primary-600 shrink-0 mt-0.5" />
+                          <div className="min-w-0">
                             <h4 className="font-semibold text-sm text-surface-900">{item.namaEvent}</h4>
-                            <p className="text-xs text-surface-500">Oleh: {item.requesterName} • {item.itemCount} jenis ({item.totalJumlah} unit)</p>
+                            <p className="text-xs text-surface-500 break-words">Oleh: {item.requesterName} • {item.itemCount} jenis ({item.totalJumlah} unit)</p>
                           </div>
                         </div>
-                        <div className={`text-xs font-semibold px-2.5 py-1 rounded-full tracking-wide border ${STATUS_METADATA[item.status as PermintaanStatus]?.color || ''}`}>
+                        <div className={`text-xs font-semibold px-2.5 py-1 rounded-full tracking-wide border shrink-0 ${STATUS_METADATA[item.status as PermintaanStatus]?.color || ''}`}>
                           {STATUS_METADATA[item.status as PermintaanStatus]?.label}
                         </div>
                       </div>
