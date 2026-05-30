@@ -42,6 +42,21 @@ export function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Update App Icon Badge Count (PWA App Badging API)
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'setAppBadge' in navigator) {
+      if (unreadCount > 0) {
+        navigator.setAppBadge(unreadCount).catch((err) => {
+          console.error('Failed to set app badge:', err);
+        });
+      } else {
+        navigator.clearAppBadge().catch((err) => {
+          console.error('Failed to clear app badge:', err);
+        });
+      }
+    }
+  }, [unreadCount]);
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button 

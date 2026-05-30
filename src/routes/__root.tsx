@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
 	HeadContent,
 	Scripts,
@@ -26,6 +26,7 @@ export const Route = createRootRouteWithContext<{
 		links: [
 			{ rel: "stylesheet", href: appCss },
 			{ rel: "icon", href: "/favicon.ico" },
+			{ rel: "manifest", href: "/manifest.json" },
 		],
 	}),
 
@@ -35,6 +36,20 @@ export const Route = createRootRouteWithContext<{
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	const { queryClient } = Route.useRouteContext();
+
+	useEffect(() => {
+		if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+			window.addEventListener("load", () => {
+				navigator.serviceWorker.register("/sw.js", { scope: "/" })
+					.then((reg) => {
+						console.log("Service Worker registered with scope:", reg.scope);
+					})
+					.catch((err) => {
+						console.error("Service Worker registration failed:", err);
+					});
+			});
+		}
+	}, []);
 
 	return (
 		<html lang="id">

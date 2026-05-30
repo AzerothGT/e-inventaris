@@ -13,8 +13,20 @@ self.addEventListener('push', function (event) {
       }
     };
 
-    event.waitUntil(
+    const promises = [
       self.registration.showNotification(title, options)
+    ];
+
+    if ('setAppBadge' in navigator) {
+      if (data.badge) {
+        promises.push(navigator.setAppBadge(data.badge));
+      } else {
+        promises.push(navigator.setAppBadge());
+      }
+    }
+
+    event.waitUntil(
+      Promise.all(promises)
     );
   } catch (err) {
     console.error('Failed to handle push event:', err);
@@ -36,6 +48,15 @@ self.addEventListener('notificationclick', function (event) {
       if (clients.openWindow) {
         return clients.openWindow(urlToOpen);
       }
+    })
+  );
+});
+
+self.addEventListener('fetch', function (event) {
+  // Minimal fetch listener to allow PWA install prompt trigger
+  event.respondWith(
+    fetch(event.request).catch(function () {
+      return new Response('Offline');
     })
   );
 });

@@ -1,0 +1,18 @@
+{
+  "short_name": "E-Inventaris",
+  "name": "E-Inventaris SMK Al Basyariah",
+  "description": "Sistem Informasi Inventaris dan Sarana Prasarana SMK Al Basyariah",
+  "icons": [
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
+}

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Sidebar } from './Sidebar'
 import { NavbarBottom } from './NavbarBottom'
 import { NotificationBell } from './NotificationBell'
-import { LogOut, ChevronDown, Package } from 'lucide-react'
+import { LogOut, ChevronDown, Package, Download } from 'lucide-react'
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getCurrentUser, logoutUser } from '../../server/functions/auth'
 import { useRouter } from '@tanstack/react-router'
@@ -16,8 +16,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [profileOpen, setProfileOpen] = React.useState(false)
   const [isPushEnabled, setIsPushEnabled] = React.useState(false)
   const [isPushPending, setIsPushPending] = React.useState(false)
+  const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
   const queryClient = useQueryClient()
   const router = useRouter()
+
+  React.useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    }
+    setDeferredPrompt(null);
+  };
 
   const { data: user } = useSuspenseQuery({
     queryKey: ['session'],
@@ -152,6 +176,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         />
                       </button>
                     </div>
+                    {deferredPrompt && (
+                      <button
+                        onClick={handleInstallClick}
+                        className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-surface-700 hover:bg-surface-50 transition-colors text-left border-b border-surface-100"
+                      >
+                        <Download size={16} className="text-primary-600" />
+                        <span>Instal Aplikasi</span>
+                      </button>
+                    )}
                     <button
                       onClick={() => logoutMutation.mutate({})}
                       disabled={logoutMutation.isPending}
