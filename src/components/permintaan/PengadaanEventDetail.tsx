@@ -31,7 +31,7 @@ export function PengadaanEventDetail({ data }: PengadaanEventDetailProps) {
       : "text-success-600";
 
   return (
-    <div className="space-y-6 max-h-[75vh] overflow-y-auto pr-2 custom-scrollbar">
+    <div className="space-y-6">
       {/* Event Title Banner */}
       <div className="flex items-center gap-3 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary-600 shadow-sm">
