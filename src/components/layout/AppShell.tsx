@@ -80,7 +80,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Navbar */}
-        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-white/40 flex items-center justify-between px-4 lg:px-8 flex-shrink-0 z-10 w-full relative shadow-sm">
+        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-white/40 flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 w-full relative shadow-sm">
           <div className="flex items-center">
             {/* Mobile Navbar Branding */}
             <div className="flex items-center gap-2 text-primary-600 font-bold text-lg tracking-tight lg:hidden">

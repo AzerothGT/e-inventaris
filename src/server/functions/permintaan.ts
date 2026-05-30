@@ -17,7 +17,7 @@ import {
   STATUS_METADATA,
 } from "../../lib/approvals";
 import { eq, desc, inArray, and } from "drizzle-orm";
-import { sendWebPushNotification } from "./push";
+import { sendWebPushNotification } from "../lib/push-sender";
 
 async function sendNotification(userId: string, tipe: string, pesan: string) {
   await db.insert(notifikasi).values({
