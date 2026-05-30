@@ -8,6 +8,7 @@ import { pushSubscriptions } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import fs from "fs";
 import path from "path";
+import webpush from "web-push";
 
 let keysInitialized = false;
 let vapidKeys = {
@@ -15,11 +16,7 @@ let vapidKeys = {
   privateKey: process.env.VAPID_PRIVATE_KEY || "",
 };
 
-async function getWebPush() {
-  // Hide from Vite static analysis so this file is never bundled client-side
-  const importName = "web-push";
-  const webpush = (await import(/* @vite-ignore */ importName)).default;
-
+function initWebPush() {
   if (!keysInitialized) {
     const keysPath = path.resolve(process.cwd(), "vapid-keys.json");
 
@@ -50,12 +47,11 @@ async function getWebPush() {
     );
     keysInitialized = true;
   }
-
-  return webpush;
 }
 
 export function getVapidPublicKeyValue() {
-  return getWebPush().then(() => vapidKeys.publicKey);
+  initWebPush();
+  return vapidKeys.publicKey;
 }
 
 export async function sendWebPushNotification(
@@ -64,7 +60,7 @@ export async function sendWebPushNotification(
   body: string,
   url: string = "/"
 ) {
-  const webpush = await getWebPush();
+  initWebPush();
 
   const subs = await db
     .select()

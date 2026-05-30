@@ -4,10 +4,9 @@ import { pushSubscriptions } from "../../db/schema";
 import { getAuthSession } from "../../lib/auth";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
-import { getVapidPublicKeyValue } from "../lib/push-sender";
-
 export const getVapidPublicKey = createServerFn({ method: "GET" })
   .handler(async () => {
+    const { getVapidPublicKeyValue } = await import("../lib/push-sender");
     return getVapidPublicKeyValue();
   });
 
