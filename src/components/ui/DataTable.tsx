@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-1 items-center space-x-2">
+        <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
             <Input
