@@ -206,7 +206,7 @@ function PermintaanListPage() {
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <div className="flex justify-end items-center gap-2">
+          <div className="flex justify-end items-center gap-2 flex-nowrap">
             <Button
               variant="secondary"
               size="icon"

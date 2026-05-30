@@ -198,7 +198,7 @@ export function PermintaanActionButtons({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex items-center gap-2 flex-nowrap">
         {availableActions.map((action) => (
           <Button
             key={action.id}
