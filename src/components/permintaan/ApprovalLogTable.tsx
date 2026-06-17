@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getApprovalLogs } from "../../server/functions/permintaan";
+import { getApprovalLogs } from "../../server/functions/pengadaan";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
 import { PermintaanStatusBadge } from "./PermintaanStatusBadge";
 import { PermintaanStatus } from "../../lib/approvals";

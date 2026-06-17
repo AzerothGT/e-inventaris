@@ -7,7 +7,7 @@ import {
 import {
   getPengadaanEventList,
   createPengadaanEvent,
-} from "../../../server/functions/permintaan";
+} from "../../../server/functions/pengadaan";
 import { getKategoriList } from "../../../server/functions/kategori";
 import { PermintaanStatusBadge } from "../../../components/permintaan/PermintaanStatusBadge";
 import { PermintaanActionButtons } from "../../../components/permintaan/PermintaanActionButtons";
