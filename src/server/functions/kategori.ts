@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { db } from '../../db';
-import { kategori, barang, pengadaanItem, permintaanPengadaan } from '../../db/schema';
+import { kategori, barang, pengadaanItem } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -60,11 +60,6 @@ export const updateKategori = createServerFn({ method: 'POST' })
             .update(pengadaanItem)
             .set({ kategori: newNama })
             .where(eq(pengadaanItem.kategori, oldNama));
-
-          await tx
-            .update(permintaanPengadaan)
-            .set({ kategori: newNama })
-            .where(eq(permintaanPengadaan.kategori, oldNama));
         }
       } else {
         await tx.update(kategori).set(updateData).where(eq(kategori.id, id));

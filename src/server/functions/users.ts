@@ -8,7 +8,7 @@ import { getAuthSession } from "../../lib/auth";
 // Middleware-like check for admin role
 async function ensureAdmin() {
   const session = await getAuthSession();
-  if (!session || (session.role !== 'admin' && session.role !== 'tu_admin' && session.role !== 'orang_tu')) {
+  if (!session || session.role !== 'admin') {
     throw new Error("Unauthorized: Only admins can manage users");
   }
   return session;

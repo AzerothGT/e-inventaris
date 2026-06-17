@@ -43,33 +43,7 @@ export const barang = sqliteTable('barang', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
 
-// Legacy table — kept for DB compatibility, no longer used by UI
-export const permintaanPengadaan = sqliteTable('permintaan_pengadaan', {
-  id: text('id').primaryKey(),
-  namaBarang: text('nama_barang').notNull(),
-  merek: text('merek'),
-  kategori: text('kategori'),
-  jumlah: integer('jumlah').notNull(),
-  deskripsi: text('deskripsi').notNull(),
-  prioritas: text('prioritas', { enum: ['rendah', 'sedang', 'tinggi'] }).notNull(),
-  status: text('status', { enum: [
-    'menunggu_kaprog',
-    'menunggu_wakasek',
-    'menunggu_kepsek',
-    'disetujui',
-    'proses_pembelian',
-    'selesai',
-    'ditolak'
-  ] }).notNull(),
-  diajukanOleh: text('diajukan_oleh').references(() => users.id).notNull(),
-  targetRuanganId: text('target_ruangan_id').references(() => ruangan.id),
-  targetLemari: text('target_lemari'),
-  kondisiDiterima: text('kondisi_diterima', { enum: ['baik', 'rusak_ringan', 'rusak_berat'] }),
-  disetujuiOleh: text('disetujui_oleh').references(() => users.id),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-});
-
-// New event-based procurement
+// Event-based procurement
 export const pengadaanEvent = sqliteTable('pengadaan_event', {
   id: text('id').primaryKey(),
   namaEvent: text('nama_event').notNull(),
