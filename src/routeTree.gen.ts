@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginWireframeRouteImport } from './routes/login-wireframe'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -20,6 +21,11 @@ import { Route as AuthenticatedBarangIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPermintaanTambahRouteImport } from './routes/_authenticated/permintaan/tambah'
 import { Route as AuthenticatedPengaturanKategoriRouteImport } from './routes/_authenticated/pengaturan/kategori'
 
+const LoginWireframeRoute = LoginWireframeRouteImport.update({
+  id: '/login-wireframe',
+  path: '/login-wireframe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -78,6 +84,7 @@ const AuthenticatedPengaturanKategoriRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/login-wireframe': typeof LoginWireframeRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/users': typeof AuthenticatedUsersRoute
   '/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/login-wireframe': typeof LoginWireframeRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/users': typeof AuthenticatedUsersRoute
   '/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/login-wireframe': typeof LoginWireframeRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/pengaturan/kategori': typeof AuthenticatedPengaturanKategoriRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/login-wireframe'
     | '/dashboard'
     | '/users'
     | '/pengaturan/kategori'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/login-wireframe'
     | '/dashboard'
     | '/users'
     | '/pengaturan/kategori'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/login'
+    | '/login-wireframe'
     | '/_authenticated/dashboard'
     | '/_authenticated/users'
     | '/_authenticated/pengaturan/kategori'
@@ -151,10 +163,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  LoginWireframeRoute: typeof LoginWireframeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login-wireframe': {
+      id: '/login-wireframe'
+      path: '/login-wireframe'
+      fullPath: '/login-wireframe'
+      preLoaderRoute: typeof LoginWireframeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -256,6 +276,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
+  LoginWireframeRoute: LoginWireframeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
