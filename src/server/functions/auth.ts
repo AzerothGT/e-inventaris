@@ -3,6 +3,7 @@ import { db } from '../../db';
 import { users } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { setAuthSession, clearAuthSession, getAuthSession } from '../../lib/auth';
+import { hashPassword, verifyPassword, isHashed } from '../../lib/password';
 import { z } from 'zod';
 
 export const loginUser = createServerFn({ method: 'POST' })
@@ -15,12 +16,18 @@ export const loginUser = createServerFn({ method: 'POST' })
     
     const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
     const user = result[0];
-    
-    // Simple password check (Hash should be used in production)
-    if (!user || user.password !== password) {
+
+    if (!user || !(await verifyPassword(password, user.password))) {
       throw new Error('Username atau password salah');
     }
-    
+
+    // Transparently upgrade legacy plaintext passwords to a hash on successful login.
+    if (!isHashed(user.password)) {
+      await db.update(users)
+        .set({ password: await hashPassword(password), updatedAt: new Date() })
+        .where(eq(users.id, user.id));
+    }
+
     await setAuthSession(user.id);
     return { success: true, user: { id: user.id, username: user.username, role: user.role, name: user.name } };
   });
