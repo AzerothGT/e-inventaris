@@ -8,6 +8,7 @@ export const ruanganQueries = {
     queryOptions({
       queryKey: ruanganQueries.lists(),
       queryFn: () => getRuanganList(),
+      staleTime: 30 * 60 * 1000,
     }),
   details: () => [...ruanganQueries.all(), 'detail'] as const,
   detail: (id: string) =>
