@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PengadaanEventForm } from '../../../components/permintaan/PengadaanEventForm'
-import { createPengadaanEvent } from '../../../server/functions/permintaan'
+import { createPengadaanEvent } from '../../../server/functions/pengadaan'
 import { getKategoriList } from '../../../server/functions/kategori'
 import { useMutation, useSuspenseQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'

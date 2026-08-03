@@ -3,9 +3,13 @@ import { db } from "../../db";
 import { barang, ruangan } from "../../db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { z } from "zod";
+import { requireSession, requireRole } from "../../lib/auth";
+
+const MANAGE_ROLES = ["admin", "penjaga_lab", "kaprog"] as const;
 
 export const getBarangList = createServerFn({ method: "GET" }).handler(
 	async () => {
+		await requireSession();
 		const list = await db
 			.select()
 			.from(barang)
@@ -33,6 +37,7 @@ export const getBarangList = createServerFn({ method: "GET" }).handler(
 export const getBarangById = createServerFn({ method: "GET" })
 	.inputValidator(z.object({ id: z.string() }))
 	.handler(async ({ data }) => {
+		await requireSession();
 		const result = await db
 			.select()
 			.from(barang)
@@ -57,6 +62,7 @@ export const createBarang = createServerFn({ method: "POST" })
 		}),
 	)
 	.handler(async ({ data }) => {
+		await requireRole(MANAGE_ROLES);
 		const newBarang = {
 			id: crypto.randomUUID(),
 			...data,
@@ -88,6 +94,7 @@ export const createMultipleBarang = createServerFn({ method: "POST" })
 		}),
 	)
 	.handler(async ({ data }) => {
+		await requireRole(MANAGE_ROLES);
 		if (data.items.length === 0) {
 			throw new Error("Minimal 1 barang harus ditambahkan");
 		}
@@ -132,6 +139,7 @@ export const updateBarang = createServerFn({ method: "POST" })
 		}),
 	)
 	.handler(async ({ data }) => {
+		await requireRole(MANAGE_ROLES);
 		const { id, ...updateData } = data;
 
 		await db
@@ -152,6 +160,7 @@ export const deleteBarang = createServerFn({ method: "POST" })
 		}),
 	)
 	.handler(async ({ data }) => {
+		await requireRole(MANAGE_ROLES);
 		await db.delete(barang).where(eq(barang.id, data.id));
 
 		return { success: true };

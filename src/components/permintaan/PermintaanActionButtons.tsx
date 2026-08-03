@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getAvailableActions, PermintaanStatus, UserRole } from "../../lib/approvals";
-import { updatePengadaanStatus, getPengadaanItems } from "../../server/functions/permintaan";
+import { updatePengadaanStatus, getPengadaanItems } from "../../server/functions/pengadaan";
 import { getRuanganList } from "../../server/functions/ruangan";
 import { Button } from "../ui/Button";
 import { Dialog } from "../ui/Dialog";

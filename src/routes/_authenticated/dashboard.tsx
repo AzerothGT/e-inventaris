@@ -27,11 +27,13 @@ function Dashboard() {
   const { data: user } = useSuspenseQuery({
     queryKey: ['currentUser'],
     queryFn: () => getCurrentUser(),
+    staleTime: 0,
   })
 
   const { data: stats } = useSuspenseQuery({
     queryKey: ['dashboardStats'],
     queryFn: () => getDashboardStats(),
+    staleTime: 60 * 1000,
   })
 
   const { data: recentActivity } = useSuspenseQuery({

@@ -8,5 +8,6 @@ export const kategoriQueries = {
     queryOptions({
       queryKey: kategoriQueries.lists(),
       queryFn: () => getKategoriList(),
+      staleTime: 30 * 60 * 1000,
     }),
 };

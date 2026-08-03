@@ -4,6 +4,7 @@ import { users } from "../../db/schema";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { getAuthSession } from "../../lib/auth";
+import { hashPassword } from "../../lib/password";
 
 // Middleware-like check for admin role
 async function ensureAdmin() {
@@ -70,6 +71,7 @@ export const createUser = createServerFn({ method: "POST" })
     const newUser = {
       id: crypto.randomUUID(),
       ...data,
+      password: await hashPassword(data.password),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -137,7 +139,7 @@ export const resetPassword = createServerFn({ method: "POST" })
     await db
       .update(users)
       .set({
-        password: data.newPassword,
+        password: await hashPassword(data.newPassword),
         updatedAt: new Date(),
       })
       .where(eq(users.id, data.id));

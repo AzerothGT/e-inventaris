@@ -94,7 +94,7 @@ export function KategoriTableActions({ kategori }: KategoriTableActionsProps) {
       >
         <div className="space-y-4 py-2">
           <p className="text-sm text-surface-600">
-            Apakah Anda yakin ingin menghapus kategori <strong>{kategori.nama}</strong>? Barang yang menggunakan kategori ini tidak akan dihapus, namun kategorinya akan menjadi tidak valid.
+            Apakah Anda yakin ingin menghapus kategori <strong>{kategori.nama}</strong>? Kategori yang masih digunakan oleh barang atau item pengadaan tidak dapat dihapus.
           </p>
           <div className="flex justify-end gap-3 pt-4">
             <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(false)}>
