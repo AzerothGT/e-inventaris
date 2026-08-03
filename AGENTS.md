@@ -195,7 +195,8 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 
 When the user corrects your approach, append a one-line rule here before ending the session. Write it concretely ("Always use X for Y"), never abstractly ("be careful with Y"). If an existing line already covers the correction, tighten it instead of adding a new one. Remove lines when the underlying issue goes away (model upgrades, refactors, process changes).
 
-- (empty)
+- `.drawio` "max width N cm" requests: wrap the whole diagram in a group cell (style `group`) sized to N×39.37px (1cm = 39.37px; 8cm = 314.96). Keep `pageWidth` at A4 (827), keep the original layout direction, and uniformly scale fonts (16→8) and strokeWidth to 0.5mm (1.9685). Do NOT change page size or rotate the layout. Route cross-lane edges manually with `<Array as="points">` waypoints when scaling misroutes them.
+- `.drawio` ERD layouts: align relationship diamonds directly below or beside their respective entities in a compact, logically-grouped grid (avoid simple single-column stacks), and ensure all XML comments use single hyphens (`-`) to keep the XML parser valid.
 
 ---
 
