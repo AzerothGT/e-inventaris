@@ -4,11 +4,11 @@ import autoTable from "jspdf-autotable";
 export interface ExportColumn {
 	key: string;
 	label: string;
-	formatter?: (value: any) => string;
+	formatter?: (value: unknown) => string;
 }
 
 export function exportToPDF(
-	data: any[],
+	data: Record<string, unknown>[],
 	columns: ExportColumn[],
 	filename: string,
 	title: string,
@@ -37,7 +37,7 @@ export function exportToPDF(
 	const rows = data.map((row) =>
 		columns.map((col) => {
 			const value = row[col.key];
-			return col.formatter ? col.formatter(value) : value;
+			return col.formatter ? col.formatter(value) : String(value ?? "");
 		}),
 	);
 
@@ -63,7 +63,7 @@ export function exportToPDF(
 	});
 
 	// Footer
-	const pageCount = (doc as any).internal.getNumberOfPages();
+	const pageCount = (doc as unknown as { internal: { getNumberOfPages(): number } }).internal.getNumberOfPages();
 	doc.setFontSize(8);
 	doc.setTextColor(150);
 	for (let i = 1; i <= pageCount; i++) {

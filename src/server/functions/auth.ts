@@ -1,46 +1,72 @@
-import { createServerFn } from '@tanstack/react-start';
-import { db } from '../../db';
-import { users } from '../../db/schema';
-import { eq } from 'drizzle-orm';
-import { setAuthSession, clearAuthSession, getAuthSession } from '../../lib/auth';
-import { hashPassword, verifyPassword, isHashed } from '../../lib/password';
-import { z } from 'zod';
+import { createServerFn } from "@tanstack/react-start";
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { db } from "../../db";
+import { users } from "../../db/schema";
+import {
+	clearAuthSession,
+	getAuthSession,
+	setAuthSession,
+} from "../../lib/auth";
+import { hashPassword, isHashed, verifyPassword } from "../../lib/password";
 
-export const loginUser = createServerFn({ method: 'POST' })
-  .inputValidator(z.object({
-    username: z.string(),
-    password: z.string(),
-  }))
-  .handler(async ({ data }) => {
-    const { username, password } = data;
-    
-    const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
-    const user = result[0];
+export const loginUser = createServerFn({ method: "POST" })
+	.validator(
+		z.object({
+			username: z.string(),
+			password: z.string(),
+		}),
+	)
+	.handler(async ({ data }) => {
+		const { username, password } = data;
 
-    if (!user || !(await verifyPassword(password, user.password))) {
-      throw new Error('Username atau password salah');
-    }
+		const result = await db
+			.select()
+			.from(users)
+			.where(eq(users.username, username))
+			.limit(1);
+		const user = result[0];
 
-    // Transparently upgrade legacy plaintext passwords to a hash on successful login.
-    if (!isHashed(user.password)) {
-      await db.update(users)
-        .set({ password: await hashPassword(password), updatedAt: new Date() })
-        .where(eq(users.id, user.id));
-    }
+		if (!user || !(await verifyPassword(password, user.password))) {
+			throw new Error("Username atau password salah");
+		}
 
-    await setAuthSession(user.id);
-    return { success: true, user: { id: user.id, username: user.username, role: user.role, name: user.name } };
-  });
+		// Transparently upgrade legacy plaintext passwords to a hash on successful login.
+		if (!isHashed(user.password)) {
+			await db
+				.update(users)
+				.set({ password: await hashPassword(password), updatedAt: new Date() })
+				.where(eq(users.id, user.id));
+		}
 
-export const logoutUser = createServerFn({ method: 'POST' })
-  .handler(async () => {
-    await clearAuthSession();
-    return { success: true };
-  });
+		await setAuthSession(user.id);
+		return {
+			success: true,
+			user: {
+				id: user.id,
+				username: user.username,
+				role: user.role,
+				name: user.name,
+			},
+		};
+	});
 
-export const getCurrentUser = createServerFn({ method: 'GET' })
-  .handler(async () => {
-    const user = await getAuthSession();
-    if (!user) return null;
-    return { id: user.id, username: user.username, role: user.role, name: user.name };
-  });
+export const logoutUser = createServerFn({ method: "POST" }).handler(
+	async () => {
+		await clearAuthSession();
+		return { success: true };
+	},
+);
+
+export const getCurrentUser = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const user = await getAuthSession();
+		if (!user) return null;
+		return {
+			id: user.id,
+			username: user.username,
+			role: user.role,
+			name: user.name,
+		};
+	},
+);

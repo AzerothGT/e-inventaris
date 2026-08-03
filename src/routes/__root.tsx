@@ -1,14 +1,13 @@
-import { lazy, Suspense, useEffect } from "react";
+import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
+	createRootRouteWithContext,
 	HeadContent,
 	Scripts,
-	createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "sonner";
-
-import appCss from "../styles.css?url";
 import { NotFound } from "../components/ui/NotFound";
+import appCss from "../styles.css?url";
 
 const Devtools = import.meta.env.DEV
 	? lazy(() => import("../components/devtools/Devtools"))
@@ -40,7 +39,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
 		if (typeof window !== "undefined" && "serviceWorker" in navigator) {
 			window.addEventListener("load", () => {
-				navigator.serviceWorker.register("/sw.js", { scope: "/" })
+				navigator.serviceWorker
+					.register("/sw.js", { scope: "/" })
 					.then((reg) => {
 						console.log("Service Worker registered with scope:", reg.scope);
 					})

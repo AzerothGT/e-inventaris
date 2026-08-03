@@ -1,28 +1,27 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
 import {
-	useSuspenseQuery,
 	useMutation,
 	useQueryClient,
+	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { ruanganQueries } from "../../../data/ruanganQueries";
-import { DataTable } from "../../../components/ui/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
-import { Warehouse, Plus } from "lucide-react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Plus, Warehouse } from "lucide-react";
+import * as React from "react";
+import { RuanganForm } from "../../../components/inventory/RuanganForm";
 import { Button } from "../../../components/ui/Button";
+import { DataTable } from "../../../components/ui/DataTable";
 import { DataTableColumnHeader } from "../../../components/ui/DataTableColumnHeader";
 import { DataTableRowActions } from "../../../components/ui/DataTableRowActions";
 import { Dialog } from "../../../components/ui/Dialog";
-import { RuanganForm } from "../../../components/inventory/RuanganForm";
+import { IconBox } from "../../../components/ui/IconBox";
+import { PageHeader } from "../../../components/ui/PageHeader";
+import { TablePageSkeleton } from "../../../components/ui/TablePageSkeleton";
+import { ruanganQueries } from "../../../data/ruanganQueries";
 import {
 	createRuangan,
-	updateRuangan,
 	deleteRuangan,
+	updateRuangan,
 } from "../../../server/functions/ruangan";
-import { PageHeader } from "../../../components/ui/PageHeader";
-import { IconBox } from "../../../components/ui/IconBox";
-
-import * as React from "react";
-import { TablePageSkeleton } from "../../../components/ui/TablePageSkeleton";
 
 export const Route = createFileRoute("/_authenticated/ruangan/")({
 	loader: ({ context }) =>
@@ -39,8 +38,8 @@ function RuanganListPage() {
 	const { data: items } = useSuspenseQuery(ruanganQueries.list());
 
 	const [isAddOpen, setIsAddOpen] = React.useState(false);
-	const [editingItem, setEditingItem] = React.useState<any>(null);
-	const [deletingItem, setDeletingItem] = React.useState<any>(null);
+	const [editingItem, setEditingItem] = React.useState<Record<string, unknown> | null>(null);
+	const [deletingItem, setDeletingItem] = React.useState<Record<string, unknown> | null>(null);
 
 	const createMutation = useMutation({
 		mutationFn: createRuangan,
@@ -76,7 +75,7 @@ function RuanganListPage() {
 				<DataTableColumnHeader column={column} title="Kode Ruangan" />
 			),
 			cell: ({ row }) => (
-				<div className="w-[120px] font-mono text-xs font-semibold text-primary-600">
+				<div className="w-30 font-mono font-semibold text-primary-600 text-xs">
 					{row.getValue("kodeRuangan")}
 				</div>
 			),
@@ -109,9 +108,7 @@ function RuanganListPage() {
 				<DataTableColumnHeader column={column} title="Gedung" />
 			),
 			cell: ({ row }) => (
-				<div className="text-surface-600">
-					{row.getValue("gedung")}
-				</div>
+				<div className="text-surface-600">{row.getValue("gedung")}</div>
 			),
 		},
 		{
@@ -126,31 +123,26 @@ function RuanganListPage() {
 		},
 	];
 
-
-
 	return (
 		<div className="space-y-6">
 			<PageHeader
 				title="Daftar"
 				gradientTitle="Ruangan"
 				actions={
-					<>
-
-						<Button
-							onClick={() => setIsAddOpen(true)}
-							className="glass-button flex items-center gap-2"
-						>
-							<Plus className="h-4 w-4" />
-							Tambah Ruangan
-						</Button>
-					</>
+					<Button
+						onClick={() => setIsAddOpen(true)}
+						className="glass-button flex items-center gap-2"
+					>
+						<Plus className="h-4 w-4" />
+						Tambah Ruangan
+					</Button>
 				}
 			/>
 
-			<div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
-				<div className="flex items-center gap-2 mb-4">
+			<div className="stagger-2 rounded-xl border border-surface-200/50 bg-white/50 p-6 shadow-sm backdrop-blur-sm">
+				<div className="mb-4 flex items-center gap-2">
 					<IconBox icon={Warehouse} variant="primary" size={20} />
-					<h3 className="text-lg font-semibold text-surface-900">
+					<h3 className="font-semibold text-lg text-surface-900">
 						Semua Ruangan
 					</h3>
 				</div>
@@ -186,7 +178,7 @@ function RuanganListPage() {
 					<RuanganForm
 						initialData={editingItem}
 						onSubmit={(data) =>
-							updateMutation.mutate({ data: { ...data, id: editingItem.id } })
+							updateMutation.mutate({ data: { ...data, id: editingItem.id as string } })
 						}
 						onCancel={() => setEditingItem(null)}
 						isLoading={updateMutation.isPending}
@@ -205,7 +197,7 @@ function RuanganListPage() {
 						<p className="text-surface-600">
 							Apakah Anda yakin ingin menghapus ruangan{" "}
 							<span className="font-bold text-surface-900">
-								{deletingItem.nama}
+								{deletingItem.nama as string}
 							</span>
 							? Tindakan ini tidak dapat dibatalkan.
 						</p>
@@ -216,7 +208,7 @@ function RuanganListPage() {
 							<Button
 								variant="destructive"
 								onClick={() =>
-									deleteMutation.mutate({ data: { id: deletingItem.id } })
+									deleteMutation.mutate({ data: { id: deletingItem.id as string } })
 								}
 								disabled={deleteMutation.isPending}
 							>

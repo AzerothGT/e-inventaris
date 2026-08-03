@@ -1,18 +1,18 @@
-import { Button } from "./Button";
 import { FileSpreadsheet, FileText } from "lucide-react";
 import { useState } from "react";
 import {
+	type ExportColumn as CSVExportColumn,
 	exportToCSV,
-	ExportColumn as CSVExportColumn,
 } from "../../lib/exportCSV";
 import {
 	exportToPDF,
-	ExportColumn as PDFExportColumn,
+	type ExportColumn as PDFExportColumn,
 } from "../../lib/exportPDF";
 import { cn } from "../../lib/utils";
+import { Button } from "./Button";
 
 interface ExportButtonProps {
-	data: any[];
+	data: Record<string, unknown>[];
 	columns: (CSVExportColumn & PDFExportColumn)[];
 	filename: string;
 	title?: string;
@@ -54,24 +54,24 @@ export function ExportButton({
 				variant="secondary"
 				onClick={handleExportCSV}
 				disabled={isExporting || !data?.length}
-				className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-success-500/10 hover:border-success-200/50"
+				className="group relative overflow-hidden transition-all duration-300 hover:border-success-200/50 hover:shadow-lg hover:shadow-success-500/10"
 				title="Export ke Excel"
 			>
-				<FileSpreadsheet className="h-4 w-4 mr-2 text-success-600 transition-transform group-hover:scale-110" />
+				<FileSpreadsheet className="mr-2 h-4 w-4 text-success-600 transition-transform group-hover:scale-110" />
 				<span className="font-bold text-surface-900">XLS</span>
-				<div className="absolute inset-x-0 bottom-0 h-[2px] bg-success-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+				<div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 transform bg-success-500 transition-transform duration-300 group-hover:scale-x-100" />
 			</Button>
 
 			<Button
 				variant="secondary"
 				onClick={handleExportPDF}
 				disabled={isExporting || !data?.length}
-				className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-danger-500/10 hover:border-danger-200/50"
+				className="group relative overflow-hidden transition-all duration-300 hover:border-danger-200/50 hover:shadow-danger-500/10 hover:shadow-lg"
 				title="Export ke PDF"
 			>
-				<FileText className="h-4 w-4 mr-2 text-danger-600 transition-transform group-hover:scale-110" />
+				<FileText className="mr-2 h-4 w-4 text-danger-600 transition-transform group-hover:scale-110" />
 				<span className="font-bold text-surface-900">PDF</span>
-				<div className="absolute inset-x-0 bottom-0 h-[2px] bg-danger-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+				<div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 transform bg-danger-500 transition-transform duration-300 group-hover:scale-x-100" />
 			</Button>
 		</div>
 	);

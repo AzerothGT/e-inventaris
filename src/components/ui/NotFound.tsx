@@ -1,50 +1,57 @@
-import { Link } from '@tanstack/react-router'
-import { ArrowLeft, Home } from 'lucide-react'
+import { Link } from "@tanstack/react-router";
+import { ArrowLeft, Home } from "lucide-react";
 
 export function NotFound() {
-  return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 overflow-hidden relative">
-      {/* Decorative background blur elements */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl flex justify-center opacity-30 pointer-events-none blur-3xl">
-        <div className="w-64 h-64 bg-primary-400 rounded-full mix-blend-multiply animate-blob"></div>
-        <div className="w-64 h-64 bg-teal-400 rounded-full mix-blend-multiply animate-blob animation-delay-2000 -ml-16"></div>
-        <div className="w-64 h-64 bg-indigo-400 rounded-full mix-blend-multiply animate-blob animation-delay-4000 -ml-16 -mt-16"></div>
-      </div>
+	return (
+		<div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-50 p-4">
+			{/* Decorative background blur elements */}
+			<div className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 flex w-full max-w-3xl justify-center opacity-30 blur-3xl">
+				<div className="h-64 w-64 animate-blob rounded-full bg-primary-400 mix-blend-multiply"></div>
+				<div className="animation-delay-2000 -ml-16 h-64 w-64 animate-blob rounded-full bg-teal-400 mix-blend-multiply"></div>
+				<div className="animation-delay-4000 -mt-16 -ml-16 h-64 w-64 animate-blob rounded-full bg-indigo-400 mix-blend-multiply"></div>
+			</div>
 
-      <div className="max-w-md w-full text-center space-y-8 relative z-10 p-8 md:p-12 bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/50">
-        <div className="relative">
-          <h1 className="text-9xl font-extrabold text-transparent bg-clip-text bg-linear-to-br from-primary-600 to-indigo-600 tracking-tighter drop-shadow-sm transition-transform hover:scale-105 duration-500 cursor-default">
-            404
-          </h1>
-        </div>
-        
-        <div className="space-y-3">
-          <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
-            Oops! Tersesat?
-          </h2>
-          <p className="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">
-            Halaman yang Anda cari mungkin telah dipindahkan, diganti namanya, atau memang tidak pernah ada.
-          </p>
-        </div>
+			<div className="relative z-10 w-full max-w-md space-y-8 rounded-3xl border border-white/50 bg-white/70 p-8 text-center shadow-xl backdrop-blur-xl md:p-12">
+				<div className="relative">
+					<h1 className="cursor-default bg-linear-to-br from-primary-600 to-indigo-600 bg-clip-text font-extrabold text-9xl text-transparent tracking-tighter drop-shadow-sm transition-transform duration-500 hover:scale-105">
+						404
+					</h1>
+				</div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-          <button 
-            onClick={() => window.history.back()}
-            className="w-full sm:w-auto px-6 py-3 rounded-2xl border border-slate-200 bg-white text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center justify-center gap-2 group ring-1 ring-transparent hover:ring-slate-200"
-          >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            Kembali
-          </button>
-          
-          <Link 
-            to="/dashboard"
-            className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-linear-to-r from-primary-600 to-primary-500 text-white font-medium hover:from-primary-700 hover:to-primary-600 shadow-md shadow-primary-500/20 hover:shadow-lg hover:shadow-primary-500/30 transition-all flex items-center justify-center gap-2 group hover:-translate-y-0.5"
-          >
-            <Home size={18} className="group-hover:scale-110 transition-transform" />
-            Dashboard
-          </Link>
-        </div>
-      </div>
-    </div>
-  )
+				<div className="space-y-3">
+					<h2 className="font-bold text-3xl text-slate-800 tracking-tight">
+						Oops! Tersesat?
+					</h2>
+					<p className="mx-auto max-w-xs text-slate-500 text-sm leading-relaxed">
+						Halaman yang Anda cari mungkin telah dipindahkan, diganti namanya,
+						atau memang tidak pernah ada.
+					</p>
+				</div>
+
+				<div className="flex flex-col items-center justify-center gap-4 pt-6 sm:flex-row">
+					<button
+						onClick={() => window.history.back()}
+						className="group flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3 font-medium text-slate-600 ring-1 ring-transparent transition-all hover:bg-slate-50 hover:text-slate-900 hover:ring-slate-200 sm:w-auto"
+					>
+						<ArrowLeft
+							size={18}
+							className="group-hover:-translate-x-1 transition-transform"
+						/>
+						Kembali
+					</button>
+
+					<Link
+						to="/dashboard"
+						className="group hover:-translate-y-0.5 flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-primary-600 to-primary-500 px-6 py-3 font-medium text-white shadow-md shadow-primary-500/20 transition-all hover:from-primary-700 hover:to-primary-600 hover:shadow-lg hover:shadow-primary-500/30 sm:w-auto"
+					>
+						<Home
+							size={18}
+							className="transition-transform group-hover:scale-110"
+						/>
+						Dashboard
+					</Link>
+				</div>
+			</div>
+		</div>
+	);
 }

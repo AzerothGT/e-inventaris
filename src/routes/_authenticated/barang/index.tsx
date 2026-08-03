@@ -1,38 +1,35 @@
-import { createFileRoute } from "@tanstack/react-router";
 import {
-	useSuspenseQuery,
 	useMutation,
 	useQueryClient,
+	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { barangQueries } from "../../../data/barangQueries";
-import { ruanganQueries } from "../../../data/ruanganQueries";
-import { kategoriQueries } from "../../../data/kategoriQueries";
-import { DataTable } from "../../../components/ui/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
+import { createFileRoute } from "@tanstack/react-router";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Package, Plus, Shield, ShieldAlert, ShieldCheck } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
+import { BarangForm } from "../../../components/inventory/BarangForm";
+import { MultipleBarangForm } from "../../../components/inventory/MultipleBarangForm";
 import { Badge } from "../../../components/ui/Badge";
-import { Package, Plus, ShieldCheck, ShieldAlert, Shield } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
+import { DataTable } from "../../../components/ui/DataTable";
 import { DataTableColumnHeader } from "../../../components/ui/DataTableColumnHeader";
 import { DataTableRowActions } from "../../../components/ui/DataTableRowActions";
 import { Dialog } from "../../../components/ui/Dialog";
-import { BarangForm } from "../../../components/inventory/BarangForm";
-import { MultipleBarangForm } from "../../../components/inventory/MultipleBarangForm";
+import { ExportButton } from "../../../components/ui/ExportButton";
+import { IconBox } from "../../../components/ui/IconBox";
+import { PageHeader } from "../../../components/ui/PageHeader";
+import { TablePageSkeleton } from "../../../components/ui/TablePageSkeleton";
+import { barangQueries } from "../../../data/barangQueries";
+import { kategoriQueries } from "../../../data/kategoriQueries";
+import { ruanganQueries } from "../../../data/ruanganQueries";
+import { cn } from "../../../lib/utils";
 import {
 	createBarang,
 	createMultipleBarang,
-	updateBarang,
 	deleteBarang,
+	updateBarang,
 } from "../../../server/functions/barang";
-import { PageHeader } from "../../../components/ui/PageHeader";
-import { IconBox } from "../../../components/ui/IconBox";
-import { ExportButton } from "../../../components/ui/ExportButton";
-import { toast } from "sonner";
-import { cn } from "../../../lib/utils";
-
-
-import * as React from "react";
-
-import { TablePageSkeleton } from "../../../components/ui/TablePageSkeleton";
 
 export const Route = createFileRoute("/_authenticated/barang/")({
 	loader: ({ context }) => {
@@ -61,7 +58,7 @@ const barangExportColumns = [
 	{
 		key: "status",
 		label: "Kondisi",
-		formatter: (v: string) => (v ? v.replace("_", " ").toLowerCase() : ""),
+		formatter: (v: unknown) => (v ? (v as string).replace("_", " ").toLowerCase() : ""),
 	},
 	{ key: "namaRuangan", label: "Ruangan" },
 ];
@@ -74,10 +71,12 @@ function BarangListPage() {
 	const { data: categories } = useSuspenseQuery(kategoriQueries.list());
 
 	const [isAddOpen, setIsAddOpen] = React.useState(false);
-	const [formMode, setFormMode] = React.useState<"single" | "multiple">("single");
-	const [editingItem, setEditingItem] = React.useState<any>(null);
-	const [deletingItem, setDeletingItem] = React.useState<any>(null);
-	const [filteredItems, setFilteredItems] = React.useState<any[]>(items);
+	const [formMode, setFormMode] = React.useState<"single" | "multiple">(
+		"single",
+	);
+	const [editingItem, setEditingItem] = React.useState<Record<string, unknown> | null>(null);
+	const [deletingItem, setDeletingItem] = React.useState<Record<string, unknown> | null>(null);
+	const [filteredItems, setFilteredItems] = React.useState<Record<string, unknown>[]>(items);
 
 	const createMutation = useMutation({
 		mutationFn: createBarang,
@@ -87,7 +86,7 @@ function BarangListPage() {
 			setIsAddOpen(false);
 			toast.success("Barang berhasil ditambahkan");
 		},
-		onError: (error: any) => {
+		onError: (error: Error) => {
 			toast.error(error.message || "Gagal menambahkan barang");
 		},
 	});
@@ -101,7 +100,7 @@ function BarangListPage() {
 			setFormMode("single");
 			toast.success("Semua barang berhasil ditambahkan");
 		},
-		onError: (error: any) => {
+		onError: (error: Error) => {
 			toast.error(error.message || "Gagal menambahkan barang");
 		},
 	});
@@ -114,7 +113,7 @@ function BarangListPage() {
 			setEditingItem(null);
 			toast.success("Barang berhasil diperbarui");
 		},
-		onError: (error: any) => {
+		onError: (error: Error) => {
 			toast.error(error.message || "Gagal memperbarui barang");
 		},
 	});
@@ -127,19 +126,19 @@ function BarangListPage() {
 			setDeletingItem(null);
 			toast.success("Barang berhasil dihapus");
 		},
-		onError: (error: any) => {
+		onError: (error: Error) => {
 			toast.error(error.message || "Gagal menghapus barang");
 		},
 	});
 
-	const columns: ColumnDef<any>[] = [
+	const columns: ColumnDef<Record<string, unknown>>[] = [
 		{
 			accessorKey: "kodeBarang",
 			header: ({ column }) => (
 				<DataTableColumnHeader column={column} title="Kode" />
 			),
 			cell: ({ row }) => (
-				<div className="w-[80px] font-mono text-xs font-semibold text-primary-600">
+				<div className="w-20 font-mono font-semibold text-primary-600 text-xs">
 					{row.getValue("kodeBarang")}
 				</div>
 			),
@@ -150,10 +149,10 @@ function BarangListPage() {
 				<DataTableColumnHeader column={column} title="Nama Barang" />
 			),
 			cell: ({ row }) => (
-			<div className="font-medium text-surface-900 capitalize">
-				{(row.getValue("nama") as string)?.toLowerCase()}
-			</div>
-		),
+				<div className="font-medium text-surface-900 capitalize">
+					{(row.getValue("nama") as string)?.toLowerCase()}
+				</div>
+			),
 		},
 		{
 			accessorKey: "kategori",
@@ -196,9 +195,7 @@ function BarangListPage() {
 				<DataTableColumnHeader column={column} title="Gedung" />
 			),
 			cell: ({ row }) => (
-				<div className="text-surface-600">
-					{row.getValue("gedung") || "-"}
-				</div>
+				<div className="text-surface-600">{row.getValue("gedung") || "-"}</div>
 			),
 		},
 		{
@@ -259,8 +256,6 @@ function BarangListPage() {
 		},
 	];
 
-
-
 	return (
 		<div className="space-y-6">
 			<PageHeader
@@ -286,10 +281,10 @@ function BarangListPage() {
 				}
 			/>
 
-			<div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-surface-200/50 shadow-sm stagger-2">
-				<div className="flex items-center gap-2 mb-4">
+			<div className="stagger-2 rounded-xl border border-surface-200/50 bg-white/50 p-6 shadow-sm backdrop-blur-sm">
+				<div className="mb-4 flex items-center gap-2">
 					<IconBox icon={Package} variant="primary" size={20} />
-					<h3 className="text-lg font-semibold text-surface-900">
+					<h3 className="font-semibold text-lg text-surface-900">
 						Semua Barang
 					</h3>
 				</div>
@@ -346,15 +341,15 @@ function BarangListPage() {
 			>
 				<div className="space-y-6">
 					<div className="flex justify-center">
-						<div className="flex bg-surface-100 p-1 rounded-xl border border-surface-200/50">
+						<div className="flex rounded-xl border border-surface-200/50 bg-surface-100 p-1">
 							<button
 								type="button"
 								onClick={() => setFormMode("single")}
 								className={cn(
-									"px-4 py-1.5 text-xs font-bold rounded-lg transition-all",
+									"rounded-lg px-4 py-1.5 font-bold text-xs transition-all",
 									formMode === "single"
 										? "bg-white text-surface-900 shadow-sm"
-										: "text-surface-500 hover:text-surface-900"
+										: "text-surface-500 hover:text-surface-900",
 								)}
 							>
 								Satu Barang
@@ -363,10 +358,10 @@ function BarangListPage() {
 								type="button"
 								onClick={() => setFormMode("multiple")}
 								className={cn(
-									"px-4 py-1.5 text-xs font-bold rounded-lg transition-all",
+									"rounded-lg px-4 py-1.5 font-bold text-xs transition-all",
 									formMode === "multiple"
 										? "bg-white text-surface-900 shadow-sm"
-										: "text-surface-500 hover:text-surface-900"
+										: "text-surface-500 hover:text-surface-900",
 								)}
 							>
 								Banyak Barang
@@ -389,7 +384,7 @@ function BarangListPage() {
 						<MultipleBarangForm
 							ruanganOptions={rooms}
 							kategoriOptions={categories}
-							onSubmit={(data) => createMultipleMutation.mutate({ data })}
+							onSubmit={(data) => createMultipleMutation.mutate({ data: data as unknown as { items: { status: "baik" | "rusak_ringan" | "rusak_berat"; kategori: string; nama: string; kodeBarang: string; merek: string; tahunPengadaan: number; ruanganId: string; jumlah: number; noSeri?: string }[] } })}
 							onCancel={() => {
 								setIsAddOpen(false);
 								setFormMode("single");
@@ -409,11 +404,11 @@ function BarangListPage() {
 			>
 				{editingItem && (
 					<BarangForm
-						initialData={editingItem}
+						initialData={editingItem as { status: "baik" | "rusak_ringan" | "rusak_berat"; kategori: string; nama: string; kodeBarang: string; merek: string; tahunPengadaan: number; ruanganId: string; jumlah: number; noSeri?: string }}
 						ruanganOptions={rooms}
 						kategoriOptions={categories}
 						onSubmit={(data) =>
-							updateMutation.mutate({ data: { ...data, id: editingItem.id } })
+							updateMutation.mutate({ data: { ...data, id: editingItem.id as string } })
 						}
 						onCancel={() => setEditingItem(null)}
 						isLoading={updateMutation.isPending}
@@ -432,7 +427,7 @@ function BarangListPage() {
 						<p className="text-surface-600">
 							Apakah Anda yakin ingin menghapus barang{" "}
 							<span className="font-bold text-surface-900">
-								{deletingItem.nama}
+								{deletingItem.nama as string}
 							</span>
 							? Tindakan ini tidak dapat dibatalkan.
 						</p>
@@ -443,7 +438,7 @@ function BarangListPage() {
 							<Button
 								variant="destructive"
 								onClick={() =>
-									deleteMutation.mutate({ data: { id: deletingItem.id } })
+									deleteMutation.mutate({ data: { id: deletingItem.id as string } })
 								}
 								disabled={deleteMutation.isPending}
 							>

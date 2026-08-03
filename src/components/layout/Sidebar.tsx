@@ -1,124 +1,168 @@
-import * as React from 'react'
-import { Link } from '@tanstack/react-router'
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
-  LayoutDashboard,
-  Package,
-  FilePen,
-  Warehouse,
-  Users,
-  ChevronLeft,
-  ChevronRight,
-  Tag
-} from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { getCurrentUser } from '../../server/functions/auth'
+	ChevronLeft,
+	ChevronRight,
+	FilePen,
+	LayoutDashboard,
+	Package,
+	Tag,
+	Users,
+	Warehouse,
+} from "lucide-react";
+import * as React from "react";
+import { getCurrentUser } from "../../server/functions/auth";
 
 export function Sidebar() {
-  const [isMinimized, setIsMinimized] = React.useState(true)
+	const [isMinimized, setIsMinimized] = React.useState(true);
 
-  React.useEffect(() => {
-    const match = document.cookie.match(/(^| )sidebar_minimized=([^;]+)/)
-    if (match) {
-      setIsMinimized(match[2] === 'true')
-    }
-  }, [])
+	React.useEffect(() => {
+		const match = document.cookie.match(/(^| )sidebar_minimized=([^;]+)/);
+		if (match) {
+			setIsMinimized(match[2] === "true");
+		}
+	}, []);
 
-  const toggleSidebar = () => {
-    const newVal = !isMinimized
-    setIsMinimized(newVal)
-    if (typeof document !== 'undefined') {
-      document.cookie = `sidebar_minimized=${newVal}; path=/; max-age=31536000`
-    }
-  }
+	const toggleSidebar = () => {
+		const newVal = !isMinimized;
+		setIsMinimized(newVal);
+		if (typeof document !== "undefined") {
+			document.cookie = `sidebar_minimized=${newVal}; path=/; max-age=31536000`;
+		}
+	};
 
-  const { data: user } = useQuery({
-    queryKey: ['session'],
-    queryFn: () => getCurrentUser(),
-  })
+	const { data: user } = useQuery({
+		queryKey: ["session"],
+		queryFn: () => getCurrentUser(),
+	});
 
-  const currentRole = user?.role || 'guest'
+	const currentRole = user?.role || "guest";
 
-  const menuItems = [
-    {
-      title: 'Dashboard',
-      icon: LayoutDashboard,
-      to: '/dashboard',
-      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
-    },
-    {
-      title: 'Barang',
-      icon: Package,
-      to: '/barang',
-      roles: ['tu_admin', 'penjaga_lab', 'orang_tu', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
-    },
-    {
-      title: 'Pengajuan',
-      icon: FilePen,
-      to: '/permintaan',
-      roles: ['penjaga_lab', 'orang_tu', 'tu_admin', 'kaprog', 'wakasek', 'kepala_sekolah', 'admin'],
-    },
-    {
-      title: 'Gudang',
-      icon: Warehouse,
-      to: '/ruangan',
-      roles: ['tu_admin', 'penjaga_lab', 'admin'],
-    },
-    {
-      title: 'Pengguna',
-      icon: Users,
-      to: '/users',
-      roles: ['tu_admin', 'admin'],
-    },
-    {
-      title: 'Kategori',
-      icon: Tag,
-      to: '/pengaturan/kategori',
-      roles: ['tu_admin', 'admin'],
-    },
-  ]
+	const menuItems = [
+		{
+			title: "Dashboard",
+			icon: LayoutDashboard,
+			to: "/dashboard",
+			roles: [
+				"penjaga_lab",
+				"orang_tu",
+				"tu_admin",
+				"kaprog",
+				"wakasek",
+				"kepala_sekolah",
+				"admin",
+			],
+		},
+		{
+			title: "Barang",
+			icon: Package,
+			to: "/barang",
+			roles: [
+				"tu_admin",
+				"penjaga_lab",
+				"orang_tu",
+				"kaprog",
+				"wakasek",
+				"kepala_sekolah",
+				"admin",
+			],
+		},
+		{
+			title: "Pengajuan",
+			icon: FilePen,
+			to: "/permintaan",
+			roles: [
+				"penjaga_lab",
+				"orang_tu",
+				"tu_admin",
+				"kaprog",
+				"wakasek",
+				"kepala_sekolah",
+				"admin",
+			],
+		},
+		{
+			title: "Gudang",
+			icon: Warehouse,
+			to: "/ruangan",
+			roles: ["tu_admin", "penjaga_lab", "admin"],
+		},
+		{
+			title: "Pengguna",
+			icon: Users,
+			to: "/users",
+			roles: ["tu_admin", "admin"],
+		},
+		{
+			title: "Kategori",
+			icon: Tag,
+			to: "/pengaturan/kategori",
+			roles: ["tu_admin", "admin"],
+		},
+	];
 
-  const filteredMenu = menuItems.filter(item => item.roles.includes(currentRole as any))
+	const filteredMenu = menuItems.filter((item) =>
+		item.roles.includes(currentRole as string),
+	);
 
-  return (
-    <aside className={`border-r border-white/40 bg-white/70 backdrop-blur-xl flex flex-col h-full shrink-0 transition-all duration-300 relative z-20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] ${isMinimized ? 'w-20' : 'w-64'}`}>
-      <div className={`h-16 flex items-center border-b border-white/10 transition-all duration-300 ${isMinimized ? 'justify-center px-0' : 'px-6'}`}>
-        <div className={`flex items-center gap-2 text-primary-600 font-bold tracking-tight overflow-hidden ${isMinimized ? '' : 'text-xl'}`}>
-          <div className="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center shrink-0">
-            <Package size={isMinimized ? 24 : 20} className="transition-all duration-300" />
-          </div>
-          {!isMinimized && <span className="whitespace-nowrap transition-opacity duration-300">E-Inventaris</span>}
-        </div>
-      </div>
+	return (
+		<aside
+			className={`relative z-20 flex h-full shrink-0 flex-col border-white/40 border-r bg-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] backdrop-blur-xl transition-all duration-300 ${isMinimized ? "w-20" : "w-64"}`}
+		>
+			<div
+				className={`flex h-16 items-center border-white/10 border-b transition-all duration-300 ${isMinimized ? "justify-center px-0" : "px-6"}`}
+			>
+				<div
+					className={`flex items-center gap-2 overflow-hidden font-bold text-primary-600 tracking-tight ${isMinimized ? "" : "text-xl"}`}
+				>
+					<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-600 text-white">
+						<Package
+							size={isMinimized ? 24 : 20}
+							className="transition-all duration-300"
+						/>
+					</div>
+					{!isMinimized && (
+						<span className="whitespace-nowrap transition-opacity duration-300">
+							E-Inventaris
+						</span>
+					)}
+				</div>
+			</div>
 
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 overflow-x-hidden">
-        {filteredMenu.map((item) => {
-          const Icon = item.icon
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={`sidebar-link ${isMinimized ? 'justify-center px-0!' : ''}`}
-              activeProps={{
-                className: 'sidebar-link-active',
-              }}
-              title={isMinimized ? item.title : undefined}
-            >
-              <Icon size={isMinimized ? 28 : 20} className="shrink-0 transition-all duration-300" />
-              {!isMinimized && <span className="whitespace-nowrap">{item.title}</span>}
-            </Link>
-          )
-        })}
-      </nav>
+			<nav className="flex-1 space-y-1 overflow-y-auto overflow-x-hidden px-3 py-4">
+				{filteredMenu.map((item) => {
+					const Icon = item.icon;
+					return (
+						<Link
+							key={item.to}
+							to={item.to}
+							className={`sidebar-link ${isMinimized ? "justify-center px-0!" : ""}`}
+							activeProps={{
+								className: "sidebar-link-active",
+							}}
+							title={isMinimized ? item.title : undefined}
+						>
+							<Icon
+								size={isMinimized ? 28 : 20}
+								className="shrink-0 transition-all duration-300"
+							/>
+							{!isMinimized && (
+								<span className="whitespace-nowrap">{item.title}</span>
+							)}
+						</Link>
+					);
+				})}
+			</nav>
 
-      <div className="p-3 border-t border-white/10">
-        <button
-          onClick={toggleSidebar}
-          className={`flex items-center text-surface-500 hover:text-primary-600 hover:bg-primary-50 p-2.5 rounded-xl transition-all duration-300 w-full ${isMinimized ? 'justify-center' : 'justify-end'}`}
-          title={isMinimized ? 'Perbesar sidebar' : 'Perkecil sidebar'}
-        >
-          {isMinimized ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
-        </button>
-      </div>
-    </aside>
-  )
+			<div className="border-white/10 border-t p-3">
+				<button
+					onClick={toggleSidebar}
+					className={`flex w-full items-center rounded-xl p-2.5 text-surface-500 transition-all duration-300 hover:bg-primary-50 hover:text-primary-600 ${isMinimized ? "justify-center" : "justify-end"}`}
+					title={isMinimized ? "Perbesar sidebar" : "Perkecil sidebar"}
+				>
+					{isMinimized ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
+				</button>
+			</div>
+		</aside>
+	);
 }

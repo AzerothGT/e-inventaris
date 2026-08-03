@@ -1,10 +1,10 @@
 export interface ExportColumn {
 	key: string;
 	label: string;
-	formatter?: (value: any) => string;
+	formatter?: (value: unknown) => string;
 }
 
-function escapeCSVValue(value: any): string {
+function escapeCSVValue(value: unknown): string {
 	if (value === null || value === undefined) return "";
 	const stringValue = String(value);
 	if (
@@ -18,7 +18,7 @@ function escapeCSVValue(value: any): string {
 }
 
 export function exportToCSV(
-	data: any[],
+	data: Record<string, unknown>[],
 	columns: ExportColumn[],
 	filename: string,
 ) {

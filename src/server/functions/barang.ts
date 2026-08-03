@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
-import { db } from "../../db";
-import { barang, ruangan } from "../../db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { requireSession, requireRole } from "../../lib/auth";
+import { db } from "../../db";
+import { barang, ruangan } from "../../db/schema";
+import { requireRole, requireSession } from "../../lib/auth";
 
 const MANAGE_ROLES = ["admin", "penjaga_lab", "kaprog"] as const;
 
@@ -35,7 +35,7 @@ export const getBarangList = createServerFn({ method: "GET" }).handler(
 );
 
 export const getBarangById = createServerFn({ method: "GET" })
-	.inputValidator(z.object({ id: z.string() }))
+	.validator(z.object({ id: z.string() }))
 	.handler(async ({ data }) => {
 		await requireSession();
 		const result = await db
@@ -48,7 +48,7 @@ export const getBarangById = createServerFn({ method: "GET" })
 	});
 
 export const createBarang = createServerFn({ method: "POST" })
-	.inputValidator(
+	.validator(
 		z.object({
 			kodeBarang: z.string().min(1, "Kode barang harus diisi"),
 			nama: z.string().min(1, "Nama barang harus diisi"),
@@ -76,7 +76,7 @@ export const createBarang = createServerFn({ method: "POST" })
 	});
 
 export const createMultipleBarang = createServerFn({ method: "POST" })
-	.inputValidator(
+	.validator(
 		z.object({
 			items: z.array(
 				z.object({
@@ -124,7 +124,7 @@ export const createMultipleBarang = createServerFn({ method: "POST" })
 	});
 
 export const updateBarang = createServerFn({ method: "POST" })
-	.inputValidator(
+	.validator(
 		z.object({
 			id: z.string(),
 			kodeBarang: z.string().min(1, "Kode barang harus diisi"),
@@ -154,7 +154,7 @@ export const updateBarang = createServerFn({ method: "POST" })
 	});
 
 export const deleteBarang = createServerFn({ method: "POST" })
-	.inputValidator(
+	.validator(
 		z.object({
 			id: z.string(),
 		}),
