@@ -13,7 +13,7 @@ export function NotFound() {
 
       <div className="max-w-md w-full text-center space-y-8 relative z-10 p-8 md:p-12 bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/50">
         <div className="relative">
-          <h1 className="text-9xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-primary-600 to-indigo-600 tracking-tighter drop-shadow-sm transition-transform hover:scale-105 duration-500 cursor-default">
+          <h1 className="text-9xl font-extrabold text-transparent bg-clip-text bg-linear-to-br from-primary-600 to-indigo-600 tracking-tighter drop-shadow-sm transition-transform hover:scale-105 duration-500 cursor-default">
             404
           </h1>
         </div>
@@ -38,7 +38,7 @@ export function NotFound() {
           
           <Link 
             to="/dashboard"
-            className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium hover:from-primary-700 hover:to-primary-600 shadow-md shadow-primary-500/20 hover:shadow-lg hover:shadow-primary-500/30 transition-all flex items-center justify-center gap-2 group hover:-translate-y-0.5"
+            className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-linear-to-r from-primary-600 to-primary-500 text-white font-medium hover:from-primary-700 hover:to-primary-600 shadow-md shadow-primary-500/20 hover:shadow-lg hover:shadow-primary-500/30 transition-all flex items-center justify-center gap-2 group hover:-translate-y-0.5"
           >
             <Home size={18} className="group-hover:scale-110 transition-transform" />
             Dashboard

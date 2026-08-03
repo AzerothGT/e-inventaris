@@ -18,7 +18,7 @@ function LoginPage() {
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    
+
     try {
       const result = await loginUser({ data: { username, password } })
       if (result.success) {
@@ -38,21 +38,21 @@ function LoginPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-primary-600/10 blur-[120px] mix-blend-multiply animate-[blob_7s_infinite]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-600/10 blur-[120px] mix-blend-multiply animate-[blob_7s_infinite] [animation-delay:2s]" />
       <div className="absolute top-[20%] right-[20%] w-[40%] h-[40%] rounded-full bg-sky-600/10 blur-[100px] mix-blend-multiply animate-[blob_7s_infinite] [animation-delay:4s]" />
-      
+
       <div className="relative w-full max-w-md z-10">
         {/* Card */}
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-card-hover border border-surface-200 p-8 sm:p-10 transition-all duration-300 hover:shadow-modal relative overflow-hidden">
-          
+
           {/* Decorative shine effect */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-50" />
-          
+          <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-white to-transparent opacity-50" />
+
           {/* Header */}
           <div className="flex flex-col items-center justify-center text-center space-y-4 mb-10">
             <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-600/20 rotate-3 transition-transform duration-300 hover:rotate-6 hover:scale-105 border border-primary-500/50">
               <Package className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-surface-900 to-surface-600">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-surface-900 to-surface-600">
                 E-Inventaris
               </h1>
               <p className="text-surface-500 mt-2 text-sm sm:text-base">
@@ -138,7 +138,7 @@ function LoginPage() {
                 <>
                   <span className="relative z-10">Masuk ke Sistem</span>
                   <ArrowRight className="w-5 h-5 ml-2 relative z-10 group-hover:translate-x-1 transition-transform" />
-                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-primary-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity z-0" />
+                  <div className="absolute inset-0 h-full w-full bg-linear-to-r from-primary-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity z-0" />
                 </>
               )}
             </button>
